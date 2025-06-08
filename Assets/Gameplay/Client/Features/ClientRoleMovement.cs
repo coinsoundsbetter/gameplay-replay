@@ -1,0 +1,23 @@
+﻿using UnityEngine;
+
+public class ClientRoleMovement : RoleMovement, IUpdateable {
+    private ClientRoleRegistry registry;
+    
+    public override void OnInitialize(ref WorldLink link) {
+        registry = link.RequireFeature<ClientRoleRegistry>();
+    }
+
+    public void OnUpdate() {
+        var states = registry.GameIdToLocalStates;
+        foreach (var state in states.Values) {
+            bool isRemoteStateExist = registry.GameIdToRoleNets.TryGetValue(state.GameId, out var remote);
+            if (!isRemoteStateExist) {
+                continue;
+            }
+
+            state.Pos = remote.Pos.Value;
+            state.Rot = remote.Rot.Value;
+            state.SetPos(state.Pos);
+        }
+    }
+}

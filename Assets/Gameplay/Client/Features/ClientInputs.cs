@@ -8,6 +8,7 @@ public class ClientInputs : Feature, IUpdateable {
     public override void OnInitialize(ref WorldLink link) {
         networking = link.RequireFeature<ClientNetworking>();
         roleRegistry = link.RequireFeature<ClientRoleRegistry>();
+        gameState = link.RequireFeature<ClientGameState>();
     }
 
     public void OnUpdate() {

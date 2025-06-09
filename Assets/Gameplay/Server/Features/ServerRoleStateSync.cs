@@ -1,10 +1,10 @@
 public class ServerRoleStateSync : Feature, IUpdateable {
-    private ServerRoleNetRegistry roleNetRegistry;
+    private ServerNetObjSpawn roleNetRegistry;
     private ServerRoleRegistry roleRegistry;
     
     public override void OnInitialize(ref WorldLink link) {
         roleRegistry = link.RequireFeature<ServerRoleRegistry>();
-        roleNetRegistry = link.RequireFeature<ServerRoleNetRegistry>();
+        roleNetRegistry = link.RequireFeature<ServerNetObjSpawn>();
     }
 
     public void OnUpdate() {

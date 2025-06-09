@@ -51,17 +51,3 @@ public struct FeatureBuilder {
         dataTypes.Add(typeof(T));
     }
 }
-
-public struct RemoteValue<T> {
-    public T Local { get; set; }
-    public T Remote { get; set; }
-
-    public void Set(T value) {
-        Local = value;
-        Remote = value;
-    }
-
-    public void SetRemote(T value) {
-        Remote = value;
-    }
-}

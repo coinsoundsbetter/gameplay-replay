@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 656634397321745046}
-  - component: {fileID: 222582048968691247}
-  - component: {fileID: 7317282771812150319}
+  - component: {fileID: 9053815554321039887}
+  - component: {fileID: 1720580050986079189}
   m_Layer: 0
-  m_Name: WorldNet
+  m_Name: GameNet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,7 +33,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &222582048968691247
+--- !u!114 &9053815554321039887
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -46,10 +46,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _componentIndexCache: 255
-  _addedNetworkObject: {fileID: 7317282771812150319}
+  _addedNetworkObject: {fileID: 1720580050986079189}
   _networkObjectCache: {fileID: 0}
-  commandIndex: 0
---- !u!114 &7317282771812150319
+--- !u!114 &1720580050986079189
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,7 +93,7 @@ MonoBehaviour:
   _teleportThreshold: 1
   <PrefabId>k__BackingField: 65535
   <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 6310027692503803914
+  <AssetPathHash>k__BackingField: 12490363348190804952
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}

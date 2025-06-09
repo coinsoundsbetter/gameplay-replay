@@ -5,7 +5,7 @@ public class NetworkObj : NetworkBehaviour {
         var serverWorld = WorldManager.Instance.GetWorld(WorldType.Server);
         serverWorld.GetFeature<WorldEvents>().Publish(new WorldEventDefine.NetObjSpawn() {
             IsSpawn = true,
-            ObjType = GetType(),
+            Obj = this,
         });
     }
 
@@ -18,7 +18,7 @@ public class NetworkObj : NetworkBehaviour {
         var serverWorld = WorldManager.Instance.GetWorld(WorldType.Server);
         serverWorld.GetFeature<WorldEvents>().Publish(new WorldEventDefine.NetObjSpawn() {
             IsSpawn = false,
-            ObjType = GetType(),
+            Obj = this,
         });
     }
 
@@ -26,7 +26,7 @@ public class NetworkObj : NetworkBehaviour {
         var clientWorld = WorldManager.Instance.GetWorld(WorldType.Client);
         clientWorld.GetFeature<WorldEvents>().Publish(new WorldEventDefine.NetObjSpawn() {
             IsSpawn = true,
-            ObjType = GetType(),
+            Obj = this,
         });
     }
 
@@ -39,7 +39,7 @@ public class NetworkObj : NetworkBehaviour {
         var clientWorld = WorldManager.Instance.GetWorld(WorldType.Client);
         clientWorld.GetFeature<WorldEvents>().Publish(new WorldEventDefine.NetObjSpawn() {
             IsSpawn = false,
-            ObjType = GetType(),
+            Obj = this,
         });
     }
 }

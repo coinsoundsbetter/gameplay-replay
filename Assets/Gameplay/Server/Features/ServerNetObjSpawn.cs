@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-public class ClientNetworkSpawn : Feature {
-    private WorldEvents worldEvents;
+public class ServerNetObjSpawn : Feature {
     public Dictionary<int, RoleNet> RoleNets = new Dictionary<int, RoleNet>();
     public GameNet MyGameNet { get; private set; }
+    private WorldEvents worldEvents;
     
     public override void OnInitialize(ref WorldLink link) {
         worldEvents = link.RequireFeature<WorldEvents>();
@@ -13,7 +13,7 @@ public class ClientNetworkSpawn : Feature {
     public override void OnClear() {
         worldEvents.Unregister<WorldEventDefine.NetObjSpawn>(OnNetObjSpawn);
     }
-
+    
     private void OnNetObjSpawn(WorldEventDefine.NetObjSpawn ent) {
         NetworkObj obj = ent.Obj;
         if (obj is RoleNet roleNet) {
@@ -44,7 +44,6 @@ public class ClientNetworkSpawn : Feature {
             MyGameNet = net;
             worldEvents.Publish(new ClientWorldEvents.GameSpawn() {
                 GameState = net.GameState.Value,
-                GameMode = net.GameMode.Value,
             });
         }else {
             worldEvents.Publish(new ClientWorldEvents.GameDespawn());

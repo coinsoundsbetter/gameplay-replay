@@ -27,6 +27,24 @@ public class ServerFishNet : Feature {
     }
 
     private void MsgLoginRequest(NetworkConnection conn, FishBroadcastDefine.LoginRequest arg2, Channel arg3) {
+       
+    }
+
+    public void StartConnect() {
+        manager.ServerManager.StartConnection();
+    }
+
+    public void SpawnGame(GameMode mode) {
+        var asset = Resources.Load("Networking/GameNet");
+        var instance = (GameObject)Object.Instantiate(asset);
+        var netObj = instance.GetComponent<NetworkObject>();
+        var net = instance.GetComponent<GameNet>();
+        net.GameMode.Value = mode;
+        net.GameState.Value = GameState.Waiting;
+        manager.ServerManager.Spawn(netObj);
+    }
+
+    public void SpawnRole() {
         var roleNetAsset = Resources.Load("Networking/RoleNet");
         var roleNetInstance = (GameObject)Object.Instantiate(roleNetAsset);
         var roleNetObj = roleNetInstance.GetComponent<NetworkObject>();
@@ -35,10 +53,6 @@ public class ServerFishNet : Feature {
         roleNet.Rot.Value = Quaternion.identity;
         roleNet.RoleId.Value = ++gameIdPool;
         roleNet.GameName.Value = $"GoodGuy_{gameIdPool}";
-        manager.ServerManager.Spawn(roleNetObj, conn);
-    }
-
-    public void StartConnect() {
-        manager.ServerManager.StartConnection();
+        manager.ServerManager.Spawn(roleNetObj);
     }
 }

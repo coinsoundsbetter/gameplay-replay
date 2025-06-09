@@ -1,6 +1,12 @@
 ﻿using UnityEngine;
 
 public class ClientWorldEvents {
+    public struct GameSpawn {
+        public GameState GameState;
+        public GameMode GameMode;
+    }
+    
+    public struct GameDespawn { }
 
     public struct RoleSpawn {
         public int RoleId;

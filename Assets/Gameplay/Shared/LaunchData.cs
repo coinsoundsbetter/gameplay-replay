@@ -11,4 +11,5 @@
     public bool StartAsServer;
     public bool StartAsClient;
     public bool UseReplay;
+    public GameMode StartGameMode;
 }

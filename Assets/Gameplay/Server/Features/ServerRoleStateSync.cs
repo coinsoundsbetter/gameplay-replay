@@ -1,20 +1,21 @@
 public class ServerRoleStateSync : Feature, IUpdateable {
-    private ServerRoleRegistry registry;
+    private ServerRoleNetRegistry roleNetRegistry;
+    private ServerRoleRegistry roleRegistry;
     
     public override void OnInitialize(ref WorldLink link) {
-        registry = link.RequireFeature<ServerRoleRegistry>();
+        roleRegistry = link.RequireFeature<ServerRoleRegistry>();
+        roleNetRegistry = link.RequireFeature<ServerRoleNetRegistry>();
     }
 
     public void OnUpdate() {
-        var serverRoleStates = registry.GameIdToRoleStates;
-        foreach (var serverRoleState in serverRoleStates.Values) {
-            bool isNetExist = registry.GameIdToRoleNets.TryGetValue(serverRoleState.GameId, out var net);
+        foreach (var serverRole in roleRegistry.GameIdToRoleStates.Values) {
+            bool isNetExist = roleNetRegistry.RoleNets.TryGetValue(serverRole.RoleId, out var net);
             if (!isNetExist) {
                 continue;
             }
 
-            net.Pos.Value = serverRoleState.Pos;
-            net.Rot.Value = serverRoleState.Rot;
+            net.Pos.Value = serverRole.Pos;
+            net.Rot.Value = serverRole.Rot;
         }
     }
 }

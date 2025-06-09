@@ -8,9 +8,9 @@ public class ClientRoleMovement : RoleMovement, IUpdateable {
     }
 
     public void OnUpdate() {
-        var states = registry.GameIdToLocalStates;
+        /*var states = registry.GameIdToLocalStates;
         foreach (var state in states.Values) {
-            bool isRemoteStateExist = registry.GameIdToRoleNets.TryGetValue(state.GameId, out var remote);
+            bool isRemoteStateExist = registry.GameIdToRoleNets.TryGetValue(state.RoleId, out var remote);
             if (!isRemoteStateExist) {
                 continue;
             }
@@ -18,6 +18,6 @@ public class ClientRoleMovement : RoleMovement, IUpdateable {
             state.Pos = remote.Pos.Value;
             state.Rot = remote.Rot.Value;
             state.SetPos(state.Pos);
-        }
+        }*/
     }
 }

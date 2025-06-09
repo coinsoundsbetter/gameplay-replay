@@ -15,7 +15,11 @@ public class ClientInputs : Feature, IUpdateable {
     }
 
     private void RoleMoveInput() {
-        if (!roleRegistry.IsLocalInitialized) {
+        if (gameState.CurrentGameState != GameState.Gaming) {
+            return;
+        }
+        
+        /*if (!roleRegistry.IsLocalInitialized) {
             return;
         }
         
@@ -31,8 +35,8 @@ public class ClientInputs : Feature, IUpdateable {
             moveInput.y = -1;
         }
         networking.BroadcastToServer(new FishBroadcastDefine.InputInfo() {
-            GameId = roleRegistry.LocalNet.GameId.Value,
+            GameId = roleRegistry.LocalNet.RoleId.Value,
             Move = moveInput,
-        });
+        });*/
     }
 }

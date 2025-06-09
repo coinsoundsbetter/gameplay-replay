@@ -4,7 +4,7 @@ public class ClientRoleState : RoleState {
     private UnityRole unityRole;
 
     public void Init(int gameId) {
-        GameId = gameId;
+        RoleId = gameId;
         CreateUnityView();
     }
 

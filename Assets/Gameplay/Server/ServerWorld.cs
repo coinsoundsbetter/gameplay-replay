@@ -4,12 +4,14 @@ public class ServerWorld : WorldBase {
         builder.RegisterFeature<WorldEvents>();
         builder.RegisterFeature<ServerGameState>();
         builder.RegisterFeature<ServerRoleRegistry>();
+        builder.RegisterFeature<ServerRoleNetRegistry>();
+        builder.RegisterFeature<ServerGameNetRegistry>();
         builder.RegisterFeature<ServerRoleMovement>();
-        builder.RegisterFeature<ServerNetworking>();
+        builder.RegisterFeature<ServerFishNet>();
         builder.RegisterFeature<ServerRoleStateSync>();
     }
 
     protected override void OnAfterInitializeAllFeatures() {
-        GetFeature<ServerNetworking>().StartConnect();
+        GetFeature<ServerFishNet>().StartConnect();
     }
 }

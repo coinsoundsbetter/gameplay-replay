@@ -2,28 +2,22 @@
 
 public class ServerRoleRegistry : Feature {
     public Dictionary<int, ServerRoleState> GameIdToRoleStates = new Dictionary<int, ServerRoleState>();
-    public Dictionary<int, RoleNet> GameIdToRoleNets = new Dictionary<int, RoleNet>();
     private WorldEvents worldEvents;
     
     public override void OnInitialize(ref WorldLink link) {
         worldEvents = link.RequireFeature<WorldEvents>();
-        worldEvents.Register<WorldEventDefine.RoleNetSpawn>(OnRoleNetSpawn);
+        worldEvents.Register<ServerWorldEvents.RoleSpawn>(OnRoleSpawn);
     }
 
     public override void OnClear() {
-        worldEvents.Unregister<WorldEventDefine.RoleNetSpawn>(OnRoleNetSpawn);
+        worldEvents.Unregister<ServerWorldEvents.RoleSpawn>(OnRoleSpawn);
     }
-
-    private void OnRoleNetSpawn(WorldEventDefine.RoleNetSpawn ent) {
-        var id = ent.RoleNet.GameId.Value;
-        if (ent.IsSpawn) {
-            var newServerState = new ServerRoleState();
-            newServerState.Init(id);
-            GameIdToRoleStates.Add(id, newServerState);
-            GameIdToRoleNets.Add(id, ent.RoleNet);
-        }else {
-            GameIdToRoleStates.Remove(id);
-            GameIdToRoleNets.Remove(id);
-        }
+    
+    private void OnRoleSpawn(ServerWorldEvents.RoleSpawn ent) {
+        var newState = new ServerRoleState();
+        GameIdToRoleStates.Add(ent.RoleId, newState);
+        newState.RoleId = ent.RoleId;
+        newState.Pos = ent.DefaultPos;
+        newState.Rot = ent.DefaultRot;
     }
 }

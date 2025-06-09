@@ -6,15 +6,15 @@ public class ClientRoleStateUpdater : Feature, IUpdateable {
     }
 
     public void OnUpdate() {
-        var remoteStates = registry.GameIdToRoleNets;
+        /*var remoteStates = registry.GameIdToRoleNets;
         foreach (var remote in remoteStates.Values) {
-            bool localStateExist = registry.GameIdToLocalStates.TryGetValue(remote.GameId.Value, out var local);
+            bool localStateExist = registry.GameIdToLocalStates.TryGetValue(remote.RoleId.Value, out var local);
             if (!localStateExist) {
                 continue;
             }
             
             local.Pos = remote.Pos.Value;
             local.Rot = remote.Rot.Value;
-        }
+        }*/
     }
 }

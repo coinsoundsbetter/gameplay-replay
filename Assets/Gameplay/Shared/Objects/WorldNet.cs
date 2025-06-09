@@ -1,4 +1,5 @@
+using FishNet.Object.Synchronizing;
 
-public class WorldNet : NetworkObj {
-     public uint commandIndex;
+public class GameStateNet : NetworkObj {
+    public readonly SyncVar<GameState> gameState;
 }

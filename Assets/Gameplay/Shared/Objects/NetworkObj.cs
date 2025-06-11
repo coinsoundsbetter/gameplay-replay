@@ -1,4 +1,5 @@
 using FishNet.Object;
+using Unity.VisualScripting;
 
 public class NetworkObj : NetworkBehaviour {
     public override void OnStartServer() {
@@ -37,6 +38,10 @@ public class NetworkObj : NetworkBehaviour {
         }
         
         var clientWorld = WorldManager.Instance.GetWorld(WorldType.Client);
+        if (clientWorld == null) {
+            return;
+        }
+        
         clientWorld.GetFeature<WorldEvents>().Publish(new WorldEventDefine.NetObjSpawn() {
             IsSpawn = false,
             Obj = this,

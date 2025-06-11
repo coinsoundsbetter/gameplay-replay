@@ -5,7 +5,7 @@ public class WorldEvents : Feature {
     private readonly Dictionary<int, List<Delegate>> handlers = new();
 
     public void Publish<T>(T message) {
-        var id = Event<T>.GetId();
+        var id = EventTypeMgr.GetId<T>();
         if (handlers.TryGetValue(id, out var list)) {
             foreach (var del in list) {
                 ((Action<T>)del)?.Invoke(message);
@@ -14,7 +14,7 @@ public class WorldEvents : Feature {
     }
 
     public void Register<T>(Action<T> action) {
-        var id = Event<T>.GetId();
+        var id = EventTypeMgr.GetId<T>();
         if (!handlers.ContainsKey(id)) {
             handlers.Add(id, new List<Delegate>());
         }
@@ -23,7 +23,7 @@ public class WorldEvents : Feature {
     }
 
     public void Unregister<T>(Action<T> action) {
-        var id = Event<T>.GetId();
+        var id = EventTypeMgr.GetId<T>();
         if (!handlers.TryGetValue(id, out var list)) {
             return;
         }
@@ -32,16 +32,17 @@ public class WorldEvents : Feature {
     }
 }
 
-public static class Event<T> {
-    private static int idPool;
-    private static Dictionary<Type, int> eventIds = new();
+public static class EventTypeMgr {
+    private static int idAllocator;
+    private static Dictionary<Type, int> typeIds = new();
 
-    public static int GetId() {
+    public static int GetId<T>() {
         var type = typeof(T);
-        if (!eventIds.ContainsKey(type)) {
-            eventIds.Add(type, ++idPool);
+        if (!typeIds.ContainsKey(type)) {
+            idAllocator++;
+            typeIds.Add(type, idAllocator);
         }
-        
-        return eventIds[type];
+
+        return typeIds[type];
     }
 }

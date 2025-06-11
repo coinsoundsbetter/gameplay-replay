@@ -18,4 +18,9 @@ public class ServerWorldEvents {
     public struct RoleDespawn {
         public int RoleId;
     }
+    
+    public struct InputInfo {
+        public int RoleId;
+        public Vector2 Move;
+    }
 }

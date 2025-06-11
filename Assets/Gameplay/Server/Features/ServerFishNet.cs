@@ -8,11 +8,9 @@ using UnityEngine;
 public class ServerFishNet : Feature {
     private NetworkManager manager;
     private int gameIdPool;
-    private ServerRoleMovement movement;
     
     public override void OnInitialize(ref WorldLink link) {
         manager = InstanceFinder.NetworkManager;
-        movement = link.RequireFeature<ServerRoleMovement>();
         manager.ServerManager.RegisterBroadcast<FishBroadcastDefine.LoginRequest>(MsgLoginRequest);
         manager.ServerManager.RegisterBroadcast<FishBroadcastDefine.InputInfo>(MsgInputInfo);
     }
@@ -22,12 +20,15 @@ public class ServerFishNet : Feature {
         manager.ServerManager.UnregisterBroadcast<FishBroadcastDefine.InputInfo>(MsgInputInfo);
     }
 
-    private void MsgInputInfo(NetworkConnection arg1, FishBroadcastDefine.InputInfo arg2, Channel arg3) {
-        movement.OnRoleInput(arg2.GameId, arg2.Move);
+    private void MsgInputInfo(NetworkConnection conn, FishBroadcastDefine.InputInfo ent, Channel channel) {
+        var worlds = WorldManager.Instance.GetWorlds(WorldType.Server | WorldType.Replay);
+        foreach (var w in worlds) {
+            w.GetFeature<ServerEventHandler>().OnRoleInput(ent.GameId, ent.Move);
+        }
     }
 
-    private void MsgLoginRequest(NetworkConnection conn, FishBroadcastDefine.LoginRequest arg2, Channel arg3) {
-       
+    private void MsgLoginRequest(NetworkConnection conn, FishBroadcastDefine.LoginRequest request, Channel channel) {
+        SpawnRole(conn);   
     }
 
     public void StartConnect() {
@@ -44,7 +45,7 @@ public class ServerFishNet : Feature {
         manager.ServerManager.Spawn(netObj);
     }
 
-    public void SpawnRole() {
+    private void SpawnRole(NetworkConnection conn) {
         var roleNetAsset = Resources.Load("Networking/RoleNet");
         var roleNetInstance = (GameObject)Object.Instantiate(roleNetAsset);
         var roleNetObj = roleNetInstance.GetComponent<NetworkObject>();
@@ -53,6 +54,6 @@ public class ServerFishNet : Feature {
         roleNet.Rot.Value = Quaternion.identity;
         roleNet.RoleId.Value = ++gameIdPool;
         roleNet.GameName.Value = $"GoodGuy_{gameIdPool}";
-        manager.ServerManager.Spawn(roleNetObj);
+        manager.ServerManager.Spawn(roleNetObj, conn);
     }
 }

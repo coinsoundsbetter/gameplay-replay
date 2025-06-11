@@ -8,6 +8,7 @@ public class ServerWorld : WorldBase {
         builder.RegisterFeature<ServerGameNetRegistry>();
         builder.RegisterFeature<ServerRoleMovement>();
         builder.RegisterFeature<ServerFishNet>();
+        builder.RegisterFeature<ServerEventHandler>();
         builder.RegisterFeature<ServerRoleStateSync>();
     }
 

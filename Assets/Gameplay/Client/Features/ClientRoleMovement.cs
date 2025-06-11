@@ -1,10 +1,8 @@
-﻿using UnityEngine;
-
+﻿
 public class ClientRoleMovement : RoleMovement, IUpdateable {
-    private ClientRoleRegistry registry;
     
     public override void OnInitialize(ref WorldLink link) {
-        registry = link.RequireFeature<ClientRoleRegistry>();
+        
     }
 
     public void OnUpdate() {

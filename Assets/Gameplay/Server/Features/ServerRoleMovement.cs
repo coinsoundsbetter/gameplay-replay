@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ServerRoleMovement : RoleMovement, IUpdateable {
     private ServerRoleRegistry registry;
-    private Queue<(int, Vector2)> waitHandleInputs = new Queue<(int, Vector2)>();
+    
     
     public override void OnInitialize(ref WorldLink link) {
         registry = link.RequireFeature<ServerRoleRegistry>();
@@ -24,7 +24,7 @@ public class ServerRoleMovement : RoleMovement, IUpdateable {
         }
     }
 
-    public void OnRoleInput(int gameId, Vector2 input) {
-        waitHandleInputs.Enqueue((gameId, input));
+    public void ApplyRoleInput(Vector2 moveInput) {
+        
     }
 }

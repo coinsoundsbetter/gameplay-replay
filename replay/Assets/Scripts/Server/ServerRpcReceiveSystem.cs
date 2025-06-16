@@ -16,6 +16,8 @@ namespace Server {
                 Debug.Log("Received CmdPlayerInput");
                 ecb.DestroyEntity(entity);
             }
+            ecb.Playback(state.EntityManager);
+            ecb.Dispose();
         }
     }
 }

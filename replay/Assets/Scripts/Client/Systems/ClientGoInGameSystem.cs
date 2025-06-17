@@ -1,12 +1,11 @@
 using Unity.Collections;
 using Unity.Entities;
 using Unity.NetCode;
-using UnityEngine;
 
 namespace Client
 {
     [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.ThinClientSimulation)]
-    public partial struct ClientGoInGame : ISystem
+    public partial struct ClientGoInGameSystem : ISystem
     {
         public void OnUpdate(ref SystemState state)
         {
@@ -16,7 +15,6 @@ namespace Client
                          .WithNone<NetworkStreamInGame>()
                          .WithEntityAccess())
             {
-                Debug.Log("go");
                 cmdBuffer.AddComponent<NetworkStreamInGame>(entity);
                 cmdBuffer.AddComponent<ConnectionState>(entity);
             }

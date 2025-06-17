@@ -4,7 +4,7 @@ using Unity.NetCode;
 namespace Server
 {
     [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
-    public partial struct ServerGoInGame : ISystem 
+    public partial struct ServerGoInGameSytsem : ISystem 
     {
         public void OnUpdate(ref SystemState state)
         {

@@ -1,4 +1,4 @@
-using Unity.Entities;
+/*using Unity.Entities;
 using UnityEngine;
 
 namespace Mix {
@@ -10,4 +10,4 @@ namespace Mix {
         public CharacterController Cc { get; }
         public Transform Trans { get; }
     }
-}
+}*/

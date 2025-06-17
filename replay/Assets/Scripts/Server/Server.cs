@@ -1,21 +1,39 @@
-﻿using Unity.Entities;
-using Unity.NetCode;
+﻿using Core;
 
 namespace KillCam
 {
-    internal class Server
+    internal class Server : IGameLoop
     {
-        private World world;
+        private GameWorld gameWorld;
 
         internal void Init()
         {
-            ClientServerBootstrap.AutoConnectPort = 7979;
-            world = ClientServerBootstrap.CreateServerWorld("server");
+            gameWorld = new GameWorld();
+            var init = gameWorld.GetOrCreateSystemGroup<InitializeSystemGroup>();
+            init.AddSystem<S_ConnectSystem>();
+            
+            var simulate = gameWorld.GetOrCreateSystemGroup<SimulationSystemGroup>();
+            var presentation = gameWorld.GetOrCreateSystemGroup<PresentationSystemGroup>();
         }
 
         internal void Clear()
         {
-            world.Dispose();
+            gameWorld.Dispose();
+        }
+
+        public void OnUpdate()
+        {
+            gameWorld.OnUpdate();
+        }
+
+        public void OnLateUpdate()
+        {
+            gameWorld.OnLateUpdate();
+        }
+
+        public void OnFixedUpdate()
+        {
+            gameWorld.OnFixedUpdate();
         }
     }
 }

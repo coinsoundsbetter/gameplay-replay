@@ -1,4 +1,32 @@
-using Mix;
+
+
+
+
+
+
+
+
+namespace KillCam
+{
+    public class ClientInputSystem
+    {
+        
+        
+        
+        
+        
+        
+        
+        
+    }
+}
+
+
+
+
+
+
+/*using Mix;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.NetCode;
@@ -46,4 +74,4 @@ namespace Client
             ecb.Playback(state.EntityManager);
         }
     }
-}
+}*/

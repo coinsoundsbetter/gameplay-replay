@@ -1,22 +1,22 @@
-﻿using FishNet.Managing;
-using Unity.Entities;
+﻿using Unity.Entities;
 
-namespace KillCam {
+namespace KillCam
+{
+    /// <summary>
+    /// 服务器上告知客户端的消息列表
+    /// </summary>
     [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
     [UpdateAfter(typeof(PresentationSystemGroup))]
-    public partial class S_RpcSystem : SystemBase {
-        private NetworkManager manager;
-        
-        public void OnCreate(ref SystemState state) {
-          //  manager = NetworkManager.Singleton;
-        }
-
-        protected override void OnCreate() {
-            
-        }
-
-        protected override void OnUpdate() {
-
+    public partial class S_RpcSystem : SystemBase
+    {
+        protected override void OnUpdate()
+        {
+            var data = SystemAPI.ManagedAPI.GetSingleton<RpcQueue>();
+            while (data.RpcList.Count > 0)
+            {
+                var now = data.RpcList.Dequeue();
+                SystemAPI.ManagedAPI.GetSingleton<NetChannels>().Handle(now);
+            }
         }
     }
 }

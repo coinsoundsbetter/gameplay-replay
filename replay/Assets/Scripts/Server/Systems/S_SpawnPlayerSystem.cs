@@ -50,14 +50,13 @@ namespace KillCam {
                 });
                 
                 // 通知客户端生成角色
-                var rpc = cmd.CreateEntity();
-                cmd.AddComponent(rpc, new S2C_NetSpawnPlayer() {
+                SystemAPI.ManagedAPI.GetSingleton<RpcQueue>().Add(new S2C_NetSpawnPlayer()
+                {
                     PlayerId = playerId,
                     PlayerName = playerName,
                     Pos = Vector3.zero,
                     Rot = Quaternion.identity,
                 });
-                cmd.AddComponent(rpc, new S2C_RpcAll());
             }
         }
     }

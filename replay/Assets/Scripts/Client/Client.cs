@@ -1,37 +1,20 @@
-﻿using Core;
+﻿using Unity.Entities;
 
-namespace KillCam
-{
-    internal class Client : IGameLoop
-    {
-        private GameWorld gameWorld;
+namespace KillCam {
+    internal class Client {
+        private World world;
 
-        internal void Init()
-        {
-            gameWorld = new GameWorld();
-            var init = gameWorld.GetOrCreateSystemGroup<InitializeSystemGroup>();
-            var simulate = gameWorld.GetOrCreateSystemGroup<SimulationSystemGroup>();
-            var presentation = gameWorld.GetOrCreateSystemGroup<PresentationSystemGroup>();
+        internal void Init() {
+            world = new World("client");
+            var allSystemTypes = DefaultWorldInitialization.GetAllSystems(
+                WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.Default);
+            DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(world, allSystemTypes);
+            ScriptBehaviourUpdateOrder.AppendWorldToCurrentPlayerLoop(world);
         }
 
-        internal void Clear()
-        {
-            gameWorld.Dispose();
-        }
-
-        public void OnUpdate()
-        {
-            gameWorld.OnUpdate();
-        }
-
-        public void OnLateUpdate()
-        {
-            gameWorld.OnLateUpdate();
-        }
-
-        public void OnFixedUpdate()
-        {
-            gameWorld.OnFixedUpdate();
+        internal void Clear() {
+            world.Dispose();
+            ScriptBehaviourUpdateOrder.RemoveWorldFromCurrentPlayerLoop(world);
         }
     }
 }

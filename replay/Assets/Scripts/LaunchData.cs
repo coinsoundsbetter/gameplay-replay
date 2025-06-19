@@ -3,6 +3,7 @@ public class LaunchData {
 
     public bool IsClient;
     public bool IsServer;
+    public bool IsHost => IsClient && IsServer;
     public ushort Port = 7888;
 
     public static void Create() {

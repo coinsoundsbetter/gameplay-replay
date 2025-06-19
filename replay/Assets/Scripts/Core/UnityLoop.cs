@@ -1,9 +1,9 @@
-using Unity.Netcode;
+using FishNet.Managing;
 using UnityEngine;
 
 namespace KillCam
 {
-    public class UnityLoop : MonoBehaviour, IGameLoop
+    public class UnityLoop : MonoBehaviour
     {
         private NetworkManager networkManager;
         private Client client;
@@ -31,50 +31,10 @@ namespace KillCam
             }
         }
 
-        private void Update()
-        {
-            OnUpdate();
-        }
-
-        private void LateUpdate()
-        {
-            OnLateUpdate();
-        }
-
-        private void FixedUpdate()
-        {
-            OnFixedUpdate();
-        }
-
-        public void OnUpdate()
-        {
-            server?.OnUpdate();
-            client?.OnUpdate();
-        }
-
-        public void OnLateUpdate()
-        {
-            server?.OnLateUpdate();
-            client?.OnLateUpdate();
-        }
-
-        public void OnFixedUpdate()
-        {
-            server?.OnFixedUpdate();
-            client?.OnFixedUpdate();
-        }
-
         private void OnDestroy()
         {
             server?.Clear();
             client?.Clear();
         }
-    }
-
-    public interface IGameLoop
-    {
-        void OnUpdate();
-        void OnLateUpdate();
-        void OnFixedUpdate();
     }
 }

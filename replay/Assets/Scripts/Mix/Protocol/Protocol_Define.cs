@@ -11,8 +11,17 @@ namespace KillCam
 
     public interface IClientSend : INetMessage { }
 
-    public interface IServerRpc : INetMessage
+    public interface IServerRpc : INetMessage { }
+
+    public struct S2CMsg
     {
-        int TargetPlayerId { get; set; }
+        public int TargetPlayerId;
+        public byte[] Data;
+    }
+
+    public struct C2SMsg
+    {
+        public int PlayerId;
+        public byte[] Data;
     }
 }

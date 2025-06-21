@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FishNet.Serializing;
 using Unity.Entities;
 
@@ -7,19 +8,53 @@ namespace KillCam
     [UpdateInGroup(typeof(InitializationSystemGroup))]
     public partial class S_HandleNetworkMsgSystem : SystemBase
     {
+        private readonly Queue<C2SMsg> waitHandles = new ();
+        
         protected override void OnCreate()
         {
             FishNetChannel.OnServerReceived += OnClientRequest;
         }
 
-        protected override void OnUpdate()
+        protected override void OnDestroy()
         {
             FishNetChannel.OnServerReceived -= OnClientRequest;
         }
-        
-        private void OnClientRequest(int playerId, byte[] arg2)
+
+        protected override void OnUpdate()
         {
-            var reader = new Reader();
+            while (waitHandles.Count > 0)
+            {
+                C2SMsg packet = waitHandles.Dequeue();
+                var reader = new Reader();
+                var msgType = reader.Read<NetMsg>();
+                switch (msgType)
+                {
+                    case NetMsg.C2S_LoginGame:
+                        var data = new C2S_LoginGame();
+                        var playerId = reader.ReadInt32();
+                        data.Deserialize(reader);
+                        OnC2S_LoginGame(playerId, data);
+                        break;
+                }
+            }
         }
+        
+        private void OnClientRequest(int playerId, byte[] bytes)
+        {
+            waitHandles.Enqueue(new C2SMsg()
+            {
+                PlayerId = playerId,
+                Data = bytes,
+            });
+        }
+
+        #region 协议处理
+
+        private void OnC2S_LoginGame(int playerId, C2S_LoginGame data)
+        {
+            
+        }
+
+        #endregion
     }
 }

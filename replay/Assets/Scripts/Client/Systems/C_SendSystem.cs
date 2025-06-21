@@ -15,7 +15,7 @@ namespace KillCam
             while (data.SendList.Count > 0)
             {
                 var now = data.SendList.Dequeue();
-                SystemAPI.ManagedAPI.GetSingleton<NetChannels>().Handle(now);
+                SystemAPI.ManagedAPI.GetSingleton<NetChannels>().Send(now);
             }
         }
     }

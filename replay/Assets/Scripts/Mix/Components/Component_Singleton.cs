@@ -1,26 +1,40 @@
 ﻿using System.Collections.Generic;
 using FishNet.Serializing;
 using Unity.Entities;
+using UnityEngine;
 
 namespace KillCam {
-    
-    public struct SingletonTag : IComponentData { }
 
-    public struct GameIdPool : IComponentData {
-        public int PlayerIdPool;
+    public struct PlayerInputState : IComponentData
+    {
+        public Vector2 Move;
+    }
+    
+    public struct LocalConnectState : IComponentData
+    {
+        public NetConnectState State;
+    }
+    
+    public enum NetConnectState {
+        Undefined,
+        Unconnected,
+        Connected,
+        Disconnected,
     }
 
-    public class GameDict : IComponentData {
-        public Dictionary<int, Entity> NetIdToNetState = new();
+    public class GameData : IComponentData
+    {
+        public int GameIdPool;
+        public Dictionary<string, int> UserNameToPlayerId = new Dictionary<string, int>();
     }
 
     public class RpcQueue : IComponentData
     {
-        public Queue<IServerRpc> RpcList = new();
+        public Queue<(IServerRpc, int)> RpcList = new();
         
-        public void Add(IServerRpc serverRpcAll)
+        public void Add(IServerRpc serverRpcAll, int playerId = 0)
         {
-            RpcList.Enqueue(serverRpcAll);
+            RpcList.Enqueue((serverRpcAll, playerId));
         }
      }
 
@@ -39,12 +53,15 @@ namespace KillCam {
         public int LocalPlayerId;
         public Dictionary<int, FishNetChannel> Channels = new();
         
-        public void Handle(IServerRpc serverRpc)
+        public void Rpc(IServerRpc serverRpc, int playerId = 0)
         {
             // TODO: Pooled
             var writer = new Writer();
+            // 写入消息类型
+            writer.Write(serverRpc.GetMsgType());
+            // 写入协议内容
             serverRpc.Serialize(writer);
-            bool isRpcAll = serverRpc.TargetPlayerId == 0;
+            bool isRpcAll = playerId == 0;
             if (isRpcAll)
             {
                 foreach (var channel in Channels.Values)
@@ -54,14 +71,14 @@ namespace KillCam {
             }
             else
             {
-                if (Channels.TryGetValue(serverRpc.TargetPlayerId, out var channel))
+                if (Channels.TryGetValue(playerId, out var channel))
                 {
                     channel.Rpc(writer.GetBuffer());
                 }    
             }
         }
 
-        public void Handle(IClientSend clientSend)
+        public void Send(IClientSend clientSend)
         {
             var writer = new Writer();
             clientSend.Serialize(writer);

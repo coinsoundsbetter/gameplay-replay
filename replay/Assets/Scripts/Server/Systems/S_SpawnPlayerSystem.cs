@@ -5,9 +5,9 @@ using UnityEngine;
 namespace KillCam {
     [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
     [UpdateInGroup(typeof(InitializationSystemGroup))]
+    [DisableAutoCreation]
     public partial struct S_SpawnPlayerSystem : ISystem {
         public void OnCreate(ref SystemState state) {
-            state.EntityManager.CreateSingleton(new GameIdPool());
             state.RequireForUpdate<WaitSpawnPlayer>();
         }
 

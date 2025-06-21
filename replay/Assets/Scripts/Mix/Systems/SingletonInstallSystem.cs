@@ -1,15 +1,18 @@
-﻿using Unity.Entities;
+﻿using Unity.Collections;
+using Unity.Entities;
+using UnityEngine;
 
 namespace KillCam {
-    [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+    [UpdateBefore(typeof(InitializationSystemGroup))]
     public partial class SingletonInstallSystem : SystemBase {
         
         protected override void OnCreate()
         {
-            EntityManager.CreateSingleton<GameIdPool>();
-            EntityManager.CreateSingleton<SendQueue>();
-            EntityManager.CreateSingleton<RpcQueue>();
-            EntityManager.CreateSingleton<NetChannels>();
+            CreateSingleton<LocalConnectState>("Singleton_LocalConnectState");
+            CreateSingletonManaged<GameData>("Singleton_GameDict");
+            CreateSingletonManaged<SendQueue>("Singleton_SendQueue");
+            CreateSingletonManaged<RpcQueue>("Singleton_RpcQueue");
+            CreateSingletonManaged<NetChannels>("Singleton_NetChannels");
             FishNetChannel.OnSpawned += OnSpawn;
             FishNetChannel.OnDespawn += OnDespawn;
         }
@@ -22,6 +25,7 @@ namespace KillCam {
         
         private void OnSpawn(FishNetChannel obj)
         {
+            Debug.Log("Spawn !" );
             var netChannels = SystemAPI.ManagedAPI.GetSingleton<NetChannels>();
             netChannels.Channels.Add(obj.PlayerId.Value, obj);
             if (obj.IsOwner)
@@ -36,5 +40,19 @@ namespace KillCam {
         }
 
         protected override void OnUpdate() { }
+
+        private void CreateSingletonManaged<T>(FixedString64Bytes name) where T : class, IComponentData, new() 
+        {
+            var entity = EntityManager.CreateEntity();
+            EntityManager.SetName(entity, name);
+            EntityManager.AddComponentData(entity, new T());
+        }
+        
+        private void CreateSingleton<T>(FixedString64Bytes name) where T : unmanaged, IComponentData
+        {
+            var entity = EntityManager.CreateEntity();
+            EntityManager.SetName(entity, name);
+            EntityManager.AddComponentData(entity, new T());
+        }
     }
 }

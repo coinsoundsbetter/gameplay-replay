@@ -5,7 +5,7 @@ namespace KillCam {
         private World world;
 
         internal void Init() {
-            world = new World("client");
+            world = new World("server");
             var allSystemTypes = DefaultWorldInitialization.GetAllSystems(
                 WorldSystemFilterFlags.ServerSimulation | WorldSystemFilterFlags.Default);
             DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(world, allSystemTypes);

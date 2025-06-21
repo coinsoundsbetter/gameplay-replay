@@ -8,16 +8,16 @@ namespace KillCam {
     {
         C2S = 0,
         C2S_LoginGame,
+        CS2_PlayerInputState,
         
         S2C = 10000,
-        S2C_NetSpawnPlayer,
+        S2C_SpawnPlayer,
     }
     
     public struct S2C_NetSpawnPlayer : IServerRpc
     {
         // 固定数据
         const NetMsg Msg = NetMsg.C2S;
-        public int TargetPlayerId { get; set; }
         
         // 自定义部分
         public int PlayerId;
@@ -35,7 +35,10 @@ namespace KillCam {
 
         public void Deserialize(Reader reader)
         {
-            
+            PlayerId = reader.ReadInt32();
+            PlayerName = reader.ReadStringAllocated();
+            Pos = reader.ReadVector3();
+            Rot = reader.Read<Quaternion>();
         }
         
         public NetMsg GetMsgType() => Msg;

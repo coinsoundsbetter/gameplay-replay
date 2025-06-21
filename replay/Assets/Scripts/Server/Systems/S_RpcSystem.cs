@@ -15,7 +15,7 @@ namespace KillCam
             while (data.RpcList.Count > 0)
             {
                 var now = data.RpcList.Dequeue();
-                SystemAPI.ManagedAPI.GetSingleton<NetChannels>().Handle(now);
+                SystemAPI.ManagedAPI.GetSingleton<NetChannels>().Rpc(now.Item1, now.Item2);
             }
         }
     }

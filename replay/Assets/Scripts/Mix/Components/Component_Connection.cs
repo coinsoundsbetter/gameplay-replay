@@ -9,13 +9,9 @@ namespace KillCam {
         public NetConnectState NetState;
     }
 
-    public struct ConnectState : IComponentData {
-        
-    }
-
-    public enum NetConnectState {
-        Unconnected,
-        Connected,
-        Disconnected,
+    public struct Event_ConnectState : IComponentData
+    {
+        public NetConnectState Last;
+        public NetConnectState Now;
     }
 }

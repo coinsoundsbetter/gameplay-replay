@@ -7,7 +7,6 @@ namespace KillCam {
     public enum NetMsg
     {
         C2S = 0,
-        C2S_LoginGame,
         CS2_PlayerInputState,
         
         S2C = 10000,

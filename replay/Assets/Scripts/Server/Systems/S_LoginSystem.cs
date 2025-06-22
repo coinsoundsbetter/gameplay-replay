@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace KillCam
 {
+    [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
     public partial class S_LoginSystem : SystemBase
     {
         private NetworkManager manager;
@@ -29,6 +30,7 @@ namespace KillCam
             if (!data.UserNameToPlayerId.ContainsKey(req.UserName))
             {
                 int newId = ++data.GameIdPool;
+                Debug.Log($"生成角色=>{req.UserName}, Id:{newId}");
                 data.UserNameToPlayerId.Add(req.UserName, newId);
                 var asset = Resources.Load("NetChannel");
                 var instance = (GameObject)Object.Instantiate(asset);

@@ -1,31 +1,33 @@
-﻿using Unity.Collections;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
-namespace KillCam {
-    [UpdateBefore(typeof(InitializationSystemGroup))]
-    public partial class SingletonInstallSystem : SystemBase {
-        
+namespace KillCam
+{
+    [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
+    [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
+    public partial class S_InitializeSystem : SystemBase
+    {
         protected override void OnCreate()
         {
-            CreateSingleton<LocalConnectState>("Singleton_LocalConnectState");
-            CreateSingletonManaged<GameData>("Singleton_GameDict");
-            CreateSingletonManaged<SendQueue>("Singleton_SendQueue");
+            CreateSingletonManaged<GameData>("Singleton_GameData");
             CreateSingletonManaged<RpcQueue>("Singleton_RpcQueue");
             CreateSingletonManaged<NetChannels>("Singleton_NetChannels");
             FishNetChannel.OnSpawned += OnSpawn;
             FishNetChannel.OnDespawn += OnDespawn;
         }
-
+        
         protected override void OnDestroy()
         {
             FishNetChannel.OnSpawned -= OnSpawn;
             FishNetChannel.OnDespawn -= OnDespawn;
         }
+
+        protected override void OnUpdate() { }
         
         private void OnSpawn(FishNetChannel obj)
         {
-            Debug.Log("Spawn !" );
+            Debug.Log("Spawn " + obj);
             var netChannels = SystemAPI.ManagedAPI.GetSingleton<NetChannels>();
             netChannels.Channels.Add(obj.PlayerId.Value, obj);
             if (obj.IsOwner)
@@ -38,9 +40,7 @@ namespace KillCam {
         {
             SystemAPI.ManagedAPI.GetSingleton<NetChannels>().Channels.Remove(obj.PlayerId.Value);
         }
-
-        protected override void OnUpdate() { }
-
+        
         private void CreateSingletonManaged<T>(FixedString64Bytes name) where T : class, IComponentData, new() 
         {
             var entity = EntityManager.CreateEntity();

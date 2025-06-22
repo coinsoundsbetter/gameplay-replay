@@ -29,12 +29,7 @@ namespace KillCam
                 var msgType = reader.Read<NetMsg>();
                 switch (msgType)
                 {
-                    case NetMsg.C2S_LoginGame:
-                        var data = new C2S_LoginGame();
-                        var playerId = reader.ReadInt32();
-                        data.Deserialize(reader);
-                        OnC2S_LoginGame(playerId, data);
-                        break;
+                    
                 }
             }
         }
@@ -49,11 +44,6 @@ namespace KillCam
         }
 
         #region 协议处理
-
-        private void OnC2S_LoginGame(int playerId, C2S_LoginGame data)
-        {
-            
-        }
 
         #endregion
     }

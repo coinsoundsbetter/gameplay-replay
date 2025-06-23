@@ -43,20 +43,15 @@ namespace KillCam {
                     Id = playerId,
                     Name = playerName,
                 });
-                cmd.AddComponent(entity, new PlayerHealth());
-                cmd.AddComponent(entity, new PlayerMovement() {
-                    Position = Vector3.zero,
-                    Rotation = Quaternion.identity,
-                });
                 
                 // 通知客户端生成角色
-                SystemAPI.ManagedAPI.GetSingleton<RpcQueue>().Add(new S2C_NetSpawnPlayer()
+                /*SystemAPI.ManagedAPI.GetSingleton<RpcQueue>().Add(new S2C_NetSpawnPlayer()
                 {
                     PlayerId = playerId,
                     PlayerName = playerName,
                     Pos = Vector3.zero,
                     Rot = Quaternion.identity,
-                });
+                });*/
             }
         }
     }

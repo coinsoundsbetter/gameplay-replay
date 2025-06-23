@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 using GameKit.Dependencies.Utilities.Types;
+using Unity.Collections;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo(UtilityConstants.GENERATED_ASSEMBLY_NAME)]
@@ -1280,8 +1281,17 @@ namespace FishNet.Serializing
             Write<T>(value.Data);
             WriteChannel(value.Channel);
         }
+        
+        public void WriteFixedString64Bytes(FixedString64Bytes value)
+        {
+            Write(value.Value);
+        }
 
-
+        public void WriteFixedString32Bytes(FixedString32Bytes value)
+        {
+            Write(value.Value);
+        }
+        
         /// <summary>
         /// Writes any supported type using packing.
         /// </summary>

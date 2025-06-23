@@ -1,6 +1,5 @@
 using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
 
 namespace KillCam
 {
@@ -8,18 +7,18 @@ namespace KillCam
     [UpdateBefore(typeof(InitializationSystemGroup))]
     public partial class C_InitializeSystem : SystemBase
     {
-        protected override void OnCreate()
-        {
+        protected override void OnCreate() {
             CreateSingleton<LocalConnectState>("Singleton_LocalConnectState");
             CreateSingletonManaged<GameData>("Singleton_GameData");
             CreateSingletonManaged<SendQueue>("Singleton_SendQueue");
             CreateSingletonManaged<NetChannels>("Singleton_NetChannels");
+            CreateSingleton<PlayerInputState>("Singleton_PlayerInputState");
+            CreateSingleton<NetTickState>("Singleton_NetTickState");
             FishNetChannel.OnSpawned += OnSpawn;
             FishNetChannel.OnDespawn += OnDespawn;
         }
 
-        protected override void OnDestroy()
-        {
+        protected override void OnDestroy() {
             FishNetChannel.OnSpawned -= OnSpawn;
             FishNetChannel.OnDespawn -= OnDespawn;
         }
@@ -53,7 +52,6 @@ namespace KillCam
             var entity = EntityManager.CreateEntity();
             EntityManager.SetName(entity, name);
             EntityManager.AddComponentData(entity, new T());
-            Debug.Log("创建单例");
         }
     }
 }

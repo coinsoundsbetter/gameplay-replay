@@ -8,17 +8,15 @@ namespace KillCam
     [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
     public partial class S_InitializeSystem : SystemBase
     {
-        protected override void OnCreate()
-        {
+        protected override void OnStartRunning() {
             CreateSingletonManaged<GameData>("Singleton_GameData");
             CreateSingletonManaged<RpcQueue>("Singleton_RpcQueue");
             CreateSingletonManaged<NetChannels>("Singleton_NetChannels");
             FishNetChannel.OnSpawned += OnSpawn;
             FishNetChannel.OnDespawn += OnDespawn;
         }
-        
-        protected override void OnDestroy()
-        {
+
+        protected override void OnStopRunning() {
             FishNetChannel.OnSpawned -= OnSpawn;
             FishNetChannel.OnDespawn -= OnDespawn;
         }

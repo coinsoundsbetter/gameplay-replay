@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace KillCam {
 
+    public struct NetTickState : IComponentData {
+        public uint Local;
+        public uint Server;
+    }
+
     public struct PlayerInputState : IComponentData
     {
         public Vector2 Move;
@@ -58,7 +63,7 @@ namespace KillCam {
             // TODO: Pooled
             var writer = new Writer();
             // 写入消息类型
-            writer.Write(serverRpc.GetMsgType());
+            writer.WriteUInt32((uint)serverRpc.GetMsgType());
             // 写入协议内容
             serverRpc.Serialize(writer);
             bool isRpcAll = playerId == 0;

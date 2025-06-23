@@ -1,8 +1,9 @@
 using FishNet.Serializing;
+using Unity.Entities;
 
 namespace KillCam
 {
-    public interface INetMessage
+    public interface INetMessage : IComponentData
     {
         void Serialize(Writer writer);
         void Deserialize(Reader reader);

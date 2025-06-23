@@ -14,5 +14,6 @@ namespace FishNet.Serializing
     [APIExclude]
     public static class ReaderExtensions
     {
+        
     }
 }

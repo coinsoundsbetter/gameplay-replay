@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace KillCam {
 
-    public enum NetMsg
+    public enum NetMsg : uint
     {
         C2S = 0,
         CS2_PlayerInputState,
@@ -15,8 +15,8 @@ namespace KillCam {
     
     public struct S2C_NetSpawnPlayer : IServerRpc
     {
-        // 固定数据
-        const NetMsg Msg = NetMsg.C2S;
+        // 消息类型
+        const NetMsg Msg = NetMsg.S2C_SpawnPlayer;
         
         // 自定义部分
         public int PlayerId;
@@ -27,7 +27,7 @@ namespace KillCam {
         public void Serialize(Writer writer)
         {
             writer.Write(PlayerId);
-            writer.Write(PlayerName);
+            writer.WriteFixedString32Bytes(PlayerName);
             writer.WriteVector3(Pos);
             writer.Write(Rot);
         }
@@ -35,7 +35,7 @@ namespace KillCam {
         public void Deserialize(Reader reader)
         {
             PlayerId = reader.ReadInt32();
-            PlayerName = reader.ReadStringAllocated();
+            PlayerName = reader.ReadFixedString32Bytes();
             Pos = reader.ReadVector3();
             Rot = reader.Read<Quaternion>();
         }

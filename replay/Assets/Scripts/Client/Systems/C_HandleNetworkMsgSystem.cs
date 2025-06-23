@@ -12,7 +12,8 @@ namespace KillCam
     {
         private readonly Queue<S2CMsg> dataQueue = new Queue<S2CMsg>();
         private NetworkManager manager;
-        
+        private EntityCommandBuffer cmd;
+
         protected override void OnCreate()
         {
             manager = InstanceFinder.NetworkManager;
@@ -30,33 +31,38 @@ namespace KillCam
             {
                 return;
             }
-            
+
+            if (dataQueue.Count == 0)
+            {
+                return;
+            }
+
+            cmd = new EntityCommandBuffer(Allocator.Temp);
             while (dataQueue.Count > 0)
             {
                 var reader = new Reader(dataQueue.Dequeue().Data, manager);
-                var msgType = reader.Read<NetMsg>();
+                var msgType = (NetMsg)reader.ReadUInt32();
                 switch (msgType)
                 {
                     case NetMsg.S2C_SpawnPlayer:
                         var spawnPlayer = new S2C_NetSpawnPlayer();
                         spawnPlayer.Deserialize(reader);
-                        OnS2C_SpawnPlayer(spawnPlayer);
+                        var ent = cmd.CreateEntity();
+                        cmd.AddComponent(ent, spawnPlayer);
                         break;
                 }
             }
+
+            cmd.Playback(EntityManager);
+            cmd.Dispose();
         }
-        
+
         private void OnClientReceived(byte[] bytes)
         {
             dataQueue.Enqueue(new S2CMsg()
             {
                 Data = bytes,
             });
-        }
-
-        private void OnS2C_SpawnPlayer(S2C_NetSpawnPlayer message)
-        {
-            
         }
     }
 }

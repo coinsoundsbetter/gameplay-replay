@@ -27,7 +27,7 @@ namespace KillCam
         {
             var data = SystemAPI.ManagedAPI.GetSingleton<GameData>();
             // 首次登录
-            if (!data.UserNameToPlayerId.ContainsKey(req.UserName))
+            if (!data.UserNameToPlayerId.TryGetValue(req.UserName, out var pId))
             {
                 int newId = ++data.GameIdPool;
                 Debug.Log($"生成角色=>{req.UserName}, Id:{newId}");
@@ -43,6 +43,15 @@ namespace KillCam
             {
                 
             }
+            
+            // 通知所有客户端,这里有一个新的角色生成了
+            SystemAPI.ManagedAPI.GetSingleton<RpcQueue>().Add(new S2C_NetSpawnPlayer()
+            {
+                PlayerId = pId,
+                PlayerName = req.UserName,
+                Pos = Vector3.zero,
+                Rot = Quaternion.identity,
+            });
         }
 
         protected override void OnUpdate()

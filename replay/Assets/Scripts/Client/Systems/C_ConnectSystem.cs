@@ -7,28 +7,21 @@ using UnityEngine;
 
 namespace KillCam {
     [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+    [UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)]
     public partial class C_ConnectSystem : SystemBase {
         private NetworkManager manager;
-        
-        protected override void OnCreate() {
-            manager = InstanceFinder.NetworkManager;
-            manager.ClientManager.OnClientConnectionState += OnConnectState;
-            
-        }
-
-        protected override void OnDestroy() {
-            manager.ClientManager.OnClientConnectionState -= OnConnectState;
-            
-        }
 
         protected override void OnStartRunning()
         {
+            manager = InstanceFinder.NetworkManager;
+            manager.ClientManager.OnClientConnectionState += OnConnectState;
             manager.ClientManager.StartConnection();
         }
 
         protected override void OnStopRunning()
         {
             manager.ClientManager.StopConnection();
+            manager.ClientManager.OnClientConnectionState -= OnConnectState;
         }
 
         protected override void OnUpdate() { }

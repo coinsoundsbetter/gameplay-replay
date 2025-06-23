@@ -16,13 +16,13 @@ namespace KillCam {
         private NetworkManager manager;
         private int playerIdIndex;
 
-        protected override void OnCreate() {
+        protected override void OnStartRunning() {
             manager = InstanceFinder.NetworkManager;
             manager.ServerManager.OnRemoteConnectionState += OnRemoteClientState;
             manager.ServerManager.StartConnection();
         }
 
-        protected override void OnDestroy() {
+        protected override void OnStopRunning() {
             manager.ServerManager.StopConnection(false);
             manager.ServerManager.OnRemoteConnectionState -= OnRemoteClientState;
         }

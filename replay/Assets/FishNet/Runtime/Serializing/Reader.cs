@@ -18,6 +18,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
+using Unity.Collections;
 
 [assembly: InternalsVisibleTo(UtilityConstants.GENERATED_ASSEMBLY_NAME)]
 //Required for internal tests.
@@ -1540,6 +1541,18 @@ namespace FishNet.Serializing
             T[] result = null;
             ReadArray(ref result);
 
+            return result;
+        }
+        
+        public FixedString32Bytes ReadFixedString32Bytes()
+        {
+            var result = new FixedString32Bytes(ReadStringAllocated());
+            return result;
+        }
+        
+        public FixedString64Bytes ReadFixedString64Bytes()
+        {
+            var result = new FixedString64Bytes(ReadStringAllocated());
             return result;
         }
 

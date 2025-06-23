@@ -9,6 +9,7 @@ namespace KillCam {
 
     public struct PlayerTag : IComponentData {
         public int Id;
+        public bool IsLocalPlayer;
         public FixedString32Bytes Name;
     }
 

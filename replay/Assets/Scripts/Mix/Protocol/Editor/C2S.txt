@@ -1,6 +1,5 @@
 
 C2S_PlayerInputState 
 {
-    int : a
-    float : b
+    PlayerInputState : Data
 }

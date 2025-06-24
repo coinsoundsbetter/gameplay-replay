@@ -1,4 +1,4 @@
-// AutoGenerate -> 2025/6/24 14:47:02
+// AutoGenerate -> 2025/6/24 15:17:02
 
 namespace KillCam
 {
@@ -6,7 +6,7 @@ namespace KillCam
 	{
 		public const NetMsg Msg = NetMsg.S2C_NetSpawnPlayer ;
 
-		public System.Int32 PlayerId;
+		public int PlayerId;
 		public Unity.Collections.FixedString32Bytes PlayerName;
 		public UnityEngine.Vector3 Pos;
 		public UnityEngine.Quaternion Rot;

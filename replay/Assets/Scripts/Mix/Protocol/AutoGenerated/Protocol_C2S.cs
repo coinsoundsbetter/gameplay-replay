@@ -1,4 +1,4 @@
-// AutoGenerate -> 2025/6/24 14:47:02
+// AutoGenerate -> 2025/6/24 15:17:02
 
 namespace KillCam
 {
@@ -6,19 +6,16 @@ namespace KillCam
 	{
 		public const NetMsg Msg = NetMsg.C2S_PlayerInputState ;
 
-		public System.Int32 a;
-		public System.Single b;
+		public PlayerInputState Data;
 
 		public void Serialize(FishNet.Serializing.Writer writer)
 		{
-			writer.WriteInt32(a);
-			writer.WriteSingle(b);
+			writer.WritePlayerInputState(Data);
 		}
 
 		public void Deserialize(FishNet.Serializing.Reader reader)
 		{
-			a = reader.ReadInt32();
-			b = reader.ReadSingle();
+			Data = reader.ReadPlayerInputState();
 		}
 
 		public NetMsg GetMsgType() => Msg;

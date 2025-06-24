@@ -1,10 +1,10 @@
-// AutoGenerate -> 2025/6/24 14:47:02
+// AutoGenerate -> 2025/6/24 15:17:02
 
 namespace KillCam
 {
-	public enum NetMsg
+	public enum NetMsg : uint 
 	{
-		C2S_PlayerInputState ,
-		S2C_NetSpawnPlayer ,
+		C2S_PlayerInputState = 0,
+		S2C_NetSpawnPlayer = 1
 	}
 }

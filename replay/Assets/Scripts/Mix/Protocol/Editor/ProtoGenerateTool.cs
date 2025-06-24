@@ -81,11 +81,22 @@ namespace KillCam
             sb.AppendLine();
             sb.AppendLine("namespace KillCam");
             sb.AppendLine("{");
-                sb.AppendLine("\tpublic enum NetMsg");
+                sb.AppendLine("\tpublic enum NetMsg : uint ");
                 sb.AppendLine("\t{");
-                foreach (var value in netMsgList)
+                // 先生成C2S
+                int index = -1;
+                foreach (var def in c2sDefs)
                 {
-                    sb.AppendLine($"\t\t{value},");
+                    index++;
+                    string name = def.ProtocolName.Trim();
+                    sb.AppendLine($"\t\t{name} = {index},");
+                }
+                
+                foreach (var def in s2cDefs)
+                {
+                    index++;
+                    string name = def.ProtocolName.Trim();
+                    sb.AppendLine($"\t\t{name} = {index}");
                 }
                 sb.AppendLine("\t}");
             
@@ -98,20 +109,6 @@ namespace KillCam
         {
             var result = new List<ProtocolDef>();
             var allLines = File.ReadAllLines(filePath);
-
-            Dictionary<string, Type> buildInTypes = new Dictionary<string, Type>()
-            {
-                {"int", typeof(int)},
-                {"float", typeof(float)},
-                {"bool", typeof(bool)},
-                {"string", typeof(string)},
-                {"Vector3", typeof(UnityEngine.Vector3)},
-                {"Quaternion", typeof(UnityEngine.Quaternion)},
-                {"uint", typeof(uint)},
-                {"long", typeof(long)},
-                {"FixedString32Bytes", typeof(FixedString32Bytes)},
-                {"FixedString64Bytes", typeof(FixedString64Bytes)},
-            };
 
             ProtocolDef current = null;
             int index = -1;
@@ -154,20 +151,7 @@ namespace KillCam
                     var fieldSpit = line.Split(':');
                     var fieldType = fieldSpit[0].Trim();
                     var fieldName = fieldSpit[1].Trim();
-                    if (buildInTypes.TryGetValue(fieldType, out var type))
-                    {
-                        current.TypeToNames.Add((type, fieldName));
-                    }
-                    else
-                    {
-                        type = Type.GetType(fieldType);
-                        if (type == null)
-                        {
-                            throw new Exception("failed to get type for " + fieldType);
-                        }
-                        
-                        current.TypeToNames.Add((type, fieldName));
-                    }
+                    current.TypeNameToFieldNames.Add((fieldType, fieldName));
                 }
             }
 
@@ -190,29 +174,45 @@ namespace KillCam
                 sb.AppendLine($"\t\tpublic const NetMsg Msg = NetMsg.{def.ProtocolName};");
                 sb.AppendLine();
                 // 字段
-                foreach (var (fieldType, fieldName) in def.TypeToNames)
+                // 非C#内置但比较常用的Unity类型,用一个字典去映射它的类型声明
+                Dictionary<string, string> fieldTypeToFullName = new Dictionary<string, string>()
                 {
-                    sb.AppendLine($"\t\tpublic {fieldType} {fieldName};");
+                    { "FixedString32Bytes", typeof(FixedString32Bytes).FullName },
+                    { "FixedString64Bytes", typeof(FixedString64Bytes).FullName },
+                    { "Vector2", typeof(Vector2).FullName },
+                    { "Vector3", typeof(Vector3).FullName },
+                    { "Quaternion", typeof(Quaternion).FullName },
+                };
+                foreach (var (fieldTypeName, fieldName) in def.TypeNameToFieldNames)
+                {
+                    if (fieldTypeToFullName.TryGetValue(fieldTypeName, out var fullName))
+                    {
+                        sb.AppendLine($"\t\tpublic {fullName} {fieldName};");
+                    }
+                    else
+                    {
+                        sb.AppendLine($"\t\tpublic {fieldTypeName} {fieldName};");
+                    }
                 }
                 sb.AppendLine();
                 // 序列化方法
                 sb.AppendLine($"\t\tpublic void Serialize(FishNet.Serializing.Writer writer)");
                 sb.AppendLine("\t\t{");
                 // 序列化
-                Dictionary<Type, string> writeMethodNames = new Dictionary<Type, string>()
+                Dictionary<string, string> writeMethodNames = new Dictionary<string, string>()
                 {
-                    { typeof(int), "WriteInt32" },
-                    { typeof(bool), "WriteBoolean" },
-                    { typeof(string), "WriteStringAllocated" },
-                    { typeof(Vector2), "WriteVector2" },
-                    { typeof(Vector3), "WriteVector3" },
-                    { typeof(Quaternion), "WriteQuaternion64" },
-                    { typeof(float), "WriteSingle" },
-                    { typeof(long), "WriteInt64" },
-                    { typeof(FixedString32Bytes), "WriteFixedString32Bytes" },
-                    { typeof(FixedString64Bytes), "WriteFixedString64Bytes" },
+                    { "int", "WriteInt32" },
+                    { "bool", "WriteBoolean" },
+                    { "string", "WriteStringAllocated" },
+                    { "Vector2", "WriteVector2" },
+                    { "Vector3", "WriteVector3" },
+                    { "Quaternion", "WriteQuaternion64" },
+                    { "float", "WriteSingle" },
+                    { "long", "WriteInt64" },
+                    { "FixedString32Bytes", "WriteFixedString32Bytes" },
+                    { "FixedString64Bytes", "WriteFixedString64Bytes" },
                 };
-                foreach (var (fieldType, fieldName) in def.TypeToNames)
+                foreach (var (fieldType, fieldName) in def.TypeNameToFieldNames)
                 {
                     if (writeMethodNames.TryGetValue(fieldType, out var methodName))
                     {
@@ -222,7 +222,7 @@ namespace KillCam
                     else
                     {
                         // 拓展类型
-                        sb.AppendLine($"\t\t\twriter.Write{fieldType.Name}({fieldName});");
+                        sb.AppendLine($"\t\t\twriter.Write{fieldType}({fieldName});");
                     }
                 }
                 sb.AppendLine("\t\t}");
@@ -231,21 +231,21 @@ namespace KillCam
                 // 反序列化方法
                 sb.AppendLine("\t\tpublic void Deserialize(FishNet.Serializing.Reader reader)");
                 sb.AppendLine("\t\t{");
-                Dictionary<Type, string> readMethodNames = new Dictionary<Type, string>()
+                Dictionary<string, string> readMethodNames = new Dictionary<string, string>()
                 {
-                    { typeof(int), "ReadInt32()" },
-                    { typeof(bool), "ReadBoolean()" },
-                    { typeof(string), "ReadStringAllocated()" },
-                    { typeof(Vector2), "ReadVector2()" },
-                    { typeof(Vector3), "ReadVector3()" },
-                    { typeof(Quaternion), "ReadQuaternion64()" },
-                    { typeof(float), "ReadSingle()" },
-                    { typeof(FixedString32Bytes), "ReadFixedString32Bytes()" },
-                    { typeof(FixedString64Bytes), "ReadFixedString64Bytes()" },
+                    { "int", "ReadInt32()" },
+                    { "bool", "ReadBoolean()" },
+                    { "string", "ReadStringAllocated()" },
+                    { "Vector2", "ReadVector2()" },
+                    { "Vector3", "ReadVector3()" },
+                    { "Quaternion", "ReadQuaternion64()" },
+                    { "float", "ReadSingle()" },
+                    { "FixedString32Bytes", "ReadFixedString32Bytes()" },
+                    { "FixedString64Bytes", "ReadFixedString64Bytes()" },
                 };
-                foreach (var (fieldType, fieldName) in def.TypeToNames)
+                foreach (var (fieldTypeName, fieldName) in def.TypeNameToFieldNames)
                 {
-                    if (readMethodNames.TryGetValue(fieldType, out var methodName))
+                    if (readMethodNames.TryGetValue(fieldTypeName, out var methodName))
                     {
                         // 内置类型
                         sb.AppendLine($"\t\t\t{fieldName} = reader.{methodName};");
@@ -253,7 +253,7 @@ namespace KillCam
                     else
                     {
                         // 拓展类型
-                        sb.AppendLine($"\t\t\t{fieldName} = reader.Read{fieldType.Name}();");
+                        sb.AppendLine($"\t\t\t{fieldName} = reader.Read{fieldTypeName}();");
                     }
                 }
                 sb.AppendLine("\t\t}");
@@ -273,7 +273,7 @@ namespace KillCam
         {
             public string ProtocolName;
             public string InterfaceName;
-            public List<(Type, string)> TypeToNames = new List<(Type, string)>();
+            public List<(string, string)> TypeNameToFieldNames = new();
         }
     }
 }

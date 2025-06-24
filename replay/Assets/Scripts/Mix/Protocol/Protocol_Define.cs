@@ -24,4 +24,9 @@ namespace KillCam
         public int PlayerId;
         public byte[] Data;
     }
+
+    public struct NetMsgTag : IComponentData
+    {
+        public uint Tick;
+    }
 }

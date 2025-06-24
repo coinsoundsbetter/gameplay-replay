@@ -10,7 +10,7 @@ namespace KillCam
         protected override void OnCreate() {
             CreateSingleton<LocalConnectState>("Singleton_LocalConnectState");
             CreateSingletonManaged<GameData>("Singleton_GameData");
-            CreateSingletonManaged<SendQueue>("Singleton_SendQueue");
+            CreateSingletonManaged<NetSend>("Singleton_SendQueue");
             CreateSingletonManaged<NetChannels>("Singleton_NetChannels");
             CreateSingleton<PlayerInputState>("Singleton_PlayerInputState");
             CreateSingleton<NetTickState>("Singleton_NetTickState");

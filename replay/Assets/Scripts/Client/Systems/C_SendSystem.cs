@@ -11,7 +11,7 @@ namespace KillCam
     {
         protected override void OnUpdate()
         {
-            var data = SystemAPI.ManagedAPI.GetSingleton<SendQueue>();
+            var data = SystemAPI.ManagedAPI.GetSingleton<NetSend>();
             while (data.SendList.Count > 0)
             {
                 var now = data.SendList.Dequeue();

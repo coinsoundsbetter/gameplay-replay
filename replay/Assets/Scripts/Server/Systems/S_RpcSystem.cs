@@ -11,7 +11,7 @@ namespace KillCam
     {
         protected override void OnUpdate()
         {
-            var data = SystemAPI.ManagedAPI.GetSingleton<RpcQueue>();
+            var data = SystemAPI.ManagedAPI.GetSingleton<NetRpc>();
             while (data.RpcList.Count > 0)
             {
                 var now = data.RpcList.Dequeue();

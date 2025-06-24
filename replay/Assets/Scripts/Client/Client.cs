@@ -9,6 +9,10 @@ namespace KillCam {
             var allSystemTypes = DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.ClientSimulation);
             // 初始化系统确保最早创建
             world.GetOrCreateSystem<C_InitializeSystem>();
+            
+            // 使用固定步长更新系统
+            var fixedGroup = world.GetOrCreateSystemManaged<FixedStepSimulationSystemGroup>();
+            
             DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(world, allSystemTypes);
             ScriptBehaviourUpdateOrder.AppendWorldToCurrentPlayerLoop(world);
         }

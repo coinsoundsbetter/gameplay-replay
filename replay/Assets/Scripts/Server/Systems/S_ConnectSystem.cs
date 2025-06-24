@@ -39,6 +39,7 @@ namespace KillCam {
                 var reqCreatePlayer = EntityManager.CreateEntity(ComponentType.ReadWrite<WaitSpawnPlayer>());
                 EntityManager.SetComponentData(reqCreatePlayer, new WaitSpawnPlayer() {
                     PlayerId = playerIdIndex,
+                    NetId = args.ConnectionId,
                     PlayerName = "Player_" + playerIdIndex,
                 });
             }

@@ -5,29 +5,25 @@ using UnityEngine;
 namespace KillCam
 {
     [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
+    [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
     public partial struct C_SpawnPlayerSystem : ISystem
     {
-        public void OnCreate(ref SystemState state)
-        {
-            
-        }
-
         public void OnUpdate(ref SystemState state)
         {
-            /*var cmd = new EntityCommandBuffer(Allocator.Temp);
+            var cmd = new EntityCommandBuffer(Allocator.Temp);
             foreach (var (data, entity) in SystemAPI
                          .Query<RefRO<S2C_NetSpawnPlayer>>()
                          .WithEntityAccess())
             {
-                Debug.Log("生成角色!");
+                ClientLog.Log($"新角色加入世界! {data.ValueRO.PlayerName}");
                 cmd.DestroyEntity(entity);
                 SpawnPlayer(ref cmd, data.ValueRO);
             }
             cmd.Playback(state.EntityManager);
-            cmd.Dispose();*/
+            cmd.Dispose();
         }
 
-        /*private void SpawnPlayer(ref EntityCommandBuffer cmd, S2C_NetSpawnPlayer context)
+        private void SpawnPlayer(ref EntityCommandBuffer cmd, S2C_NetSpawnPlayer context)
         {
             var asset = Resources.Load<GameObject>("Player");
             var gameObj = Object.Instantiate(asset);
@@ -44,6 +40,6 @@ namespace KillCam
             });
             script.SetPos(context.Pos);
             script.SetRotation(context.Rot);
-        }*/
+        }
     }
 }

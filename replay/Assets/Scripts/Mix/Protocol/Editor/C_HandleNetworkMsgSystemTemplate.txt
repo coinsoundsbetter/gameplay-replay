@@ -13,6 +13,7 @@ namespace KillCam
             while (dataQueue.Count > 0)
             {
                 var reader = new Reader(dataQueue.Dequeue().Data, manager);
+                var tick = manager.TimeManager.Tick;
                 var msgType = (NetMsg)reader.ReadUInt32();
                 switch (msgType)
                 {

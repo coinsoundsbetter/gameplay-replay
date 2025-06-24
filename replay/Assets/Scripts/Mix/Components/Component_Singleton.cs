@@ -33,17 +33,18 @@ namespace KillCam {
         public Dictionary<string, int> UserNameToPlayerId = new Dictionary<string, int>();
     }
 
-    public class RpcQueue : IComponentData
+    public class NetRpc : IComponentData
     {
         public Queue<(IServerRpc, int)> RpcList = new();
         
         public void Add(IServerRpc serverRpcAll, int playerId = 0)
         {
+            Debug.Log("Add");
             RpcList.Enqueue((serverRpcAll, playerId));
         }
      }
 
-    public class SendQueue : IComponentData
+    public class NetSend : IComponentData
     {
         public Queue<IClientSend> SendList = new();
 
@@ -85,10 +86,13 @@ namespace KillCam {
 
         public void Send(IClientSend clientSend)
         {
-            var writer = new Writer();
-            clientSend.Serialize(writer);
             if (Channels.TryGetValue(LocalPlayerId, out var channel))
             {
+                var writer = new Writer();
+                // 客户端每次发送的时候,都会带上当前的服务器命令帧号
+                writer.Write(channel.NetworkManager.TimeManager.Tick);
+                writer.Write(clientSend.GetMsgType());
+                clientSend.Serialize(writer);
                 channel.Send(writer.GetBuffer());
             }
         }

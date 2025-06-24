@@ -42,9 +42,5 @@ namespace KillCam
                 Data = bytes,
             });
         }
-
-        #region 协议处理
-
-        #endregion
     }
 }

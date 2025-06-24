@@ -4,6 +4,7 @@ using Unity.Entities;
 namespace KillCam {
     public struct WaitSpawnPlayer : IComponentData {
         public int PlayerId;
+        public int NetId;
         public FixedString32Bytes PlayerName;
     }
 

@@ -10,7 +10,7 @@ namespace KillCam
     {
         protected override void OnStartRunning() {
             CreateSingletonManaged<GameData>("Singleton_GameData");
-            CreateSingletonManaged<RpcQueue>("Singleton_RpcQueue");
+            CreateSingletonManaged<NetRpc>("Singleton_RpcQueue");
             CreateSingletonManaged<NetChannels>("Singleton_NetChannels");
             FishNetChannel.OnSpawned += OnSpawn;
             FishNetChannel.OnDespawn += OnDespawn;

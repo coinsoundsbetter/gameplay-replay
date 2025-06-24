@@ -7,7 +7,7 @@ namespace KillCam {
         internal void Init() {
             world = new World("server");
             var allSystemTypes = DefaultWorldInitialization.GetAllSystems(
-                WorldSystemFilterFlags.ServerSimulation | WorldSystemFilterFlags.Default);
+                WorldSystemFilterFlags.ServerSimulation);
             DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(world, allSystemTypes);
             ScriptBehaviourUpdateOrder.AppendWorldToCurrentPlayerLoop(world);
         }

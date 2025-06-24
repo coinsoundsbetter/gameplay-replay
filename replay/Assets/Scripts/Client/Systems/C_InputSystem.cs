@@ -30,10 +30,10 @@ namespace KillCam
             SystemAPI.SetSingleton(inputState);
             
             // 发送给服务器
-            var net = SystemAPI.ManagedAPI.GetSingleton<NetChannels>();
-            net.Send(new C2S_PlayerInputState()
+            var net = SystemAPI.ManagedAPI.GetSingleton<NetSend>();
+            net.Add(new C2S_PlayerInputState()
             {
-                //Data = inputState
+                Data = inputState,
             });
         }
     }

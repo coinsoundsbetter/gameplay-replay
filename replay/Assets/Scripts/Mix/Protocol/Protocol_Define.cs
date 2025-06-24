@@ -16,7 +16,6 @@ namespace KillCam
 
     public struct S2CMsg
     {
-        public int TargetPlayerId;
         public byte[] Data;
     }
 

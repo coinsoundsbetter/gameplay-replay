@@ -14,8 +14,7 @@ namespace KillCam
             while (waitHandles.Count > 0)
             {
                 C2SMsg packet = waitHandles.Dequeue();
-                var reader = new Reader();
-                reader.Initialize(packet.Data, manager, Reader.DataSource.Unset);
+                var reader = new Reader(packet.Data, manager);
                 var msgType = (NetMsg)reader.ReadUInt32();
                 switch (msgType)
                 {

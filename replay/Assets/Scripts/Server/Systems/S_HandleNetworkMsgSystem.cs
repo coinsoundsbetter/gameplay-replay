@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using FishNet;
+using FishNet.Managing;
 using FishNet.Serializing;
 using Unity.Entities;
 
@@ -9,9 +11,11 @@ namespace KillCam
     public partial class S_HandleNetworkMsgSystem : SystemBase
     {
         private readonly Queue<C2SMsg> waitHandles = new ();
+        private NetworkManager manager;
         
         protected override void OnCreate()
         {
+            manager = InstanceFinder.NetworkManager;
             FishNetChannel.OnServerReceived += OnClientRequest;
         }
 
@@ -22,16 +26,12 @@ namespace KillCam
 
         protected override void OnUpdate()
         {
-            while (waitHandles.Count > 0)
+            if (waitHandles.Count == 0)
             {
-                C2SMsg packet = waitHandles.Dequeue();
-                var reader = new Reader();
-                var msgType = reader.Read<NetMsg>();
-                switch (msgType)
-                {
-                    
-                }
+                return;
             }
+            
+            PoolNetworkEvents();
         }
         
         private void OnClientRequest(int playerId, byte[] bytes)

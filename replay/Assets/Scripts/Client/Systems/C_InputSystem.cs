@@ -33,7 +33,7 @@ namespace KillCam
             var net = SystemAPI.ManagedAPI.GetSingleton<NetChannels>();
             net.Send(new C2S_PlayerInputState()
             {
-                Data = inputState
+                //Data = inputState
             });
         }
     }

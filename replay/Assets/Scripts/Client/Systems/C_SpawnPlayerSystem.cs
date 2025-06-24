@@ -14,7 +14,7 @@ namespace KillCam
 
         public void OnUpdate(ref SystemState state)
         {
-            var cmd = new EntityCommandBuffer(Allocator.Temp);
+            /*var cmd = new EntityCommandBuffer(Allocator.Temp);
             foreach (var (data, entity) in SystemAPI
                          .Query<RefRO<S2C_NetSpawnPlayer>>()
                          .WithEntityAccess())
@@ -24,10 +24,10 @@ namespace KillCam
                 SpawnPlayer(ref cmd, data.ValueRO);
             }
             cmd.Playback(state.EntityManager);
-            cmd.Dispose();
+            cmd.Dispose();*/
         }
 
-        private void SpawnPlayer(ref EntityCommandBuffer cmd, S2C_NetSpawnPlayer context)
+        /*private void SpawnPlayer(ref EntityCommandBuffer cmd, S2C_NetSpawnPlayer context)
         {
             var asset = Resources.Load<GameObject>("Player");
             var gameObj = Object.Instantiate(asset);
@@ -44,6 +44,6 @@ namespace KillCam
             });
             script.SetPos(context.Pos);
             script.SetRotation(context.Rot);
-        }
+        }*/
     }
 }

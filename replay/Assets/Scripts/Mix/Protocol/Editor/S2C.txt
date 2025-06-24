@@ -1,0 +1,7 @@
+S2C_NetSpawnPlayer 
+{
+    int : PlayerId
+    FixedString32Bytes : PlayerName
+    Vector3 : Pos
+    Quaternion : Rot
+}

@@ -45,13 +45,13 @@ namespace KillCam
             }
             
             // 通知所有客户端,这里有一个新的角色生成了
-            SystemAPI.ManagedAPI.GetSingleton<RpcQueue>().Add(new S2C_NetSpawnPlayer()
+            /*SystemAPI.ManagedAPI.GetSingleton<RpcQueue>().Add(new S2C_NetSpawnPlayer()
             {
                 PlayerId = pId,
                 PlayerName = req.UserName,
                 Pos = Vector3.zero,
                 Rot = Quaternion.identity,
-            });
+            });*/
         }
 
         protected override void OnUpdate()

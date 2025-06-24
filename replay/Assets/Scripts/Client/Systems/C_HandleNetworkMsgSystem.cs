@@ -37,24 +37,7 @@ namespace KillCam
                 return;
             }
 
-            cmd = new EntityCommandBuffer(Allocator.Temp);
-            while (dataQueue.Count > 0)
-            {
-                var reader = new Reader(dataQueue.Dequeue().Data, manager);
-                var msgType = (NetMsg)reader.ReadUInt32();
-                switch (msgType)
-                {
-                    case NetMsg.S2C_SpawnPlayer:
-                        var spawnPlayer = new S2C_NetSpawnPlayer();
-                        spawnPlayer.Deserialize(reader);
-                        var ent = cmd.CreateEntity();
-                        cmd.AddComponent(ent, spawnPlayer);
-                        break;
-                }
-            }
-
-            cmd.Playback(EntityManager);
-            cmd.Dispose();
+            PoolNetworkEvents();
         }
 
         private void OnClientReceived(byte[] bytes)

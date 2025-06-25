@@ -8,6 +8,8 @@ namespace KillCam {
     public struct NetTickState : IComponentData {
         public uint Local;
         public uint Remote;
+        public bool IsPredictTick;
+        public bool IsRollbackTick;
     }
 
     public struct PlayerInputState : IComponentData

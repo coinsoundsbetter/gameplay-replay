@@ -47,12 +47,13 @@ namespace KillCam
                     continue;
                 }
 
-                sb.AppendLine($"case NetMsg.{typeStr}:");
-                sb.AppendLine($"\t\t\t\t\t\t\tvar {typeStr} = new {typeStr}();");
-                sb.AppendLine($"\t\t\t\t\t\t\t{typeStr}.Deserialize(reader);");
-                sb.AppendLine($"\t\t\t\t\t\t\tvar ent = cmd.CreateEntity();");
-                sb.AppendLine($"\t\t\t\t\t\t\tcmd.AddComponent(ent, {typeStr});");
-                sb.AppendLine($"\t\t\t\t\t\t\tcmd.AddComponent(ent, new NetMsgTag {{ Tick = tick, }});");
+                var typeStrTrim = typeStr.Trim();
+                sb.AppendLine($"\t\t\t\t\t\tcase NetMsg.{typeStrTrim}:");
+                sb.AppendLine($"\t\t\t\t\t\t\tvar {typeStrTrim} = new {typeStrTrim}();");
+                sb.AppendLine($"\t\t\t\t\t\t\t{typeStrTrim}.Deserialize(reader);");
+                sb.AppendLine($"\t\t\t\t\t\t\tvar {typeStrTrim}_Ent = cmd.CreateEntity();");
+                sb.AppendLine($"\t\t\t\t\t\t\tcmd.AddComponent({typeStrTrim}_Ent, {typeStr});");
+                sb.AppendLine($"\t\t\t\t\t\t\tcmd.AddComponent({typeStrTrim}_Ent, new NetMsgTag());");
                 sb.AppendLine("\t\t\t\t\t\t\tbreak;");
             }
 
@@ -74,12 +75,13 @@ namespace KillCam
                     continue;
                 }
 
-                sb.AppendLine($"case NetMsg.{typeStr}:");
-                sb.AppendLine($"\t\t\t\t\t\t\tvar {typeStr} = new {typeStr}();");
-                sb.AppendLine($"\t\t\t\t\t\t\t{typeStr}.Deserialize(reader);");
-                sb.AppendLine($"\t\t\t\t\t\t\tvar ent = cmd.CreateEntity();");
-                sb.AppendLine($"\t\t\t\t\t\t\tcmd.AddComponent(ent, {typeStr});");
-                sb.AppendLine($"\t\t\t\t\t\t\tcmd.AddComponent(ent, new NetMsgTag {{ Tick = tick, }});");
+                var typeStrTrim = typeStr.Trim();
+                sb.AppendLine($"\t\t\t\t\t\tcase NetMsg.{typeStrTrim}:");
+                sb.AppendLine($"\t\t\t\t\t\t\tvar {typeStrTrim} = new {typeStrTrim}();");
+                sb.AppendLine($"\t\t\t\t\t\t\t{typeStrTrim}.Deserialize(reader);");
+                sb.AppendLine($"\t\t\t\t\t\t\tvar {typeStrTrim}_Ent = cmd.CreateEntity();");
+                sb.AppendLine($"\t\t\t\t\t\t\tcmd.AddComponent({typeStrTrim}_Ent, {typeStrTrim});");
+                sb.AppendLine($"\t\t\t\t\t\t\tcmd.AddComponent({typeStrTrim}_Ent, new NetMsgTag());");
                 sb.AppendLine("\t\t\t\t\t\t\tbreak;");
             }
 
@@ -87,11 +89,6 @@ namespace KillCam
                 System.DateTime.Now.ToString(CultureInfo.CurrentCulture));
             var replace = replace1.Replace("#replace your method#", sb.ToString());
             File.WriteAllText(outputPath, replace);
-        }
-
-        public static void GenerateNetworkHandle(string templatePath, string outputPath, string filter)
-        {
-            
         }
 
         public static void GenerateNetworkMsgEnum(string outputPath)
@@ -128,7 +125,7 @@ namespace KillCam
                 {
                     index++;
                     string name = def.ProtocolName.Trim();
-                    sb.AppendLine($"\t\t{name} = {index}");
+                    sb.AppendLine($"\t\t{name} = {index},");
                 }
                 sb.AppendLine("\t}");
             
@@ -198,12 +195,15 @@ namespace KillCam
             sb.AppendLine("namespace KillCam");
             sb.AppendLine("{");
             
-            foreach (var def in defs)
+            // 生成每个协议内容
+            for (int i = 0; i < defs.Count; i++)
             {
+                var def = defs[i];
                 // 消息类型
-                sb.AppendLine($"\tpublic struct {def.ProtocolName} : {def.InterfaceName}");
+                var protocolTrim = def.ProtocolName.Trim();
+                sb.AppendLine($"\tpublic struct {protocolTrim} : {def.InterfaceName}");
                 sb.AppendLine("\t{");
-                sb.AppendLine($"\t\tpublic const NetMsg Msg = NetMsg.{def.ProtocolName};");
+                sb.AppendLine($"\t\tpublic const NetMsg Msg = NetMsg.{protocolTrim};");
                 sb.AppendLine();
                 // 字段
                 // 非C#内置但比较常用的Unity类型,用一个字典去映射它的类型声明
@@ -234,6 +234,7 @@ namespace KillCam
                 Dictionary<string, string> writeMethodNames = new Dictionary<string, string>()
                 {
                     { "int", "WriteInt32" },
+                    { "uint", "WriteUInt32"},
                     { "bool", "WriteBoolean" },
                     { "string", "WriteStringAllocated" },
                     { "Vector2", "WriteVector2" },
@@ -266,6 +267,7 @@ namespace KillCam
                 Dictionary<string, string> readMethodNames = new Dictionary<string, string>()
                 {
                     { "int", "ReadInt32()" },
+                    { "uint", "ReadUInt32()" },
                     { "bool", "ReadBoolean()" },
                     { "string", "ReadStringAllocated()" },
                     { "Vector2", "ReadVector2()" },
@@ -294,6 +296,11 @@ namespace KillCam
                 sb.AppendLine();
                 sb.AppendLine("\t\tpublic NetMsg GetMsgType() => Msg;");
                 sb.AppendLine("\t}");
+                
+                if (i < defs.Count - 1)
+                {
+                    sb.AppendLine();
+                }
             }
             
             sb.AppendLine("}");

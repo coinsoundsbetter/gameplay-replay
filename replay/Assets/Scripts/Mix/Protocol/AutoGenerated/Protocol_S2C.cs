@@ -1,10 +1,10 @@
-// AutoGenerate -> 2025/6/24 18:27:20
+// AutoGenerate -> 2025/6/25 21:06:48
 
 namespace KillCam
 {
-	public struct S2C_NetSpawnPlayer  : IServerRpc
+	public struct S2C_NetSpawnPlayer : IServerRpc
 	{
-		public const NetMsg Msg = NetMsg.S2C_NetSpawnPlayer ;
+		public const NetMsg Msg = NetMsg.S2C_NetSpawnPlayer;
 
 		public int PlayerId;
 		public Unity.Collections.FixedString32Bytes PlayerName;
@@ -25,6 +25,25 @@ namespace KillCam
 			PlayerName = reader.ReadFixedString32Bytes();
 			Pos = reader.ReadVector3();
 			Rot = reader.ReadQuaternion64();
+		}
+
+		public NetMsg GetMsgType() => Msg;
+	}
+
+	public struct S2C_Tick : IServerRpc
+	{
+		public const NetMsg Msg = NetMsg.S2C_Tick;
+
+		public uint ServerTick;
+
+		public void Serialize(FishNet.Serializing.Writer writer)
+		{
+			writer.WriteUInt32(ServerTick);
+		}
+
+		public void Deserialize(FishNet.Serializing.Reader reader)
+		{
+			ServerTick = reader.ReadUInt32();
 		}
 
 		public NetMsg GetMsgType() => Msg;

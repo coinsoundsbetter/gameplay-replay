@@ -23,7 +23,6 @@ namespace KillCam
         
         private void OnSpawn(FishNetChannel obj)
         {
-            Debug.Log("Spawn " + obj);
             var netChannels = SystemAPI.ManagedAPI.GetSingleton<NetChannels>();
             netChannels.Channels.Add(obj.PlayerId.Value, obj);
             if (obj.IsOwner)

@@ -17,7 +17,7 @@ namespace KillCam
                 var msgType = (NetMsg)reader.ReadUInt32();
                 switch (msgType)
                 {
-                    #replace your method#
+#replace your method#                    
                 }
             }
 

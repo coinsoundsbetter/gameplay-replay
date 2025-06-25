@@ -3,13 +3,20 @@ using FishNet.Managing;
 using Unity.Entities;
 
 namespace KillCam {
-    /// <summary>
-    /// 客户端知道自己的滴答跟当前已进展到的远端滴答
-    /// </summary>
-    public partial class C_NetTickSystem : SystemBase {
-        private NetworkManager manager;
+    
+    public partial struct C_NetTickSystem : ISystem {
 
-        protected override void OnCreate()
+        public void OnCreate(ref SystemState state)
+        {
+            state.RequireForUpdate<NetTickState>();
+        }
+
+        public void OnUpdate(ref SystemState state)
+        {
+            
+        }
+
+        /*protected override void OnCreate()
         {
             manager = InstanceFinder.NetworkManager;
         }
@@ -19,6 +26,6 @@ namespace KillCam {
             var netTick = SystemAPI.GetSingletonRW<NetTickState>();
             netTick.ValueRW.Local = manager.TimeManager.LocalTick;
             netTick.ValueRW.Remote = manager.TimeManager.Tick;
-        }
+        }*/
     }
 }

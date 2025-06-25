@@ -5,3 +5,8 @@ S2C_NetSpawnPlayer
     Vector3 : Pos
     Quaternion : Rot
 }
+
+S2C_Tick
+{
+    uint : ServerTick
+}

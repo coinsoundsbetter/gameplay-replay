@@ -2,8 +2,9 @@
 using UnityEngine;
 
 namespace KillCam {
-    public class GameUtils {
-        
+    public class GameUtils
+    {
+        public static FishNet.Managing.NetworkManager NetMgr() => FishNet.InstanceFinder.NetworkManager;
     }
 
     public static class ClientLog

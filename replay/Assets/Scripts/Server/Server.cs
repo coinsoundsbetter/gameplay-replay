@@ -26,7 +26,7 @@ namespace KillCam {
             // 自定义子组 逻辑状态固定间隔更新
             var stateGroup = world.GetOrCreateSystemManaged<S_StateGroup>();
             stateGroup.SetRateManagerCreateAllocator(new RateUtils.FixedRateCatchUpManager(0.016f));
-            stateGroup.AddSystemToUpdateList(world.GetOrCreateSystem<C_NetTickSystem>());
+            stateGroup.AddSystemToUpdateList(world.GetOrCreateSystem<C_LocalTickSystem>());
             stateGroup.AddSystemToUpdateList(world.GetOrCreateSystem<MoveStateSystem>());
             stateGroup.AddSystemToUpdateList(world.GetOrCreateSystem<StateSnapshotSystem>());
             simulationGroup.AddSystemToUpdateList(stateGroup);

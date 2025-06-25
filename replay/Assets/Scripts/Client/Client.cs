@@ -24,7 +24,7 @@ namespace KillCam {
             // 自定义子组 逻辑状态系统组,固定间隔更新,在这个组里的都需要有支持预测跟回滚的能力
             var stateGroup = world.GetOrCreateSystemManaged<C_StateGroup>();
             stateGroup.SetRateManagerCreateAllocator(new RateUtils.FixedRateCatchUpManager(0.016f));
-            stateGroup.AddSystemToUpdateList(world.GetOrCreateSystem<C_NetTickSystem>());
+            stateGroup.AddSystemToUpdateList(world.GetOrCreateSystem<C_LocalTickSystem>());
             stateGroup.AddSystemToUpdateList(world.GetOrCreateSystem<C_InputSystem>());
             stateGroup.AddSystemToUpdateList(world.GetOrCreateSystem<MoveStateSystem>());
             stateGroup.AddSystemToUpdateList(world.GetOrCreateSystem<StateSnapshotSystem>());

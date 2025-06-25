@@ -3,8 +3,6 @@ using Unity.Entities;
 using UnityEngine;
 
 namespace KillCam {
-    [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
-    [UpdateInGroup(typeof(InitializationSystemGroup))]
     public partial struct S_SpawnPlayerSystem : ISystem {
         public void OnCreate(ref SystemState state) {
             state.RequireForUpdate<WaitSpawnPlayer>();

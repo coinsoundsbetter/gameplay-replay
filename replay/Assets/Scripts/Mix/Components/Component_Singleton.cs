@@ -7,7 +7,7 @@ namespace KillCam {
 
     public struct NetTickState : IComponentData {
         public uint Local;
-        public uint Server;
+        public uint Remote;
     }
 
     public struct PlayerInputState : IComponentData

@@ -7,7 +7,6 @@ using UnityEngine;
 
 namespace KillCam
 {
-    [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
     public partial class S_LoginSystem : SystemBase
     {
         private NetworkManager manager;

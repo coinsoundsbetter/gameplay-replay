@@ -5,9 +5,7 @@ namespace KillCam
     /// <summary>
     /// 客户端向服务器的上传消息列表
     /// </summary>
-    [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
-    [UpdateAfter(typeof(PresentationSystemGroup))]
-    public partial class C_SendSystem : SystemBase
+    public partial class C_SendNetMsgSystem : SystemBase
     {
         protected override void OnUpdate()
         {

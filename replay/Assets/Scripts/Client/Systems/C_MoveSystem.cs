@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace KillCam
 {
-    [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
     public partial struct C_MoveSystem : ISystem
     {
         public void OnCreate(ref SystemState state)

@@ -6,8 +6,6 @@ using Unity.Entities;
 using UnityEngine;
 
 namespace KillCam {
-    [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
-    [UpdateInGroup(typeof(InitializationSystemGroup), OrderLast = true)]
     public partial class C_ConnectSystem : SystemBase {
         private NetworkManager manager;
 

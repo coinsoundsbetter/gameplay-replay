@@ -10,8 +10,6 @@ namespace KillCam {
     /// 维护游戏期间的连接状态
     /// 偶尔它也帮忙顺带发布生成玩家的命令(^ ^)
     /// </summary>
-    [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
-    [UpdateAfter(typeof(InitializationSystemGroup))]
     public partial class S_ConnectSystem : SystemBase {
         private NetworkManager manager;
         private int playerIdIndex;

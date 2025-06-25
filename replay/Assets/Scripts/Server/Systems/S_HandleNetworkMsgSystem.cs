@@ -6,8 +6,6 @@ using Unity.Entities;
 
 namespace KillCam
 {
-    [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
-    [UpdateInGroup(typeof(InitializationSystemGroup))]
     public partial class S_HandleNetworkMsgSystem : SystemBase
     {
         private readonly Queue<C2SMsg> waitHandles = new ();

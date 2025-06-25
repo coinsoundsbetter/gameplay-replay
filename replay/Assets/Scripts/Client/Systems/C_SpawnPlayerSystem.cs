@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace KillCam
 {
-    [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
-    [UpdateInGroup(typeof(SimulationSystemGroup), OrderFirst = true)]
     public partial struct C_SpawnPlayerSystem : ISystem
     {
         public void OnUpdate(ref SystemState state)

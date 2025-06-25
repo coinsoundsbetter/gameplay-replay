@@ -5,7 +5,6 @@ namespace KillCam
     /// <summary>
     /// 服务器上告知客户端的消息列表
     /// </summary>
-    [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
     [UpdateAfter(typeof(PresentationSystemGroup))]
     public partial class S_RpcSystem : SystemBase
     {

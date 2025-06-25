@@ -1,13 +1,10 @@
 using System.Collections.Generic;
 using FishNet;
 using FishNet.Managing;
-using FishNet.Serializing;
-using Unity.Collections;
 using Unity.Entities;
 
 namespace KillCam
 {
-    [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
     public partial class C_HandleNetworkMsgSystem : SystemBase
     {
         private readonly Queue<S2CMsg> dataQueue = new Queue<S2CMsg>();

@@ -3,10 +3,7 @@ using Unity.Entities;
 
 namespace KillCam
 {
-    [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation)]
-    [UpdateBefore(typeof(InitializationSystemGroup))]
-    public partial class C_InitializeSystem : SystemBase
-    {
+    public partial class C_InitializeSystem : SystemBase {
         protected override void OnCreate() {
             CreateSingleton<LocalConnectState>("Singleton_LocalConnectState");
             CreateSingletonManaged<GameData>("Singleton_GameData");

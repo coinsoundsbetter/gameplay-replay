@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace KillCam
 {
-    [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
-    [UpdateInGroup(typeof(InitializationSystemGroup), OrderFirst = true)]
     public partial class S_InitializeSystem : SystemBase
     {
         protected override void OnStartRunning() {

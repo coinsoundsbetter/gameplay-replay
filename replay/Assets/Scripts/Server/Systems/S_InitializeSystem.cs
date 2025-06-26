@@ -10,13 +10,14 @@ namespace KillCam
             CreateSingletonManaged<GameData>("Singleton_GameData");
             CreateSingletonManaged<NetRpc>("Singleton_RpcQueue");
             CreateSingletonManaged<NetChannels>("Singleton_NetChannels");
-            FishNetChannel.OnSpawned += OnSpawn;
-            FishNetChannel.OnDespawn += OnDespawn;
+            CreateSingleton<NetTickState>("Singleton_NetTickState");
+            FishNetChannel.OnSpawnAsServer += OnSpawn;
+            FishNetChannel.OnDespawnAsServer += OnDespawn;
         }
 
         protected override void OnStopRunning() {
-            FishNetChannel.OnSpawned -= OnSpawn;
-            FishNetChannel.OnDespawn -= OnDespawn;
+            FishNetChannel.OnSpawnAsServer -= OnSpawn;
+            FishNetChannel.OnDespawnAsServer -= OnDespawn;
         }
 
         protected override void OnUpdate() { }
@@ -25,10 +26,6 @@ namespace KillCam
         {
             var netChannels = SystemAPI.ManagedAPI.GetSingleton<NetChannels>();
             netChannels.Channels.Add(obj.PlayerId.Value, obj);
-            if (obj.IsOwner)
-            {
-                netChannels.LocalPlayerId = obj.PlayerId.Value;
-            }
         }
         
         private void OnDespawn(FishNetChannel obj)

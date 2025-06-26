@@ -3,47 +3,53 @@ using Unity.Entities;
 
 namespace KillCam
 {
-    public partial class C_InitializeSystem : SystemBase {
-        protected override void OnCreate() {
+    public partial class C_InitializeSystem : SystemBase
+    {
+        protected override void OnCreate()
+        {
             CreateSingleton<LocalConnectState>("Singleton_LocalConnectState");
             CreateSingletonManaged<GameData>("Singleton_GameData");
             CreateSingletonManaged<NetSend>("Singleton_SendQueue");
             CreateSingletonManaged<NetChannels>("Singleton_NetChannels");
-            CreateSingleton<PlayerInputState>("Singleton_PlayerInputState");
             CreateSingleton<NetTickState>("Singleton_NetTickState");
-            FishNetChannel.OnSpawned += OnSpawn;
-            FishNetChannel.OnDespawn += OnDespawn;
+            EntityManager.CreateSingletonBuffer<InputElement>("Singleton_InputBuffer");
+            FishNetChannel.OnSpawnAsClient += OnSpawn;
+            FishNetChannel.OnDespawnAsClient += OnDespawn;
         }
 
-        protected override void OnDestroy() {
-            FishNetChannel.OnSpawned -= OnSpawn;
-            FishNetChannel.OnDespawn -= OnDespawn;
+        protected override void OnDestroy()
+        {
+            FishNetChannel.OnSpawnAsClient -= OnSpawn;
+            FishNetChannel.OnDespawnAsClient -= OnDespawn;
         }
 
-        protected override void OnUpdate() { }
-        
+        protected override void OnUpdate()
+        {
+        }
+
         private void OnSpawn(FishNetChannel obj)
         {
             var netChannels = SystemAPI.ManagedAPI.GetSingleton<NetChannels>();
             netChannels.Channels.Add(obj.PlayerId.Value, obj);
-            if (obj.IsOwner)
+            if (obj.Owner.IsLocalClient)
             {
                 netChannels.LocalPlayerId = obj.PlayerId.Value;
             }
         }
-        
+
         private void OnDespawn(FishNetChannel obj)
         {
-            SystemAPI.ManagedAPI.GetSingleton<NetChannels>().Channels.Remove(obj.PlayerId.Value);
+            var netChannels = SystemAPI.ManagedAPI.GetSingleton<NetChannels>();
+            netChannels.Channels.Remove(obj.PlayerId.Value);
         }
-        
-        private void CreateSingletonManaged<T>(FixedString64Bytes name) where T : class, IComponentData, new() 
+
+        private void CreateSingletonManaged<T>(FixedString64Bytes name) where T : class, IComponentData, new()
         {
             var entity = EntityManager.CreateEntity();
             EntityManager.SetName(entity, name);
             EntityManager.AddComponentData(entity, new T());
         }
-        
+
         private void CreateSingleton<T>(FixedString64Bytes name) where T : unmanaged, IComponentData
         {
             var entity = EntityManager.CreateEntity();

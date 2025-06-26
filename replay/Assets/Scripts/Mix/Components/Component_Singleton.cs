@@ -1,20 +1,32 @@
 ﻿using System.Collections.Generic;
 using FishNet.Serializing;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
 namespace KillCam {
-
+    
     public struct NetTickState : IComponentData {
         public uint Local;
         public uint Remote;
+        public NetTickType TickType;
         public bool IsPredictTick;
         public bool IsRollbackTick;
     }
 
-    public struct PlayerInputState : IComponentData
+    public enum NetTickType
     {
+        Normal = 0,
+        Rollback = 1,
+        Replaying = 2,
+    }
+
+    public struct InputElement : IBufferElementData {
+        public float Delay;
+        public uint LocalTick;
         public Vector2 Move;
+        public bool IsAvailable;
+        public bool IsApplyed;
     }
     
     public struct LocalConnectState : IComponentData
@@ -41,7 +53,6 @@ namespace KillCam {
         
         public void Add(IServerRpc serverRpcAll, int playerId = 0)
         {
-            Debug.Log("Add");
             RpcList.Enqueue((serverRpcAll, playerId));
         }
      }
@@ -60,6 +71,8 @@ namespace KillCam {
     {
         public int LocalPlayerId;
         public Dictionary<int, FishNetChannel> Channels = new();
+        
+        public bool IsChannelActive(int playerId) => Channels.ContainsKey(playerId);
         
         public void Rpc(IServerRpc serverRpc, int playerId = 0)
         {
@@ -93,7 +106,7 @@ namespace KillCam {
                 var writer = new Writer();
                 // 客户端每次发送的时候,都会带上当前的服务器命令帧号
                 writer.Write(channel.NetworkManager.TimeManager.Tick);
-                writer.Write(clientSend.GetMsgType());
+                writer.Write((uint)clientSend.GetMsgType());
                 clientSend.Serialize(writer);
                 channel.Send(writer.GetBuffer());
             }

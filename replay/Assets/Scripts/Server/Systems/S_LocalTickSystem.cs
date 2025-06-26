@@ -1,10 +1,10 @@
 ﻿using Unity.Entities;
 using UnityEngine;
 
-namespace KillCam {
-    
-    public partial struct C_LocalTickSystem : ISystem {
-
+namespace KillCam
+{
+    public partial struct S_LocalTickSystem : ISystem 
+    {
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<NetTickState>();
@@ -14,6 +14,7 @@ namespace KillCam {
         {
             var tickState = SystemAPI.GetSingletonRW<NetTickState>();
             tickState.ValueRW.Local++;
+            tickState.ValueRW.Remote++;
         }
     }
 }

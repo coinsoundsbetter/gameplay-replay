@@ -251,7 +251,7 @@ namespace KillCam
                         ProtocolName = allLines[index - 1],
                     };
 
-                    if (index - 2 >= 0 && allLines[index - 2].Contains("[ManualHandle]"))
+                    if (index - 2 >= 0 && allLines[index - 2].Contains("[Manual]"))
                     {
                         current.IsManualHandle = true;
                     }

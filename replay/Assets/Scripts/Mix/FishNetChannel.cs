@@ -1,23 +1,36 @@
 using System;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using UnityEngine;
 
 public class FishNetChannel : NetworkBehaviour
 {
     public readonly SyncVar<int> PlayerId = new SyncVar<int>();
-    public static event Action<FishNetChannel> OnSpawned;
-    public static event Action<FishNetChannel> OnDespawn;
+    public static event Action<FishNetChannel> OnSpawnAsServer;
+    public static event Action<FishNetChannel> OnDespawnAsServer;
+    public static event Action<FishNetChannel> OnSpawnAsClient;
+    public static event Action<FishNetChannel> OnDespawnAsClient;
     public static event Action<int, byte[]> OnServerReceived;
     public static event Action<byte[]> OnClientReceived; 
     
-    public override void OnStartNetwork()
+    public override void OnStartClient()
     {
-        OnSpawned?.Invoke(this);
+        OnSpawnAsClient?.Invoke(this);
     }
 
-    public override void OnStopNetwork()
+    public override void OnStopClient()
     {
-        OnDespawn?.Invoke(this);
+        OnDespawnAsClient?.Invoke(this);
+    }
+
+    public override void OnStartServer()
+    {
+        OnSpawnAsServer?.Invoke(this);
+    }
+
+    public override void OnStopServer()
+    {
+        OnDespawnAsServer?.Invoke(this);
     }
 
     [ServerRpc]

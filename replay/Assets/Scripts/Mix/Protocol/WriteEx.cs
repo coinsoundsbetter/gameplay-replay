@@ -4,7 +4,7 @@ namespace KillCam
 {
     public static class WriteEx
     {
-        public static void WritePlayerInputState(this Writer writer, PlayerInputState data)
+        public static void WriteInputElement(this Writer writer, InputElement data)
         {
             writer.WriteVector2(data.Move);
         }

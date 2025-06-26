@@ -1,5 +1,6 @@
 ﻿using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 
 namespace KillCam {
     public struct WaitSpawnPlayer : IComponentData {
@@ -8,10 +9,16 @@ namespace KillCam {
         public FixedString32Bytes PlayerName;
     }
 
-    public struct PlayerTag : IComponentData {
+    public struct PlayerIdentifier : IComponentData {
         public int Id;
         public bool IsLocalPlayer;
         public FixedString32Bytes Name;
+    }
+
+    public struct PlayerMovementState : IComponentData
+    {
+        public Vector3 Pos;
+        public Quaternion Rot;
     }
 
     public class PlayerView : IComponentData

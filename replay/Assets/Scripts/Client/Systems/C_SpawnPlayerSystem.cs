@@ -23,18 +23,25 @@ namespace KillCam
 
         private void SpawnPlayer(ref EntityCommandBuffer cmd, S2C_NetSpawnPlayer context)
         {
+            var localPlayerId = SystemAPI.ManagedAPI.GetSingleton<NetChannels>().LocalPlayerId;
             var asset = Resources.Load<GameObject>("Player");
             var gameObj = Object.Instantiate(asset);
             var script = gameObj.GetComponent<IPlayerViewBinder>();
             var view = cmd.CreateEntity();
-            cmd.AddComponent(view, new PlayerTag()
+            cmd.AddComponent(view, new PlayerIdentifier()
             {
                 Id = context.PlayerId,
                 Name = context.PlayerName,
+                IsLocalPlayer = context.PlayerId == localPlayerId,
             });
             cmd.AddComponent(view, new PlayerView()
             {
                 Binder = script,
+            });
+            cmd.AddComponent(view, new PlayerMovementState()
+            {
+                Pos = context.Pos,
+                Rot = context.Rot,
             });
             script.SetPos(context.Pos);
             script.SetRotation(context.Rot);

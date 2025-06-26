@@ -1,5 +1,5 @@
 
-C2S_PlayerInputState 
+C2S_InputElement
 {
-    PlayerInputState : Data
+    InputElement : Data
 }

@@ -2,14 +2,21 @@
 
 namespace KillCam
 {
-    /// <summary>
-    /// 服务器上告知客户端的消息列表
-    /// </summary>
-    [UpdateAfter(typeof(PresentationSystemGroup))]
-    public partial class S_RpcSystem : SystemBase
+    public partial struct S_RpcSystem : ISystem
     {
-        protected override void OnUpdate()
+        public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<NetTickState>();
+        }
+
+        public void OnUpdate(ref SystemState state)
+        {
+            // 每次都会先固定发送当前帧号
+            SystemAPI.ManagedAPI.GetSingleton<NetRpc>().Add(new S2C_Tick()
+            {
+                ServerTick = SystemAPI.GetSingleton<NetTickState>().Local,
+            });
+            
             var data = SystemAPI.ManagedAPI.GetSingleton<NetRpc>();
             while (data.RpcList.Count > 0)
             {

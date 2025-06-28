@@ -11,7 +11,9 @@ public class Glue : MonoBehaviour
     public NetworkManager manager;
     public int RoleCount { get; private set; }
     public GameState GameState { get; private set; }
-    public Dictionary<int, RoleState> RoleStates = new Dictionary<int, RoleState>();
+    
+    public Dictionary<int, ServerRoleState> ServerRoles = new Dictionary<int, ServerRoleState>();
+    public Dictionary<int, ClientRoleState> ClientRoles = new Dictionary<int, ClientRoleState>();
     
     void Start()
     {
@@ -59,9 +61,19 @@ public class Glue : MonoBehaviour
        var asset = Resources.Load<GameObject>("RoleState");
        var instance = Instantiate(asset);
        var networkObject = instance.GetComponent<NetworkObject>();
-       var roleState = networkObject.GetComponent<RoleState>();
-       roleState.Id.Value = ++RoleCount;
-       RoleStates.Add(roleState.Id.Value, roleState);
+       var serverRole = instance.GetComponentInChildren<ServerRoleState>();
+       serverRole.Id.Value = ++RoleCount;
+       serverRole.Pos.Value = Vector3.zero;
+       serverRole.Rot.Value = Quaternion.identity;
+       
+       var clientRole = instance.GetComponentInChildren<ClientRoleState>();
+       clientRole.Id.Value = ++RoleCount;
+       clientRole.Pos.Value = Vector3.zero;
+       clientRole.Rot.Value = Quaternion.identity;
+       
+       ClientRoles.Add(clientRole.Id.Value, clientRole);
+       ServerRoles.Add(serverRole.Id.Value, serverRole);
+       
        manager.ServerManager.Spawn(networkObject, conn);
     }
 }

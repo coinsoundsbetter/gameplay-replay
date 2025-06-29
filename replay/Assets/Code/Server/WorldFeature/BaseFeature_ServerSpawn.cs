@@ -9,7 +9,8 @@ namespace KillCam.Server
     public class BaseFeature_ServerSpawn : Feature, INetworkServer
     {
         private NetworkManager mgr;
-        private Dictionary<int, RoleNet> roleStates = new();
+        private readonly Dictionary<int, RoleNet> roleStates = new();
+        private readonly Dictionary<int, Server_RoleLogic> roleLogics = new();
         
         public BaseFeature_ServerSpawn(NetworkManager manager)
         {
@@ -20,22 +21,51 @@ namespace KillCam.Server
         {
             RoleNet.OnServerSpawn += OnRoleNetSpawn;
             RoleNet.OnServerDespawn += OnRoleDespawn;
+            world.AddFrameUpdate(OnFrameTick);
+            world.AddLogicUpdate(OnLogicTick);
         }
 
         public override void OnDestroy()
         {
             RoleNet.OnServerSpawn -= OnRoleNetSpawn;
             RoleNet.OnServerDespawn -= OnRoleDespawn;
+            world.RemoveFrameUpdate(OnFrameTick);
+            world.RemoveLogicUpdate(OnLogicTick);
+        }
+        
+        private void OnFrameTick(float delta)
+        {
+            foreach (var role in roleLogics.Values)
+            {
+                role.TickFrame(delta);
+            }
+        }
+        
+        private void OnLogicTick(double delta)
+        {
+            foreach (var role in roleLogics.Values)
+            {
+                role.TickLogic(delta);
+            }
         }
 
         private void OnRoleNetSpawn(RoleNet net)
         {
-            roleStates.Add(net.Id.Value, net);
+            var id = net.Id.Value;
+            roleStates.Add(id, net);
+            var logic = new Server_RoleLogic();
+            roleLogics.Add(id, logic);
+            logic.Init(world);
         }
         
         private void OnRoleDespawn(RoleNet net)
         {
-            roleStates.Remove(net.Id.Value);
+            var id = net.Id.Value;
+            if (roleLogics.Remove(id, out var logic))
+            {
+                logic.Clear();
+            }
+            roleStates.Remove(id);
         }
 
         public void SpawnRole(NetworkConnection conn, int playerId)
@@ -54,6 +84,21 @@ namespace KillCam.Server
             {
                 roleNet.Rpc(data);
             }
+        }
+
+        public uint GetTick()
+        {
+            return mgr.TimeManager.LocalTick;
+        }
+
+        public bool TryGetRole(int playerId, out Server_RoleLogic roleLogic)
+        {
+            if (roleLogics.TryGetValue(playerId, out roleLogic))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

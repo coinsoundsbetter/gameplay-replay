@@ -250,7 +250,7 @@ GameObject:
   - component: {fileID: 985661576}
   - component: {fileID: 985661577}
   m_Layer: 0
-  m_Name: Launch
+  m_Name: Initializer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -286,6 +286,7 @@ MonoBehaviour:
   manager: {fileID: 994486416}
   isStartServer: 1
   isStartClient: 1
+  isOpenReplayFunction: 0
 --- !u!1 &994486414
 GameObject:
   m_ObjectHideFlags: 0

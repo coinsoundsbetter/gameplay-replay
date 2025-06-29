@@ -1,3 +1,5 @@
+using FishNet.Serializing;
+
 namespace KillCam
 {
     /// <summary>
@@ -7,7 +9,7 @@ namespace KillCam
     public class InitializeFeature : Feature { }
     
     /// <summary>
-    /// 常规的功能继承它
+    /// 世界范围的功能继承它
     /// </summary>
     public class Feature
     {
@@ -20,5 +22,19 @@ namespace KillCam
 
         public virtual void OnCreate() { }
         public virtual void OnDestroy() { }
+    }
+    
+    public interface INetworkSerialize
+    {
+        byte[] Serialize(Writer writer);
+        void Deserialize(Reader reader);
+        NetworkMsg GetMsgType();
+    }
+
+    public interface ISerializeAs<T>
+    {
+        byte[] Serialize();
+        T Deserialize(byte[] data);
+        T Parse();
     }
 }

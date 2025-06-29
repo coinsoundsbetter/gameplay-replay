@@ -1,33 +1,50 @@
 using System.Collections.Generic;
+using FishNet.Managing;
 
 namespace KillCam.Client
 {
     public class Client_BaseFeature_StateDriver : Feature, INetworkClient
     {
+        private NetworkManager mgr;
         private RoleNet localRoleNet;
         private readonly Dictionary<int, RoleNet> _roleNets = new();
         private readonly Dictionary<int, Client_RoleLogic> _roleLogics = new();
-        
+
+        public Client_BaseFeature_StateDriver(NetworkManager manager)
+        {
+            mgr = manager;
+        }
+
         public override void OnCreate()
         {
             world.SetNetworkClient(this);
             RoleNet.OnClientSpawn += OnRoleNetSpawn;
             RoleNet.OnClientDespawn += OnRoleDespawn;
-            world.AddUpdate(Update);
+            world.AddFrameUpdate(OnFrameUpdate);
+            world.AddLogicUpdate(OnLogicUpdate);
         }
 
         public override void OnDestroy()
         {
             world.SetNetworkClient(null);
             RoleNet.OnClientSpawn -= OnRoleNetSpawn;
-            world.RemoveUpdate(Update);
+            world.RemoveFrameUpdate(OnFrameUpdate);
+            world.RemoveLogicUpdate(OnLogicUpdate);
         }
 
-        private void Update(float delta)
+        private void OnFrameUpdate(float delta)
         {
             foreach (var roleLogic in _roleLogics.Values)
             {
-                roleLogic.Update();
+                roleLogic.TickFrame(delta);
+            }
+        }
+        
+        private void OnLogicUpdate(double delta)
+        {
+            foreach (var roleLogic in _roleLogics.Values)
+            {
+                roleLogic.TickLogic(delta);
             }
         }
         
@@ -63,6 +80,11 @@ namespace KillCam.Client
             {
                 localRoleNet.Send(data);
             }
+        }
+
+        public uint GetTick()
+        {
+            return mgr.TimeManager.LocalTick;
         }
     }
 }

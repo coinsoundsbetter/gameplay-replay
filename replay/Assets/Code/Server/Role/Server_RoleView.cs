@@ -1,20 +1,21 @@
+using KillCam.Client;
 using UnityEngine;
 
-namespace KillCam.Client
+namespace KillCam.Server
 {
-    public class Client_RoleView : RoleView
+    public class Server_RoleView : RoleView
     {
         private Mono_Role role;
-        private Client_RoleMovement movement;
+        private Server_RoleMovement movement;
 
-        public Client_RoleView(Client_RoleMovement movement)
+        public Server_RoleView(Server_RoleMovement movement)
         {
             this.movement = movement;
         }
         
         public void Load(Vector3 pos, Quaternion rot)
         {
-            var asset = Resources.Load<Mono_Role>("Client_Mono_Role");
+            var asset = Resources.Load<Mono_Role>("Server_Mono_Role");
             var instance = Object.Instantiate(asset);
             role = instance.GetComponent<Mono_Role>();
             role.transform.position = pos;
@@ -23,7 +24,7 @@ namespace KillCam.Client
 
         public void Unload()
         {
-            if (role)
+            if (role.gameObject)
             {
                 Object.Destroy(role.gameObject);
             }

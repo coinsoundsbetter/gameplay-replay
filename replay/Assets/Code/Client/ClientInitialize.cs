@@ -39,7 +39,7 @@ namespace KillCam.Client
         private void AddClientFeatures()
         {
             world.Add(new Client_BaseFeature_Spawn(_manager));
-            world.Add(new Client_BaseFeature_StateDriver());
+            world.Add(new Client_BaseFeature_StateDriver(_manager));
         }
     }
 }

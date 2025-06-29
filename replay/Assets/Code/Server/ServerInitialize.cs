@@ -32,10 +32,11 @@ namespace KillCam.Server
             }
         }
         
-        private void AddFeatures(BattleWorld world)
+        private void AddFeatures(BattleWorld bw)
         {
-            world.Add(new BaseFeature_ServerLogin(_manager));
-            world.Add(new BaseFeature_ServerSpawn(_manager));
+            bw.Add(new BaseFeature_ServerLogin(_manager));
+            bw.Add(new BaseFeature_ServerSpawn(_manager));
+            bw.Add(new BaseFeature_C2SHandle());
         }
     }
 }

@@ -10,32 +10,55 @@ namespace KillCam
         [SerializeField] private NetworkManager manager;
         [SerializeField] private bool isStartServer;
         [SerializeField] private bool isStartClient;
+        [SerializeField] private bool isOpenReplayFunction;
         private BattleWorld server;
         private BattleWorld client;
         private BattleWorld replayClient;
 
         private void Start()
         {
-            server = new BattleWorld("server");
-            server.Add(new ServerInitialize(manager));
-            
-            client = new BattleWorld("client");
-            client.Add(new ClientInitialize(manager));
-            
-            replayClient = new BattleWorld("replay");
-            replayClient.Add(new ReplayClientInitialize());
-        }
+            if (isStartServer)
+            {
+                server = new BattleWorld(WorldFlag.Server);
+                server.Add(new ServerInitialize(manager));
+            }
 
+            if (isStartClient)
+            {
+                client = new BattleWorld(WorldFlag.Client);
+                client.Add(new ClientInitialize(manager));
+            }
+
+            if (isOpenReplayFunction)
+            {
+                replayClient = new BattleWorld(WorldFlag.Client | WorldFlag.Replay);
+                replayClient.Add(new ReplayClientInitialize());
+            }
+            
+            manager.TimeManager.OnUpdate += OnFrameUpdate;
+            manager.TimeManager.OnTick += OnLogicUpdate;
+        }
+        
         private void OnDestroy()
         {
-            server.Dispose();
-            client.Dispose();
+            manager.TimeManager.OnUpdate -= OnFrameUpdate;
+            manager.TimeManager.OnTick -= OnLogicUpdate;
+            server?.Dispose();
+            client?.Dispose();
         }
 
-        private void Update()
+        private void OnFrameUpdate()
         {
-            server.Update();
-            client.Update();
+            var delta = Time.deltaTime;
+            server?.FrameUpdate(delta);
+            client?.FrameUpdate(delta);
+        }
+        
+        private void OnLogicUpdate()
+        {
+            var delta = manager.TimeManager.TickDelta;
+            server?.LogicUpdate(delta);
+            client?.LogicUpdate(delta);
         }
     }
 }

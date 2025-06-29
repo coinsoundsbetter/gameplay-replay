@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-public class ClientRoleState : RoleState
+public class ClientRoleState
 {
-    public override void OnStartClient()
+    /*public override void OnStartClient()
     {
         TimeManager.OnTick += OnTick;
     }
@@ -15,7 +15,7 @@ public class ClientRoleState : RoleState
     private void OnTick()
     {
         ReceiveInput();
-        SimulateMove(MoveInput);
+        SimulateMove(MoveInput, GetTickDelta());
     }
 
     private void ReceiveInput()
@@ -34,5 +34,5 @@ public class ClientRoleState : RoleState
             LocalTick = GetLocalTick(),
             Move = new Vector2(h, v),
         });
-    }
+    }*/
 }

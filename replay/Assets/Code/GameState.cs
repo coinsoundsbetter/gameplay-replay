@@ -20,6 +20,11 @@ public class GameState : NetworkBehaviour, ISerializeAs<GameStateSnapshot>
         result.GameProcess = (GameProcessEnum)reader.ReadUInt32();
         return result;
     }
+
+    public GameStateSnapshot Parse()
+    {
+        throw new System.NotImplementedException();
+    }
 }
 
 public enum GameProcessEnum : uint

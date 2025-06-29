@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using FishNet.Serializing;
 
-public class ServerRoleState : RoleState
+public class ServerRoleState
 {
-    private List<C2S_SendInput> inputBuffer = new List<C2S_SendInput>();
+    /*private List<C2S_SendInput> inputBuffer = new List<C2S_SendInput>();
     
     public override void OnStartServer()
     {
+        base.OnStartServer();
         TimeManager.OnTick += OnTick;
         TimeManager.OnPostTick += OnPostTick;
     }
@@ -28,7 +29,7 @@ public class ServerRoleState : RoleState
         {
             var useInput = inputBuffer[0];
             inputBuffer.RemoveAt(0);
-            SimulateMove(useInput.Move);
+            SimulateMove(useInput.Move, GetTickDelta());
         }
     }
 
@@ -44,5 +45,5 @@ public class ServerRoleState : RoleState
                 inputBuffer.Add(msg1);
                 break;
         }
-    }
+    }*/
 }

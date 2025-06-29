@@ -1,5 +1,0 @@
-
-C2S_InputElement
-{
-    InputElement : Data
-}

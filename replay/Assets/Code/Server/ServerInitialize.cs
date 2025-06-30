@@ -37,6 +37,7 @@ namespace KillCam.Server
             bw.Add(new BaseFeature_ServerLogin(_manager));
             bw.Add(new BaseFeature_ServerSpawn(_manager));
             bw.Add(new BaseFeature_C2SHandle());
+            bw.Add(new BaseFeature_ServerSnapshot());
         }
     }
 }

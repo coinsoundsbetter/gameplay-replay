@@ -24,7 +24,7 @@ namespace KillCam.Client
             MoveInput = new Vector2(h, v);
             world.Send(new C2S_SendInput()
             {
-                LocalTick = world.NetworkClient.GetTick(),
+                LocalTick = world.Network.GetTick(),
                 Move = MoveInput,
             });
         }

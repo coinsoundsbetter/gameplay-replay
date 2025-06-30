@@ -8,6 +8,8 @@ namespace KillCam.Server
         public Server_RoleInput Input { get; private set; }
         public Server_RoleMovement Movement { get; private set; }
         public Server_RoleView View { get; private set; }
+        
+        public RoleStateSnapshot NetStateData { get; private set; }
 
         public void Init(BattleWorld world)
         {

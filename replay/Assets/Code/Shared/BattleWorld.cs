@@ -16,14 +16,9 @@ namespace KillCam
         Replay,
     }
 
-    public interface INetworkClient
+    public interface INetwork
     {
         void Send(INetworkSerialize data);
-        uint GetTick();
-    }
-
-    public interface INetworkServer
-    {
         void Rpc(INetworkSerialize data);
         uint GetTick();
     }
@@ -35,8 +30,7 @@ namespace KillCam
         private readonly Dictionary<Type, Feature> _features = new();
         private readonly List<LogicUpdateDelegate> _logicUpdates = new();
         private readonly List<FrameUpdateDelegate> _frameUpdates = new();
-        public INetworkClient NetworkClient { get; private set; }
-        public INetworkServer NetworkServer { get; private set; }
+        public INetwork Network { get; private set; }
         public float FrameTickDelta { get; private set; }
         public double LogicTickDelta { get; private set; }
         
@@ -45,14 +39,9 @@ namespace KillCam
             Flags = flag;
         }
 
-        public void SetNetworkClient(INetworkClient networkClient)
+        public void SetNetwork(INetwork networkClient)
         {
-            NetworkClient = networkClient;
-        }
-
-        public void SetNetworkServer(INetworkServer networkServer)
-        {
-            NetworkServer = networkServer;
+            Network = networkClient;
         }
 
         public void FrameUpdate(float delta)
@@ -156,12 +145,12 @@ namespace KillCam
 
         public void Send(INetworkSerialize request)
         {
-            NetworkClient?.Send(request);
+            Network?.Send(request);
         }
 
         public void Rpc(INetworkSerialize notify)
         {
-            NetworkServer?.Rpc(notify);
+            Network?.Rpc(notify);
         }
 
         public bool HasFlag(WorldFlag check)

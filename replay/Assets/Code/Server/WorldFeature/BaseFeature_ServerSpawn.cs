@@ -6,11 +6,12 @@ using UnityEngine;
 
 namespace KillCam.Server
 {
-    public class BaseFeature_ServerSpawn : Feature, INetworkServer
+    public class BaseFeature_ServerSpawn : Feature, INetwork
     {
         private NetworkManager mgr;
         private readonly Dictionary<int, RoleNet> roleStates = new();
         private readonly Dictionary<int, Server_RoleLogic> roleLogics = new();
+        public IReadOnlyDictionary<int, Server_RoleLogic> RoleLogics => roleLogics;
         
         public BaseFeature_ServerSpawn(NetworkManager manager)
         {
@@ -19,6 +20,7 @@ namespace KillCam.Server
 
         public override void OnCreate()
         {
+            world.SetNetwork(this);
             RoleNet.OnServerSpawn += OnRoleNetSpawn;
             RoleNet.OnServerDespawn += OnRoleDespawn;
             world.AddFrameUpdate(OnFrameTick);
@@ -27,6 +29,7 @@ namespace KillCam.Server
 
         public override void OnDestroy()
         {
+            world.SetNetwork(null);
             RoleNet.OnServerSpawn -= OnRoleNetSpawn;
             RoleNet.OnServerDespawn -= OnRoleDespawn;
             world.RemoveFrameUpdate(OnFrameTick);
@@ -35,6 +38,11 @@ namespace KillCam.Server
         
         private void OnFrameTick(float delta)
         {
+            foreach (var VARIABLE in roleStates.Values)
+            {
+                
+            }
+            
             foreach (var role in roleLogics.Values)
             {
                 role.TickFrame(delta);
@@ -78,6 +86,8 @@ namespace KillCam.Server
             mgr.ServerManager.Spawn(networkObj, conn);
         }
 
+        public void Send(INetworkSerialize data) { }
+
         public void Rpc(INetworkSerialize data)
         {
             foreach (var roleNet in roleStates.Values)
@@ -86,7 +96,7 @@ namespace KillCam.Server
             }
         }
 
-        public uint GetTick()
+        public new uint GetTick()
         {
             return mgr.TimeManager.LocalTick;
         }

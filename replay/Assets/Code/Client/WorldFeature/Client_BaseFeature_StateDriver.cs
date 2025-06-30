@@ -3,7 +3,7 @@ using FishNet.Managing;
 
 namespace KillCam.Client
 {
-    public class Client_BaseFeature_StateDriver : Feature, INetworkClient
+    public class Client_BaseFeature_StateDriver : Feature, INetwork
     {
         private NetworkManager mgr;
         private RoleNet localRoleNet;
@@ -17,7 +17,7 @@ namespace KillCam.Client
 
         public override void OnCreate()
         {
-            world.SetNetworkClient(this);
+            world.SetNetwork(this);
             RoleNet.OnClientSpawn += OnRoleNetSpawn;
             RoleNet.OnClientDespawn += OnRoleDespawn;
             world.AddFrameUpdate(OnFrameUpdate);
@@ -26,7 +26,7 @@ namespace KillCam.Client
 
         public override void OnDestroy()
         {
-            world.SetNetworkClient(null);
+            world.SetNetwork(null);
             RoleNet.OnClientSpawn -= OnRoleNetSpawn;
             world.RemoveFrameUpdate(OnFrameUpdate);
             world.RemoveLogicUpdate(OnLogicUpdate);
@@ -82,7 +82,9 @@ namespace KillCam.Client
             }
         }
 
-        public uint GetTick()
+        public void Rpc(INetworkSerialize data) { }
+
+        public new uint GetTick()
         {
             return mgr.TimeManager.LocalTick;
         }

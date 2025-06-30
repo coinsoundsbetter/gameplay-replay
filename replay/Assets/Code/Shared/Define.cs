@@ -22,6 +22,13 @@ namespace KillCam
 
         public virtual void OnCreate() { }
         public virtual void OnDestroy() { }
+
+        public T Get<T>() where T : Feature 
+        {
+            return world.Get<T>();
+        }
+
+        public uint GetTick() => world.Network.GetTick();
     }
     
     public interface INetworkSerialize

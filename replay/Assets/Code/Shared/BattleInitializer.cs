@@ -1,5 +1,6 @@
 using FishNet.Managing;
 using KillCam.Client;
+using KillCam.Client.Replay;
 using KillCam.Server;
 using UnityEngine;
 

@@ -8,8 +8,8 @@ namespace KillCam.Server
         public Server_RoleInput Input { get; private set; }
         public Server_RoleMovement Movement { get; private set; }
         public Server_RoleView View { get; private set; }
-        
-        public RoleStateSnapshot NetStateData { get; private set; }
+        private RoleStateSnapshot netStateData;
+        public RoleStateSnapshot GetNetStateData() => netStateData;
 
         public void Init(BattleWorld world)
         {
@@ -28,11 +28,18 @@ namespace KillCam.Server
         public void TickLogic(double delta)
         {
             Input.Update(delta);
+            UpdateNetState();
         }
 
         public void TickFrame(float delta)
         {
             View.Update(delta);
+        }
+
+        private void UpdateNetState()
+        {
+            netStateData.Pos = Movement.Pos;
+            netStateData.Rot = Movement.Rotation;
         }
     }
 }

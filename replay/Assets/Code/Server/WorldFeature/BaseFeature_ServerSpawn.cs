@@ -38,11 +38,6 @@ namespace KillCam.Server
         
         private void OnFrameTick(float delta)
         {
-            foreach (var VARIABLE in roleStates.Values)
-            {
-                
-            }
-            
             foreach (var role in roleLogics.Values)
             {
                 role.TickFrame(delta);
@@ -54,6 +49,14 @@ namespace KillCam.Server
             foreach (var role in roleLogics.Values)
             {
                 role.TickLogic(delta);
+            }
+
+            foreach (var state in roleStates.Values)
+            {
+                if (roleLogics.TryGetValue(state.Id.Value, out var logic))
+                {
+                    state.Write(logic.GetNetStateData());
+                }
             }
         }
 

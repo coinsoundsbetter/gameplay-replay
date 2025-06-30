@@ -23,12 +23,12 @@ namespace KillCam
         public virtual void OnCreate() { }
         public virtual void OnDestroy() { }
 
-        public T Get<T>() where T : Feature 
+        protected T Get<T>() where T : Feature 
         {
             return world.Get<T>();
         }
 
-        public uint GetTick() => world.Network.GetTick();
+        protected uint GetTick() => world.Network.GetTick();
     }
     
     public interface INetworkSerialize
@@ -40,8 +40,7 @@ namespace KillCam
 
     public interface ISerializeAs<T>
     {
-        byte[] Serialize();
-        T Deserialize(byte[] data);
-        T Parse();
+        T Read();
+        void Write(T data);
     }
 }

@@ -76,41 +76,25 @@ namespace KillCam
             OnServerReceiveData?.Invoke(Id.Value, data);
         }
 
-        public byte[] Serialize()
-        {
-            var writer = new Writer();
-            writer.Write(Id.Value);
-            writer.Write(Pos.Value);
-            writer.Write(Rot.Value);
-            return writer.GetBuffer();
-        }
-
-        public RoleStateSnapshot Deserialize(byte[] data)
-        {
-            var reader = new Reader(data, NetworkManager);
-            var snapshot = new RoleStateSnapshot
-            {
-                Id = reader.ReadInt32(),
-                Pos = reader.ReadVector3(),
-                Rot = reader.ReadQuaternion64()
-            };
-            return snapshot;
-        }
-
-        public RoleStateSnapshot Parse()
+        public RoleStateSnapshot Read()
         {
             return new RoleStateSnapshot()
             {
-                Id = Id.Value,
                 Pos = Pos.Value,
                 Rot = Rot.Value,
             };
+        }
+
+        public void Write(RoleStateSnapshot snapshot)
+        {
+            Pos.Value = snapshot.Pos;
+            Rot.Value = snapshot.Rot;
+            Health.Value = snapshot.Health;
         }
     }
 
     public struct RoleStateSnapshot
     {
-        public int Id;
         public Vector3 Pos;
         public Quaternion Rot;
         public int Health;

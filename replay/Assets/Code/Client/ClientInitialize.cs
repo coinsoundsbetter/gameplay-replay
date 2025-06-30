@@ -14,6 +14,7 @@ namespace KillCam.Client
 
         public override void OnCreate()
         {
+            ClientWorldsChannel.Create();
             AddClientFeatures();
             _manager.ClientManager.OnClientConnectionState += OnLocalConnectState;
             _manager.ClientManager.StartConnection();
@@ -23,6 +24,7 @@ namespace KillCam.Client
         {
             _manager.ClientManager.StopConnection();
             _manager.ClientManager.OnClientConnectionState -= OnLocalConnectState;
+            ClientWorldsChannel.Destroy();
         }
 
         private void OnLocalConnectState(ClientConnectionStateArgs args)

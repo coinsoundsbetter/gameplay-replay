@@ -1,47 +1,36 @@
 using FishNet.Managing;
-using FishNet.Transporting;
 
 namespace KillCam.Client
 {
     public class ClientInitialize : InitializeFeature
     {
-        private NetworkManager _manager;
+        private readonly Client_Network network;
 
         public ClientInitialize(NetworkManager manager)
         {
-            _manager = manager;
+            network = new Client_Network(manager);
         }
 
         public override void OnCreate()
         {
             ClientWorldsChannel.Create();
+            world.Add(network);
             AddClientFeatures();
-            _manager.ClientManager.OnClientConnectionState += OnLocalConnectState;
-            _manager.ClientManager.StartConnection();
+            network.Start(() =>
+            {
+                network.SendLoginRequest("Coin");
+            });
         }
 
         public override void OnDestroy()
         {
-            _manager.ClientManager.StopConnection();
-            _manager.ClientManager.OnClientConnectionState -= OnLocalConnectState;
+            network.Stop();
             ClientWorldsChannel.Destroy();
-        }
-
-        private void OnLocalConnectState(ClientConnectionStateArgs args)
-        {
-            if (args.ConnectionState == LocalConnectionState.Started)
-            {
-                _manager.ClientManager.Broadcast<Login>(new Login()
-                {
-                    UserName = "Coin",
-                });    
-            }
         }
 
         private void AddClientFeatures()
         {
-            world.Add(new Client_BaseFeature_Spawn(_manager));
-            world.Add(new Client_BaseFeature_StateDriver(_manager));
+            world.Add(new Client_RoleManager());
         }
     }
 }

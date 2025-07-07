@@ -37,10 +37,4 @@ namespace KillCam
         void Deserialize(Reader reader);
         NetworkMsg GetMsgType();
     }
-
-    public interface ISerializeAs<T>
-    {
-        T Read();
-        void Write(T data);
-    }
 }

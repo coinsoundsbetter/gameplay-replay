@@ -1,3 +1,4 @@
+using System;
 using FishNet.Managing;
 using KillCam.Client;
 using KillCam.Client.Replay;
@@ -15,6 +16,7 @@ namespace KillCam
         private BattleWorld server;
         private BattleWorld client;
         private BattleWorld replayClient;
+        public static event Action OnGUIContent;
 
         private void Start()
         {
@@ -46,6 +48,12 @@ namespace KillCam
             manager.TimeManager.OnTick -= OnLogicUpdate;
             server?.Dispose();
             client?.Dispose();
+            OnGUIContent = null;
+        }
+
+        private void OnGUI()
+        {
+            OnGUIContent?.Invoke();
         }
 
         private void OnFrameUpdate()

@@ -1,0 +1,78 @@
+﻿using System;
+using FishNet.Connection;
+using FishNet.Managing;
+using FishNet.Object;
+using FishNet.Transporting;
+using UnityEngine;
+using Object = UnityEngine.Object;
+
+namespace KillCam.Server
+{
+    public class Server_Network : Feature, INetwork
+    {
+        private NetworkManager manager;
+        private Action startAction;
+        private int clientUniqueId;
+        
+        public Server_Network(NetworkManager networkManager)
+        {
+            manager = networkManager;
+        }
+
+        public void Start(Action started)
+        {
+            startAction = started;
+            world.SetNetwork(this);
+            manager.ServerManager.OnServerConnectionState += OnConnectState;
+            manager.ServerManager.RegisterBroadcast<Login>(OnLogin);
+            manager.ServerManager.StartConnection();
+        }
+
+        public void Stop()
+        {
+            manager.ServerManager.StopConnection(false);
+            manager.ServerManager.OnServerConnectionState -= OnConnectState;
+            manager.ServerManager.UnregisterBroadcast<Login>(OnLogin);
+            world.RemoveNetwork(this);
+        }
+
+        private void OnConnectState(ServerConnectionStateArgs args)
+        {
+            if (args.ConnectionState == LocalConnectionState.Started)
+            {
+                startAction?.Invoke();
+            }    
+        }
+        
+        private void OnLogin(NetworkConnection conn, Login loginInfo, Channel channel)
+        {
+            SpawnRoleNet(conn, loginInfo);
+        }
+
+        private void SpawnRoleNet(NetworkConnection conn, Login loginInfo)
+        {
+            var asset = Resources.Load<GameObject>("RoleNet");
+            var instance = Object.Instantiate(asset);
+            var role = instance.GetComponent<RoleNet>();
+            role.Id.Value = ++clientUniqueId;
+            var networkObj = instance.GetComponent<NetworkObject>();
+            manager.ServerManager.Spawn(networkObj, conn);
+        }
+
+        public void Send(INetworkSerialize data) { }
+
+        public void Rpc(INetworkSerialize data)
+        {
+            var roleMgr = world.Get<Server_RoleManager>();
+            foreach (var net in roleMgr.RoleNets.Values)
+            {
+                net.Rpc(data);
+            }
+        }
+
+        public new uint GetTick()
+        {
+            return manager.TimeManager.LocalTick;
+        }
+    }
+}

@@ -5,6 +5,7 @@ namespace KillCam.Client
     public class ClientWorldsChannel
     {
         private static ClientWorldsChannel Instance;
+        public event Action<string> startReplayByFile;
 
         public static void Create()
         {
@@ -14,16 +15,6 @@ namespace KillCam.Client
         public static void Destroy()
         {
             Instance = null;
-        }
-
-        public static void StartReplay(Action isFinish)
-        {
-            
-        }
-
-        public static void SetReplayData(byte[] data)
-        {
-            
         }
     }
 }

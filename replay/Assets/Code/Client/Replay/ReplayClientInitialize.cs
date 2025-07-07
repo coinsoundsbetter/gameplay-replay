@@ -10,7 +10,6 @@ namespace KillCam.Client.Replay
 
         private void AddReplayFeatures(BattleWorld w)
         {
-            w.Add(new Client_ReplayFeature_Spawn());
             w.Add(new Client_ReplayFeature_State());
         }
     }

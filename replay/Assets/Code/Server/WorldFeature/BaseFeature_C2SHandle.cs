@@ -30,7 +30,7 @@ namespace KillCam.Server
 
         private void OnC2S_SendInput(int senderId, C2S_SendInput message)
         {
-            var feature = world.Get<BaseFeature_ServerSpawn>();
+            var feature = world.Get<Server_RoleManager>();
             if (feature.TryGetRole(senderId, out var role))
             {
                 role.Input.AddInput(message);

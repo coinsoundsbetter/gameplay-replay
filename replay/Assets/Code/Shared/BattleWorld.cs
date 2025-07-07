@@ -44,6 +44,14 @@ namespace KillCam
             Network = networkClient;
         }
 
+        public void RemoveNetwork(INetwork networkClient)
+        {
+            if (networkClient == Network)
+            {
+                Network = null;
+            }
+        }
+
         public void FrameUpdate(float delta)
         {
             FrameTickDelta = delta;

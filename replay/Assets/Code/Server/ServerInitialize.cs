@@ -1,43 +1,36 @@
 using FishNet.Managing;
-using FishNet.Transporting;
 
 namespace KillCam.Server
 {
     public class ServerInitialize : InitializeFeature
     {
-        private NetworkManager _manager;
+        private readonly Server_Network network;
         
-        public ServerInitialize(NetworkManager manager)
+        public ServerInitialize(NetworkManager mgr)
         {
-            _manager = manager;
+            network = new Server_Network(mgr);
         }
 
         public override void OnCreate()
         {
-            _manager.ServerManager.OnServerConnectionState += OnServerState;
-            _manager.ServerManager.StartConnection();
+            world.Add(network);
+            network.Start(() =>
+            {
+                AddFeatures();
+            });
         }
 
         public override void OnDestroy()
         {
-            _manager.ServerManager.StopConnection(true);
-            _manager.ServerManager.OnServerConnectionState -= OnServerState;
-        }
-
-        private void OnServerState(ServerConnectionStateArgs args)
-        {
-            if (args.ConnectionState == LocalConnectionState.Started)
-            {
-                AddFeatures(world);
-            }
+            network.Stop();
         }
         
-        private void AddFeatures(BattleWorld bw)
+        private void AddFeatures()
         {
-            bw.Add(new BaseFeature_ServerLogin(_manager));
-            bw.Add(new BaseFeature_ServerSpawn(_manager));
-            bw.Add(new BaseFeature_C2SHandle());
-            bw.Add(new BaseFeature_ServerSnapshot());
+            world.Add(new BaseFeature_ServerLogin(network));
+            world.Add(new Server_RoleManager());
+            world.Add(new BaseFeature_C2SHandle());
+            world.Add(new BaseFeature_ServerSnapshot());
         }
     }
 }

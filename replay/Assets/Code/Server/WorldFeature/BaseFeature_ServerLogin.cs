@@ -6,27 +6,27 @@ namespace KillCam.Server
 {
     public class BaseFeature_ServerLogin : Feature
     {
-        private readonly NetworkManager mgr;
+        private Server_Network network;
         private int playerIdAllocator;
 
-        public BaseFeature_ServerLogin(NetworkManager manager)
+        public BaseFeature_ServerLogin(Server_Network net)
         {
-            mgr = manager;
+            network = net;
         }
         
         public override void OnCreate()
         {
-            mgr.ServerManager.RegisterBroadcast<Login>(OnLogin);
+           // mgr.ServerManager.RegisterBroadcast<Login>(OnLogin);
         }
 
         public override void OnDestroy()
         {
-            mgr.ServerManager.UnregisterBroadcast<Login>(OnLogin);
+           // mgr.ServerManager.UnregisterBroadcast<Login>(OnLogin);
         }
 
         private void OnLogin(NetworkConnection conn, Login info, Channel channel)
         {
-            world.Get<BaseFeature_ServerSpawn>().SpawnRole(conn, ++playerIdAllocator);
+           // world.Get<BaseFeature_ServerSpawn>().SpawnRole(conn, ++playerIdAllocator);
         }
     }
 }

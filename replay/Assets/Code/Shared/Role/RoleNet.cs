@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace KillCam
 {
-    public class RoleNet : NetworkParticipant, ISerializeAs<RoleStateSnapshot>
+    public class RoleNet : NetworkParticipant, IClientRoleNet, IServerRoleNet
     {
         /// <summary>
         /// 角色同步状态
@@ -19,10 +19,10 @@ namespace KillCam
         /// <summary>
         /// 全局事件
         /// </summary>
-        public static event Action<RoleNet> OnServerSpawn;
-        public static event Action<RoleNet> OnServerDespawn;
-        public static event Action<RoleNet> OnClientSpawn;
-        public static event Action<RoleNet> OnClientDespawn;
+        public static event Action<IServerRoleNet> OnServerSpawn;
+        public static event Action<IServerRoleNet> OnServerDespawn;
+        public static event Action<IClientRoleNet> OnClientSpawn;
+        public static event Action<IClientRoleNet> OnClientDespawn;
         public static event Action<byte[]> OnClientReceiveData; 
         public static event Action<int, byte[]> OnServerReceiveData;
 
@@ -55,6 +55,13 @@ namespace KillCam
             RpcToServer(writer.GetBuffer());
         }
 
+        public void SetServerSyncData(RoleStateSnapshot syncData)
+        {
+            Pos.Value = syncData.Pos;
+            Rot.Value = syncData.Rot;
+            Health.Value = syncData.Health;
+        }
+
         // 服务器下发消息
         public void Rpc(INetworkSerialize serialize)
         {
@@ -85,18 +92,61 @@ namespace KillCam
             };
         }
 
-        public void Write(RoleStateSnapshot snapshot)
+        public void Write(RoleStateSnapshot data)
         {
-            Pos.Value = snapshot.Pos;
-            Rot.Value = snapshot.Rot;
-            Health.Value = snapshot.Health;
+            
+        }
+
+        public int GetId()
+        {
+            return Id.Value;
+        }
+
+        public bool IsClientOwned()
+        {
+            return IsOwner;
+        }
+
+        public bool IsControlTarget()
+        {
+            return IsController;
+        }
+
+        public RoleStateSnapshot GetData()
+        {
+            return Read();
         }
     }
 
-    public struct RoleStateSnapshot
+    public struct RoleStateSnapshot : IEquatable<RoleStateSnapshot>
     {
         public Vector3 Pos;
         public Quaternion Rot;
         public int Health;
+
+        public bool Equals(RoleStateSnapshot other)
+        {
+            return Pos.Equals(other.Pos) && Rot.Equals(other.Rot) && Health == other.Health;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is RoleStateSnapshot other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Pos, Rot, Health);
+        }
+
+        public static bool operator ==(RoleStateSnapshot left, RoleStateSnapshot right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(RoleStateSnapshot left, RoleStateSnapshot right)
+        {
+            return !left.Equals(right);
+        }
     }
 }

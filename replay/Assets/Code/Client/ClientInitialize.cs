@@ -5,6 +5,7 @@ namespace KillCam.Client
     public class ClientInitialize : InitializeFeature
     {
         private readonly Client_Network network;
+        private Client_SpawnProvider spawnProvider;
 
         public ClientInitialize(NetworkManager manager)
         {
@@ -14,7 +15,6 @@ namespace KillCam.Client
         public override void OnCreate()
         {
             ClientWorldsChannel.Create();
-            world.Add(network);
             AddClientFeatures();
             network.Start(() =>
             {
@@ -30,7 +30,9 @@ namespace KillCam.Client
 
         private void AddClientFeatures()
         {
-            world.Add(new Client_RoleManager());
+            world.Add(network);
+            world.Add(spawnProvider = new Client_SpawnProvider());
+            world.Add(new Client_RoleManager(spawnProvider));
         }
     }
 }

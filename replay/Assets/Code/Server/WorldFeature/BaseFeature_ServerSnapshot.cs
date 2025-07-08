@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using FishNet.Serializing;
+using KillCam.Client;
 using UnityEngine;
 
 namespace KillCam.Server
@@ -17,6 +18,11 @@ namespace KillCam.Server
                 if (GUILayout.Button("Save World"))
                 {
                     SaveWorld();
+                }
+
+                if (GUILayout.Button("Replay World"))
+                {
+                    ReplayWorld();
                 }
             };
         }
@@ -114,6 +120,19 @@ namespace KillCam.Server
             var bytes = ms.ToArray();
             string filePath = Path.Combine(Application.dataPath, "world_streams.txt");
             File.WriteAllBytes(filePath, bytes);
+        }
+
+        private void ReplayWorld()
+        {
+            var filePath = Path.Combine(Application.dataPath, "world_streams.txt");
+            if (!File.Exists(filePath))
+            {
+                Debug.LogError("回放文件不存在:" + filePath);
+                return;
+            }
+
+            var fileData = File.ReadAllBytes(filePath);
+            ClientWorldsChannel.StartReplay(fileData);
         }
     }
 }

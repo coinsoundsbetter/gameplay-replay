@@ -286,7 +286,7 @@ MonoBehaviour:
   manager: {fileID: 994486416}
   isStartServer: 1
   isStartClient: 1
-  isOpenReplayFunction: 0
+  isOpenReplayFunction: 1
 --- !u!1 &994486414
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,8 +399,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 070f62a809c94d8ab4d309af808cf28c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Initialized>k__BackingField: 0
-  <NetworkManager>k__BackingField: {fileID: 0}
 --- !u!1 &1192221956
 GameObject:
   m_ObjectHideFlags: 0

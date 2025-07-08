@@ -10,6 +10,8 @@ namespace KillCam.Client
         private readonly NetworkManager manager;
         private IClientRoleNet sender;
         private Action startAction;
+        public event Action<IClientRoleNet> AfterRoleSpawn;
+        public event Action<IClientRoleNet> AfterRoleDespawn;
 
         public Client_Network(NetworkManager mgr)
         {
@@ -41,6 +43,8 @@ namespace KillCam.Client
             {
                 sender = net;
             }
+            
+            AfterRoleSpawn?.Invoke(net);
         }
         
         private void OnClientDespawn(IClientRoleNet net)
@@ -49,6 +53,8 @@ namespace KillCam.Client
             {
                 sender = null;
             }
+            
+            AfterRoleDespawn?.Invoke(net);
         }
         
         private void OnLocalConnectState(ClientConnectionStateArgs args)

@@ -35,7 +35,7 @@ namespace KillCam
             if (isOpenReplayFunction)
             {
                 replayClient = new BattleWorld(WorldFlag.Client | WorldFlag.Replay);
-                replayClient.Add(new ReplayClientInitialize());
+                replayClient.Add(new ReplayIInitialize());
             }
             
             manager.TimeManager.OnUpdate += OnFrameUpdate;

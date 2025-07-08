@@ -1,11 +1,11 @@
-using System;
+using KillCam.Client.Replay;
 
 namespace KillCam.Client
 {
     public class ClientWorldsChannel
     {
         private static ClientWorldsChannel Instance;
-        public event Action<string> startReplayByFile;
+        private IReplayPlayer replayPlayer;
 
         public static void Create()
         {
@@ -15,6 +15,17 @@ namespace KillCam.Client
         public static void Destroy()
         {
             Instance = null;
+        }
+
+        public static void SetReplayPlayer(IReplayPlayer player)
+        {
+            Instance.replayPlayer = player;
+        }
+
+        public static void StartReplay(byte[] data)
+        {
+            Instance.replayPlayer.SetData(data);
+            Instance.replayPlayer.Play();
         }
     }
 }

@@ -1,7 +1,7 @@
 
 namespace KillCam.Client.Replay
 {
-    public class Client_ReplayFeature_State : Feature
+    public class Replay_State : Feature
     {
         
     }

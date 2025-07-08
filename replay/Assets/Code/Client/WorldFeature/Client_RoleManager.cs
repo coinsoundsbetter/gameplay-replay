@@ -4,21 +4,27 @@ namespace KillCam.Client
 {
     public class Client_RoleManager : Feature
     {
+        private readonly IRoleSpawnProvider provider;
         private readonly Dictionary<int, IRoleNet> roleNets = new();
         private readonly Dictionary<int, Client_RoleLogic> roleLogics = new();
 
+        public Client_RoleManager(IRoleSpawnProvider provider)
+        {
+            this.provider = provider;
+        }
+
         public override void OnCreate()
         {
-            RoleNet.OnClientSpawn += OnRoleSpawn;
-            RoleNet.OnClientDespawn += OnRoleDespawn;
+            provider.OnRoleSpawn += OnRoleSpawn;
+            provider.OnRoleDespawn += OnRoleDespawn;
             world.AddLogicUpdate(OnLogicTick);
             world.AddFrameUpdate(OnFrameRefresh);
         }
 
         public override void OnDestroy()
         {
-            RoleNet.OnClientSpawn -= OnRoleSpawn;
-            RoleNet.OnClientDespawn -= OnRoleDespawn;
+            provider.OnRoleSpawn -= OnRoleSpawn;
+            provider.OnRoleDespawn -= OnRoleDespawn;
         }
         
         private void OnLogicTick(double delta)

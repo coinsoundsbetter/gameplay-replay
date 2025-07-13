@@ -48,6 +48,7 @@ namespace KillCam
             manager.TimeManager.OnTick -= OnLogicUpdate;
             server?.Dispose();
             client?.Dispose();
+            replayClient?.Dispose();
             OnGUIContent = null;
         }
 
@@ -61,6 +62,7 @@ namespace KillCam
             var delta = Time.deltaTime;
             server?.FrameUpdate(delta);
             client?.FrameUpdate(delta);
+            replayClient?.FrameUpdate(delta);
         }
         
         private void OnLogicUpdate()
@@ -68,6 +70,7 @@ namespace KillCam
             var delta = manager.TimeManager.TickDelta;
             server?.LogicUpdate(delta);
             client?.LogicUpdate(delta);
+            replayClient?.LogicUpdate(delta);
         }
     }
 }

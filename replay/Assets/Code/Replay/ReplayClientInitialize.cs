@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using FishNet.Serializing;
+using UnityEngine;
 
 namespace KillCam.Client.Replay
 {
@@ -39,7 +40,7 @@ namespace KillCam.Client.Replay
                 result.Add(tick, snapshotBytes);
             }
             
-            var replayData = new Dictionary<uint, Dictionary<int, RoleStateSnapshot>>();
+            var playStates = new Dictionary<uint, Dictionary<int, RoleStateSnapshot>>();
             foreach (var kvp in result)
             {
                 uint tick = kvp.Key;
@@ -48,8 +49,11 @@ namespace KillCam.Client.Replay
                 var reader = new Reader(data, null);
                 var worldState = new S2C_Replay_WorldStateSnapshot();
                 worldState.Deserialize(reader);
-                replayData[tick] = worldState.RoleStateSnapshots;
+                playStates[tick] = worldState.RoleStateSnapshots;
             }
+            
+            AddFeatures();
+            streamParse.StartHandleStream(playStates);
         }
 
         public void Pause()

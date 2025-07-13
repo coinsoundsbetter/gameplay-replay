@@ -9,6 +9,8 @@ namespace KillCam.Client
         public Client_RoleMovement Movement { get; private set; }
         public Client_RoleView View { get; private set; }
         
+        public bool IsControlTarget { get; set; }
+        
         public void Init(BattleWorld world)
         {
             myWorld = world;
@@ -25,7 +27,10 @@ namespace KillCam.Client
 
         public void TickLogic(double delta)
         {
-            Input.Update();
+            if (IsControlTarget)
+            {
+                Input.Update();
+            }
             Movement.Update(delta);
         }
 

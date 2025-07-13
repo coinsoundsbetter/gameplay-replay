@@ -49,7 +49,10 @@ namespace KillCam.Client
             var data = net.GetData();
             roleNets.Add(id, net);
 
-            var newLogic = new Client_RoleLogic();
+            var newLogic = new Client_RoleLogic
+            {
+                IsControlTarget = net.IsControlTarget()
+            };
             newLogic.Init(world);
             roleLogics.Add(id, newLogic);
         }

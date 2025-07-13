@@ -19,13 +19,19 @@ namespace KillCam.Client
 
         public static void SetReplayPlayer(IReplayPlayer player)
         {
-            Instance.replayPlayer = player;
+            if (Instance != null)
+            {
+                Instance.replayPlayer = player;
+            }
         }
 
         public static void StartReplay(byte[] data)
         {
-            Instance.replayPlayer.SetData(data);
-            Instance.replayPlayer.Play();
+            if (Instance != null)
+            {
+                Instance.replayPlayer.SetData(data);
+                Instance.replayPlayer.Play();
+            }
         }
     }
 }

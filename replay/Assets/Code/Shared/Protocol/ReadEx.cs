@@ -10,7 +10,8 @@ namespace KillCam
             {
                 Pos = reader.ReadVector3(),
                 Rot = reader.ReadQuaternion64(),
-                Health = reader.ReadInt32()
+                Health = reader.ReadInt32(),
+                MoveInput = reader.ReadVector2Int(),
             };
             return data;
         }

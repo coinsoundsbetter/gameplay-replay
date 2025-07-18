@@ -16,6 +16,7 @@ namespace KillCam.Client
         
         public void Update(double delta)
         {
+            Debug.Log("Input " + input.MoveInput);
             SimulateMove(ref Pos, Rotation, input.MoveInput, (float)delta);
         }
     }

@@ -8,6 +8,8 @@ namespace KillCam {
     {
         public uint Tick;
         public Dictionary<int, RoleStateSnapshot> RoleStateSnapshots;
+
+        public bool IsNull() => Tick == 0 && RoleStateSnapshots == null;
         
         public byte[] Serialize(Writer writer)
         {

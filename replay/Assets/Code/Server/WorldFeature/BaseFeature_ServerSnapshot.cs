@@ -47,7 +47,8 @@ namespace KillCam.Server
             var dict = Get<Server_RoleManager>().RoleLogics;
             foreach (var kvp in dict)
             {
-                stateSnapshots.Add(kvp.Key, kvp.Value.GetNetStateData());
+                var roleSnapState = kvp.Value.GetNetStateData();
+                stateSnapshots.Add(kvp.Key, roleSnapState);
             }
         }
 
@@ -65,6 +66,7 @@ namespace KillCam.Server
                 };
                 
                 // 遍历当前tick所有角色的快照
+                bool isDirty = false;
                 foreach (var sKvp in kvp.Value)
                 {
                     var roleId = sKvp.Key;
@@ -88,13 +90,17 @@ namespace KillCam.Server
 
                     if (isAppend)
                     {
+                        isDirty = true;
                         worldState.RoleStateSnapshots.Add(roleId, roleState);
-                        Debug.Log($"保存快照:{roleId}, {roleState.Pos}");
+                        Debug.Log($"保存快照:{roleId}, {roleState.MoveInput}");
                     }
                 }
 
-                var bytes = worldState.Serialize(new Writer());
-                worldStreams.Add(kvp.Key, bytes);
+                if (isDirty)
+                {
+                    var bytes = worldState.Serialize(new Writer());
+                    worldStreams.Add(kvp.Key, bytes);
+                }
             }
             
             SaveWorldFile(worldStreams);

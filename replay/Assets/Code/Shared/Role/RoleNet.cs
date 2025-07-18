@@ -123,10 +123,11 @@ namespace KillCam
         public Vector3 Pos;
         public Quaternion Rot;
         public int Health;
+        public Vector2Int MoveInput;
 
         public bool Equals(RoleStateSnapshot other)
         {
-            return Pos.Equals(other.Pos) && Rot.Equals(other.Rot) && Health == other.Health;
+            return Pos.Equals(other.Pos) && Rot.Equals(other.Rot) && Health == other.Health && MoveInput.Equals(other.MoveInput);
         }
 
         public override bool Equals(object obj)
@@ -136,7 +137,7 @@ namespace KillCam
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Pos, Rot, Health);
+            return HashCode.Combine(Pos, Rot, Health, MoveInput);
         }
 
         public static bool operator ==(RoleStateSnapshot left, RoleStateSnapshot right)

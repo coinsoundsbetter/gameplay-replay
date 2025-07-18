@@ -11,7 +11,7 @@ namespace KillCam.Client
             world = myWorld;
         }
 
-        public Vector2 MoveInput { get; private set; }
+        public Vector2Int MoveInput { get; private set; }
         
         public void Update()
         {
@@ -21,12 +21,17 @@ namespace KillCam.Client
             else if (h < 0) h = -1;
             if (v > 0) v = 1; 
             else if (v < 0) v = -1;
-            MoveInput = new Vector2(h, v);
+            MoveInput = new Vector2Int((int)h, (int)v);
             world.Send(new C2S_SendInput()
             {
                 LocalTick = world.Network.GetTick(),
                 Move = MoveInput,
             });
+        }
+
+        public void SetInputData(int h, int v)
+        {
+            MoveInput = new Vector2Int(h, v);
         }
     }
 }

@@ -10,10 +10,10 @@ namespace KillCam
     [System.Flags]
     public enum WorldFlag
     {
-        Default,
-        Client,
-        Server,
-        Replay,
+        Default = 0,
+        Client = 1 << 0,
+        Server = 1 << 1,
+        Replay = 1 << 2,
     }
 
     public interface INetwork
@@ -125,6 +125,17 @@ namespace KillCam
                 }
                 feature.SetWorld(this);
                 feature.OnCreate();
+            }
+        }
+
+        public void Add<T>(Feature feature)
+        {
+            var type = typeof(T);
+            if (!_features.ContainsKey(type))
+            {
+                feature.SetWorld(this);
+                feature.OnCreate();
+                _features.Add(type, feature);
             }
         }
 

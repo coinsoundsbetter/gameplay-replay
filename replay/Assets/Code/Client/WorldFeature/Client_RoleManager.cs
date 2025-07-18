@@ -7,6 +7,8 @@ namespace KillCam.Client
         private readonly IRoleSpawnProvider provider;
         private readonly Dictionary<int, IRoleNet> roleNets = new();
         private readonly Dictionary<int, Client_RoleLogic> roleLogics = new();
+        public IReadOnlyDictionary<int, Client_RoleLogic> RoleLogics => roleLogics;
+        public Client_RoleLogic LocalLogic { get; private set; }
 
         public Client_RoleManager(IRoleSpawnProvider provider)
         {
@@ -48,13 +50,16 @@ namespace KillCam.Client
             var id = net.GetId();
             var data = net.GetData();
             roleNets.Add(id, net);
-
             var newLogic = new Client_RoleLogic
             {
                 IsControlTarget = net.IsControlTarget()
             };
             newLogic.Init(world);
             roleLogics.Add(id, newLogic);
+            if (net.IsClientOwned())
+            {
+                LocalLogic = newLogic;
+            }
         }
         
         private void OnRoleDespawn(IRoleNet net)

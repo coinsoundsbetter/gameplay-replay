@@ -7,7 +7,7 @@ namespace KillCam.Server
         public Vector3 Pos;
         public Quaternion Rotation;
         
-        public void ApplyInput(Vector2 input, float delta)
+        public void ApplyInput(Vector2Int input, float delta)
         {
             SimulateMove(ref Pos, Rotation, input, delta);    
         }

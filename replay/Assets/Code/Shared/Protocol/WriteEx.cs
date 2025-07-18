@@ -9,6 +9,7 @@ namespace KillCam
             writer.WriteVector3(data.Pos);
             writer.WriteQuaternion64(data.Rot);
             writer.Write(data.Health);
+            writer.Write(data.MoveInput);
         }
     }
 }

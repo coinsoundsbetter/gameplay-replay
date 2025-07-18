@@ -1,25 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace KillCam.Client.Replay
 {
-    public class Replay_StreamParse : Feature, IRoleSpawnProvider, INetwork
+    public class Replay_StreamParse : Feature, INetwork
     {
-        public event Action<IClientRoleNet> OnRoleSpawn;
-        public event Action<IClientRoleNet> OnRoleDespawn;
-        
-        private Queue<(uint, Dictionary<int, RoleStateSnapshot>)> playQueue;
         private bool isNeedHandle;
-        private (uint, Dictionary<int, RoleStateSnapshot>) waitHandle;
+        private SortedList<uint, S2C_Replay_WorldStateSnapshot> playStreams = new();
         private uint playTick;
 
-        public void StartHandleStream(Dictionary<uint, Dictionary<int, RoleStateSnapshot>> data)
+        public void StartHandleStream(SortedList<uint, S2C_Replay_WorldStateSnapshot> streams)
         {
-            playQueue = new Queue<(uint, Dictionary<int, RoleStateSnapshot>)>();
-            foreach (var kvp in data)
-            {
-                playQueue.Enqueue((kvp.Key, kvp.Value));
-            }
+            playStreams = streams;
         }
 
         public override void OnCreate()
@@ -38,39 +29,43 @@ namespace KillCam.Client.Replay
         {
             playTick++;
 
-            if (playQueue.Count > 0 && waitHandle.Item2 == null || waitHandle.Item2.Count == 0)
+            bool isPlayNextState = false;
+            S2C_Replay_WorldStateSnapshot nextPlayState = default;
+            if (playStreams.Count > 0)
             {
-                waitHandle = playQueue.Dequeue();
+                nextPlayState = playStreams.Values[0];
             }
-            
-            // 检查是否达到要处理的tick
-            if (waitHandle.Item2 != null && waitHandle.Item2.Count > 0 && playTick == waitHandle.Item1)
+
+            if (!nextPlayState.IsNull() && playTick == nextPlayState.Tick)
             {
-                OnHandleState(waitHandle.Item2);
-                waitHandle.Item2 = null;
+                OnPlayState(nextPlayState);
+                isPlayNextState = true;
+            }
+
+            if (isPlayNextState)
+            {
+                playStreams.Remove(playTick);
             }
         }
 
-        private HashSet<int> spawnRoleIds = new HashSet<int>();
-        private void OnHandleState(Dictionary<int, RoleStateSnapshot> data)
+        private void OnPlayState(S2C_Replay_WorldStateSnapshot state)
         {
-            foreach (var kvp in data)
-            {
-                if (!spawnRoleIds.Contains(kvp.Key))
-                {
-                    spawnRoleIds.Add(kvp.Key);
-                    OnRoleSpawn?.Invoke(new ReplayRoleNet()
-                    {
-                        Id = kvp.Key,
-                        Data = kvp.Value,
-                    });
-                }
-            }
+            // 确保角色生成
+            var spawnMgr = world.Get<Replay_SpawnProvider>();
+            spawnMgr.EnsureSpawn(state);
+            
+            // 重放输入数据
+            var inputMgr = world.Get<Replay_InputProvider>();
+            inputMgr.SetInput(state);
         }
 
-        public void Send(INetworkSerialize data) { }
+        public void Send(INetworkSerialize data)
+        {
+        }
 
-        public void Rpc(INetworkSerialize data) { }
+        public void Rpc(INetworkSerialize data)
+        {
+        }
 
         public new uint GetTick()
         {

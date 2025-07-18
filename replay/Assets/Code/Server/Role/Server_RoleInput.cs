@@ -6,7 +6,9 @@ namespace KillCam.Server
     public class Server_RoleInput
     {
         private readonly SortedList<uint, InputData> inputBuffer = new();
+        private BattleWorld battleWorld;
         private Server_RoleMovement movement;
+        public C2S_SendInput UseInputData;
 
         private struct InputData
         {
@@ -14,9 +16,10 @@ namespace KillCam.Server
             public C2S_SendInput data;
         }
 
-        public Server_RoleInput(Server_RoleMovement movement)
+        public Server_RoleInput(Server_RoleMovement movement, BattleWorld world)
         {
             this.movement = movement;
+            battleWorld = world;
         }
         
         public void Update(double delta)
@@ -26,7 +29,13 @@ namespace KillCam.Server
                 var firstKey = inputBuffer.Keys[0];
                 var useInput = inputBuffer[firstKey];
                 inputBuffer.Remove(firstKey);
+                Debug.Log(" " + useInput.data.Move);
                 movement.ApplyInput(useInput.data.Move, (float)delta);
+                UseInputData = useInput.data;
+            }
+            else
+            {
+                UseInputData = new C2S_SendInput();
             }
         }
 

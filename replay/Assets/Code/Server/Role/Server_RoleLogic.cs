@@ -16,7 +16,7 @@ namespace KillCam.Server
             myWorld = world;
             Movement = new Server_RoleMovement();
             View = new Server_RoleView(Movement);
-            Input = new Server_RoleInput(Movement);
+            Input = new Server_RoleInput(Movement, myWorld);
             View.Load(Vector3.zero, Quaternion.identity);
         }
 
@@ -40,6 +40,7 @@ namespace KillCam.Server
         {
             netStateData.Pos = Movement.Pos;
             netStateData.Rot = Movement.Rotation;
+            netStateData.MoveInput = Input.UseInputData.Move;
         }
     }
 }

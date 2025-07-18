@@ -16,19 +16,19 @@ namespace KillCam
     public struct C2S_SendInput : INetworkSerialize
     {
         public uint LocalTick;
-        public Vector2 Move;
+        public Vector2Int Move;
     
         public byte[] Serialize(Writer writer)
         {
             writer.WriteUInt32(LocalTick);
-            writer.WriteVector2(Move);
+            writer.WriteVector2Int(Move);
             return writer.GetBuffer();
         }
 
         public void Deserialize(Reader reader)
         {
             LocalTick = reader.ReadUInt32();
-            Move = reader.ReadVector2();
+            Move = reader.ReadVector2Int();
         }
 
         public NetworkMsg GetMsgType() => NetworkMsg.C2S_SendInput;

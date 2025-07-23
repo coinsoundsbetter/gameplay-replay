@@ -1,40 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using FishNet.Serializing;
+using Unity.Collections;
 
 namespace KillCam {
     
     public struct S2C_Replay_WorldStateSnapshot : INetworkSerialize
     {
         public uint Tick;
-        public Dictionary<int, RoleStateSnapshot> RoleStateSnapshots;
+        public AllCharacterSnapshot CharacterSnapshot; 
 
-        public bool IsNull() => Tick == 0 && RoleStateSnapshots == null;
+        public bool IsNull() => !CharacterSnapshot.StateData.IsCreated &&
+                                !CharacterSnapshot.InputData.IsCreated;
         
         public byte[] Serialize(Writer writer)
         {
-            writer.Write(Tick);
-            writer.Write(RoleStateSnapshots.Count);
-            foreach (var kvp in RoleStateSnapshots)
-            {
-                writer.WriteInt32(kvp.Key);
-                writer.WriteRoleStateSnapshot(kvp.Value);
-            }
-
+            writer.WriteUInt32(Tick);
+            writer.WriteAllCharacterSnapshot(CharacterSnapshot);
             return writer.GetBuffer();
         }
 
         public void Deserialize(Reader reader)
         {
-            RoleStateSnapshots = new Dictionary<int, RoleStateSnapshot>();
             Tick = reader.ReadUInt32();
-            var count = reader.ReadInt32();
-            for (int i = 0; i < count; i++)
-            {
-                var id = reader.ReadInt32();
-                var roleStateSnapshot = reader.ReadRoleSnapshot();
-                RoleStateSnapshots.Add(id, roleStateSnapshot);
-            }
+            CharacterSnapshot = reader.ReadAllCharacterSnapshot();
         }
 
         public NetworkMsg GetMsgType()

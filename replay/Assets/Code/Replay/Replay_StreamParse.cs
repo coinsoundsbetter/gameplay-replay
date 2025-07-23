@@ -5,10 +5,10 @@ namespace KillCam.Client.Replay
     public class Replay_StreamParse : Feature, INetwork
     {
         private bool isNeedHandle;
-        private SortedList<uint, S2C_Replay_WorldStateSnapshot> playStreams = new();
+        private List<S2C_Replay_WorldStateSnapshot> playStreams = new();
         private uint playTick;
 
-        public void StartHandleStream(SortedList<uint, S2C_Replay_WorldStateSnapshot> streams)
+        public void StartHandleStream(List<S2C_Replay_WorldStateSnapshot> streams)
         {
             playStreams = streams;
         }
@@ -33,7 +33,7 @@ namespace KillCam.Client.Replay
             S2C_Replay_WorldStateSnapshot nextPlayState = default;
             if (playStreams.Count > 0)
             {
-                nextPlayState = playStreams.Values[0];
+                nextPlayState = playStreams[0];
             }
 
             if (!nextPlayState.IsNull() && playTick == nextPlayState.Tick)
@@ -44,7 +44,7 @@ namespace KillCam.Client.Replay
 
             if (isPlayNextState)
             {
-                playStreams.Remove(playTick);
+                playStreams.RemoveAt(0);
             }
         }
 

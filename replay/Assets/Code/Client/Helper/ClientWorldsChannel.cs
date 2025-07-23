@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using KillCam.Client.Replay;
 
 namespace KillCam.Client

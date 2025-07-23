@@ -28,32 +28,23 @@ namespace KillCam.Client.Replay
 
         public void Play()
         {
-            var result = new SortedList<uint, byte[]>();
-            using var ms = new MemoryStream(playData);
-            using var br = new BinaryReader(ms);
-            int count = br.ReadInt32();
-            for (int i = 0; i < count; i++)
+            var worldStreams = new List<S2C_Replay_WorldStateSnapshot>();
+            using (var ms = new MemoryStream(playData))
+            using (var br = new BinaryReader(ms))
             {
-                uint tick = br.ReadUInt32();
-                int length = br.ReadInt32();
-                byte[] snapshotBytes = br.ReadBytes(length);
-                result.Add(tick, snapshotBytes);
-            }
-            
-            var playStates = new SortedList<uint, S2C_Replay_WorldStateSnapshot>();
-            foreach (var kvp in result)
-            {
-                uint tick = kvp.Key;
-                byte[] data = kvp.Value;
-
-                var reader = new Reader(data, null);
-                var worldState = new S2C_Replay_WorldStateSnapshot();
-                worldState.Deserialize(reader);
-                playStates[tick] = worldState;
-            }
+                int count = br.ReadInt32();
+                for (int i = 0; i < count; i++)
+                {
+                    int len = br.ReadInt32();
+                    byte[] data = br.ReadBytes(len);
+                    var snapshot = new S2C_Replay_WorldStateSnapshot();
+                    snapshot.Deserialize(new Reader(data, null));
+                    worldStreams.Add(snapshot);
+                }
+            }    
             
             AddFeatures();
-            streamParse.StartHandleStream(playStates);
+            streamParse.StartHandleStream(worldStreams);
         }
 
         public void Pause()

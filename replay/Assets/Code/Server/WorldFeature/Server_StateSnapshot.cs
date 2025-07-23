@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using FishNet.Serializing;
+using KillCam.Client;
 using Unity.Collections;
 using UnityEngine;
 
@@ -65,102 +68,68 @@ namespace KillCam.Server
             var characterMgr = Get<Server_CharacterManager>();
             foreach (var (id, character) in characterMgr.RoleActors)
             {
-                var stateData = character.GetDataReadOnly<CharacterInputData>();
-                //snapshot.StateData.Add(id, stateData);
+                var inputData = character.GetDataReadOnly<CharacterInputData>();
+                snapshot.InputData.Add(id, inputData);
             }
-        }
-
-        private void TakeRoleSnapshot()
-        {
-            
-
-            // 创建该逻辑帧的角色状态快照列表
-            //var stateSnapshots = new Dictionary<int, RoleStateSnapshot>(8);
-            //roleSnapshots.Add(GetTick(), stateSnapshots);
-
-            // 填充快照信息
-            /*var dict = Get<Server_RoleManager>().RoleLogics;
-            foreach (var kvp in dict)
-            {
-              //  var roleSnapState = kvp.Value.GetNetStateData();
-              //  stateSnapshots.Add(kvp.Key, roleSnapState);
-            }*/
         }
 
         private void SaveWorld()
         {
-            /*SortedList<uint, byte[]> worldStreams = new();
-            Dictionary<int, RoleStateSnapshot> roleStateBuffer = new Dictionary<int, RoleStateSnapshot>();
-            // 遍历每一个tick的角色状态快照
-            foreach (var kvp in roleSnapshots)
+            NativeList<S2C_Replay_WorldStateSnapshot> worldSnapshots =
+                new NativeList<S2C_Replay_WorldStateSnapshot>(Allocator.Temp);
+            foreach (var (tick, snapshot) in characterSnapshots)
             {
-                var worldState = new S2C_Replay_WorldStateSnapshot
+                var s2cSnapshot = new S2C_Replay_WorldStateSnapshot()
                 {
-                    RoleStateSnapshots = new Dictionary<int, RoleStateSnapshot>(),
-                    Tick = kvp.Key,
+                    Tick = tick,
+                    CharacterSnapshot = new AllCharacterSnapshot()
+                    {
+                        StateData = new NativeHashMap<int, CharacterStateData>(4, Allocator.Temp),
+                        InputData = new NativeHashMap<int, CharacterInputData>(4, Allocator.Temp),
+                    }
                 };
                 
-                // 遍历当前tick所有角色的快照
-                bool isDirty = false;
-                foreach (var sKvp in kvp.Value)
+                foreach (var kvp in snapshot.StateData)
                 {
-                    var roleId = sKvp.Key;
-                    var roleState = sKvp.Value;
-                    bool isAppend = true;
-                    if (!roleStateBuffer.TryGetValue(roleId, out var value))
-                    {
-                        roleStateBuffer.Add(roleId, roleState);
-                    }
-                    else
-                    {
-                        if (value == roleState)
-                        {
-                            isAppend = false;
-                        }
-                        else
-                        {
-                            roleStateBuffer[roleId] = roleState;
-                        }
-                    }
-
-                    if (isAppend)
-                    {
-                        isDirty = true;
-                        worldState.RoleStateSnapshots.Add(roleId, roleState);
-                        Debug.Log($"保存快照:{roleId}, {roleState.MoveInput}");
-                    }
+                    var id = kvp.Key;
+                    var data = kvp.Value;
+                    s2cSnapshot.CharacterSnapshot.StateData.Add(id, data);
                 }
 
-                if (isDirty)
+                foreach (var kvp in snapshot.InputData)
                 {
-                    var bytes = worldState.Serialize(new Writer());
-                    worldStreams.Add(kvp.Key, bytes);
+                    var id = kvp.Key;
+                    var data = kvp.Value;
+                    s2cSnapshot.CharacterSnapshot.InputData.Add(id, data);
+                }
+
+                bool isAddSomething = s2cSnapshot.CharacterSnapshot.StateData.Count > 0 ||
+                                      s2cSnapshot.CharacterSnapshot.InputData.Count > 0;
+                if (isAddSomething)
+                {
+                    worldSnapshots.Add(s2cSnapshot);
                 }
             }
-            
-            SaveWorldFile(worldStreams);*/
-        }
 
-        private void SaveWorldFile(SortedList<uint, byte[]> worldStreams)
-        {
-            // 序列化世界快照列表,并且保存起来
-            using var ms = new System.IO.MemoryStream();
-            using var bw = new System.IO.BinaryWriter(ms);
-
-            // 写入总数
-            bw.Write(worldStreams.Count);
-
-            foreach (var kvp in worldStreams)
+            if (worldSnapshots.Length > 0)
             {
-                bw.Write(kvp.Key);                    
-                bw.Write(kvp.Value.Length);            
-                bw.Write(kvp.Value);                   
+                byte[] packData;
+                using (var ms = new MemoryStream())
+                using (var bw = new BinaryWriter(ms))
+                {
+                    bw.Write(worldSnapshots.Length);
+                    foreach (var snapshot in worldSnapshots)
+                    {
+                        var data = snapshot.Serialize(new Writer());
+                        bw.Write(data.Length);
+                        bw.Write(data);
+                    }
+                    packData = ms.ToArray();
+                }
+
+                string filePath = Path.Combine(Application.dataPath, "world_streams.txt");
+                File.WriteAllBytes(filePath, packData);
             }
-            
-            // 保存为文件
-            var bytes = ms.ToArray();
-            string filePath = Path.Combine(Application.dataPath, "world_streams.txt");
-            File.WriteAllBytes(filePath, bytes);
         }
 
         private void ReplayWorld()
@@ -171,9 +140,9 @@ namespace KillCam.Server
                 Debug.LogError("回放文件不存在:" + filePath);
                 return;
             }
-
-            var fileData = File.ReadAllBytes(filePath);
-            //ClientWorldsChannel.StartReplay(fileData);
+            
+            var byteData = File.ReadAllBytes(filePath);
+            ClientWorldsChannel.StartReplay(byteData);
         }
     }
 }

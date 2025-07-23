@@ -32,6 +32,7 @@ namespace KillCam.Client
         {
             world.Add(network);
             world.Add(spawnProvider = new Client_SpawnProvider());
+            world.Add(new ActorManager());
             world.Add(new Client_RoleManager(spawnProvider));
         }
     }

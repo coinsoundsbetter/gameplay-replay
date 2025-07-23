@@ -5,11 +5,9 @@ namespace KillCam.Client
     public class Client_RoleManager : Feature
     {
         private readonly IRoleSpawnProvider provider;
-        private readonly Dictionary<int, IRoleNet> roleNets = new();
-        private readonly Dictionary<int, Client_RoleLogic> roleLogics = new();
-        public IReadOnlyDictionary<int, Client_RoleLogic> RoleLogics => roleLogics;
-        public Client_RoleLogic LocalLogic { get; private set; }
-
+        private readonly Dictionary<int, Client_Character> characters = new();
+        public IReadOnlyDictionary<int, Client_Character> Characters => characters;
+        
         public Client_RoleManager(IRoleSpawnProvider provider)
         {
             this.provider = provider;
@@ -19,8 +17,6 @@ namespace KillCam.Client
         {
             provider.OnRoleSpawn += OnRoleSpawn;
             provider.OnRoleDespawn += OnRoleDespawn;
-            world.AddLogicUpdate(OnLogicTick);
-            world.AddFrameUpdate(OnFrameRefresh);
         }
 
         public override void OnDestroy()
@@ -28,47 +24,42 @@ namespace KillCam.Client
             provider.OnRoleSpawn -= OnRoleSpawn;
             provider.OnRoleDespawn -= OnRoleDespawn;
         }
-        
-        private void OnLogicTick(double delta)
-        {
-            foreach (var logic in roleLogics.Values)
-            {
-                logic.TickLogic(delta);
-            }
-        }
-        
-        private void OnFrameRefresh(float delta)
-        {
-            foreach (var logic in roleLogics.Values)
-            {
-                logic.TickFrame(delta);
-            }
-        }
 
-        private void OnRoleSpawn(IRoleNet net)
+        private void OnRoleSpawn(IClientRoleNet net)
         {
-            var id = net.GetId();
-            var data = net.GetData();
-            roleNets.Add(id, net);
-            var newLogic = new Client_RoleLogic
+            var playerId = net.GetId();
+            if (characters.ContainsKey(playerId))
             {
-                IsControlTarget = net.IsControlTarget()
-            };
-            newLogic.Init(world);
-            roleLogics.Add(id, newLogic);
-            if (net.IsClientOwned())
-            {
-                LocalLogic = newLogic;
+                return;
             }
+
+            var characterActor = new Client_Character()
+            {
+                Net = net,
+            };
+            characterActor.SetupWorld(world);
+            characterActor.SetupData(new CharacterIdentifier()
+            {
+                PlayerId = playerId,
+                IsControlTarget = net.IsClientOwned(),
+                PlayerName = $"玩家{playerId}"
+            });
+            characterActor.SetupData(new CharacterInputData());
+            characterActor.SetupData(new CharacterStateData());
+            characterActor.SetupCapability<Client_CharacterInput>(TickGroup.FixedStep);
+            characterActor.SetupCapability<Client_CharacterMovement>(TickGroup.FixedStep);
+            characterActor.SetupCapability<Client_CharacterView>(TickGroup.FrameStep);
+            Get<ActorManager>().RegisterActor(characterActor);
+            characters.Add(playerId, characterActor);
         }
         
         private void OnRoleDespawn(IRoleNet net)
         {
-            var id = net.GetId();
-            roleNets.Remove(id);
-            if (roleLogics.Remove(id, out var logic))
+            var playerId = net.GetId();
+            if (characters.Remove(playerId, out var character))
             {
-                logic.Clear();
+                character.OnOwnerDestroyed();
+                Get<ActorManager>().UnregisterActor(character);
             }
         }
     }

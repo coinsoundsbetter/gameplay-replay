@@ -27,10 +27,10 @@ namespace KillCam.Server
         
         private void AddFeatures()
         {
-            world.Add(new BaseFeature_ServerLogin(network));
-            world.Add(new Server_RoleManager());
-            world.Add(new BaseFeature_C2SHandle());
-            world.Add(new BaseFeature_ServerSnapshot());
+            world.Add(new ActorManager());
+            world.Add(new Server_CharacterManager());
+            world.Add(new Server_C2SHandle());
+            world.Add(new Server_StateSnapshot());
         }
     }
 }

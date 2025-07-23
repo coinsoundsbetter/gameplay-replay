@@ -6,9 +6,9 @@
         {
             foreach (var kvp in snapshot.RoleStateSnapshots)
             {
-                var dict = world.Get<Client_RoleManager>().RoleLogics;
+                var dict = world.Get<Client_RoleManager>().Characters;
                 var role = dict[kvp.Key];
-                role.Input.SetInputData(kvp.Value.MoveInput.x, kvp.Value.MoveInput.y);
+             //   role.Input.SetInputData(kvp.Value.MoveInput.x, kvp.Value.MoveInput.y);
             }
         }
     }

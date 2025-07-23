@@ -63,10 +63,10 @@ namespace KillCam.Server
 
         public void Rpc(INetworkSerialize data)
         {
-            var roleMgr = world.Get<Server_RoleManager>();
-            foreach (var net in roleMgr.RoleNets.Values)
+            var roleMgr = Get<Server_CharacterManager>();
+            foreach (var actor in roleMgr.RoleActors.Values)
             {
-                net.Rpc(data);
+                actor.Net?.Rpc(data);
             }
         }
 

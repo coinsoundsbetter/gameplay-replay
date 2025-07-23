@@ -80,6 +80,7 @@ namespace KillCam.Client.Replay
             
             world.Add(streamParse = new Replay_StreamParse());
             world.Add(spawnProvider = new Replay_SpawnProvider());
+            world.Add<ActorManager>();
             world.Add<Replay_InputProvider>();
             world.Add(new Client_RoleManager(spawnProvider));
         }

@@ -1,6 +1,6 @@
 namespace KillCam.Server
 {
-    public sealed class Server_Character : GameplayActor
+    public sealed class Character : GameplayActor
     {
         public IServerRoleNet Net { get; set; }
     }

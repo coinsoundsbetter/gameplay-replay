@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace KillCam.Server
 {
-    public class Server_CharacterView : RoleView
+    public class CharacterView : RoleView
     {
         private Mono_Role role;
 
@@ -25,8 +25,8 @@ namespace KillCam.Server
 
         private void Load(Vector3 pos, Quaternion rot)
         {
-            var asset = Resources.Load<Mono_Role>("Server_Mono_Role");
-            var instance = Object.Instantiate(asset);
+            var asset = Resources.Load("Server_Mono_Role");
+            var instance = (GameObject)Object.Instantiate(asset);
             role = instance.GetComponent<Mono_Role>();
             role.transform.position = pos;
             role.transform.rotation = rot;
@@ -34,7 +34,7 @@ namespace KillCam.Server
 
         private void Unload()
         {
-            if (role.gameObject)
+            if (role)
             {
                 Object.Destroy(role.gameObject);
             }

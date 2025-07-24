@@ -1,17 +1,17 @@
 namespace KillCam.Server
 {
-    public class Server_CharacterMovement : RoleMovement
+    public class CharacterMovement : RoleMovement
     {
         public override bool OnShouldActivate()
         {
             ref var inputData = ref Owner.GetDataReadWrite<CharacterInputData>();
-            return inputData.IsValid;
+            return inputData.HasValidInput();
         }
 
         public override bool OnShouldDeactivate()
         {
             ref var inputData = ref Owner.GetDataReadWrite<CharacterInputData>();
-            return !inputData.IsValid;
+            return !inputData.HasValidInput();
         }
 
         protected override void OnTickActive()

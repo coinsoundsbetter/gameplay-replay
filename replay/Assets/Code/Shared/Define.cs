@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using FishNet.Serializing;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace KillCam
 {
@@ -279,5 +280,15 @@ namespace KillCam
     {
         FixedStep,
         FrameStep,
+    }
+
+    public class LayerDefine
+    {
+        public static readonly int defaultLayer = LayerMask.NameToLayer("Default");
+        public static readonly int defaultLayerMask = 1 << defaultLayer;
+        public static readonly int characterLayer = LayerMask.NameToLayer("Character");
+        public static readonly int characterLayerMask = 1 << characterLayer;
+        public static readonly int replayCharacterLayer = LayerMask.NameToLayer("ReplayCharacter");
+        public static readonly int replayCharacterLayerMask = 1 << replayCharacterLayer;
     }
 }

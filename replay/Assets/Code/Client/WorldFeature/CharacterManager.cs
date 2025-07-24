@@ -2,13 +2,13 @@ using System.Collections.Generic;
 
 namespace KillCam.Client
 {
-    public class Client_RoleManager : Feature
+    public class CharacterManager : Feature
     {
         private readonly IRoleSpawnProvider provider;
-        private readonly Dictionary<int, Client_Character> characters = new();
-        public IReadOnlyDictionary<int, Client_Character> Characters => characters;
+        private readonly Dictionary<int, Character> characters = new();
+        public IReadOnlyDictionary<int, Character> Characters => characters;
         
-        public Client_RoleManager(IRoleSpawnProvider provider)
+        public CharacterManager(IRoleSpawnProvider provider)
         {
             this.provider = provider;
         }
@@ -33,7 +33,7 @@ namespace KillCam.Client
                 return;
             }
 
-            var characterActor = new Client_Character()
+            var characterActor = new Character()
             {
                 Net = net,
             };
@@ -46,9 +46,9 @@ namespace KillCam.Client
             });
             characterActor.SetupData(new CharacterInputData());
             characterActor.SetupData(new CharacterStateData());
-            characterActor.SetupCapability<Client_CharacterInput>(TickGroup.FixedStep);
-            characterActor.SetupCapability<Client_CharacterMovement>(TickGroup.FixedStep);
-            characterActor.SetupCapability<Client_CharacterView>(TickGroup.FrameStep);
+            characterActor.SetupCapability<CharacterInput>(TickGroup.FixedStep);
+            characterActor.SetupCapability<CharacterMovement>(TickGroup.FixedStep);
+            characterActor.SetupCapability<CharacterView>(TickGroup.FrameStep);
             Get<ActorManager>().RegisterActor(characterActor);
             characters.Add(playerId, characterActor);
         }

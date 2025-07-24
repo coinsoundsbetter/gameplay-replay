@@ -4,11 +4,11 @@ namespace KillCam.Server
 {
     public class ServerInitialize : InitializeFeature
     {
-        private readonly Server_Network network;
+        private readonly Network network;
         
         public ServerInitialize(NetworkManager mgr)
         {
-            network = new Server_Network(mgr);
+            network = new Network(mgr);
         }
 
         public override void OnCreate()
@@ -28,9 +28,9 @@ namespace KillCam.Server
         private void AddFeatures()
         {
             world.Add(new ActorManager());
-            world.Add(new Server_CharacterManager());
+            world.Add(new CharacterManager());
             world.Add(new Server_C2SHandle());
-            world.Add(new Server_StateSnapshot());
+            world.Add(new StateSnapshot());
         }
     }
 }

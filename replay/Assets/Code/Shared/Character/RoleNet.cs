@@ -55,14 +55,12 @@ namespace KillCam
             RpcToServer(writer.GetBuffer());
         }
 
-        public void SetServerSyncData(RoleStateSnapshot syncData)
+        // 服务器下发消息
+        public void SetServerSyncData(CharacterStateData syncData)
         {
-            Pos.Value = syncData.Pos;
-            Rot.Value = syncData.Rot;
-            Health.Value = syncData.Health;
+            
         }
 
-        // 服务器下发消息
         public void Rpc(INetworkSerialize serialize)
         {
             var writer = new Writer();
@@ -83,20 +81,6 @@ namespace KillCam
             OnServerReceiveData?.Invoke(Id.Value, data);
         }
 
-        public RoleStateSnapshot Read()
-        {
-            return new RoleStateSnapshot()
-            {
-                Pos = Pos.Value,
-                Rot = Rot.Value,
-            };
-        }
-
-        public void Write(RoleStateSnapshot data)
-        {
-            
-        }
-
         public int GetId()
         {
             return Id.Value;
@@ -112,42 +96,13 @@ namespace KillCam
             return IsController;
         }
 
-        public RoleStateSnapshot GetData()
+        public CharacterStateData GetData()
         {
-            return Read();
-        }
-    }
-
-    public struct RoleStateSnapshot : IEquatable<RoleStateSnapshot>
-    {
-        public Vector3 Pos;
-        public Quaternion Rot;
-        public int Health;
-        public Vector2Int MoveInput;
-
-        public bool Equals(RoleStateSnapshot other)
-        {
-            return Pos.Equals(other.Pos) && Rot.Equals(other.Rot) && Health == other.Health && MoveInput.Equals(other.MoveInput);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is RoleStateSnapshot other && Equals(other);
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Pos, Rot, Health, MoveInput);
-        }
-
-        public static bool operator ==(RoleStateSnapshot left, RoleStateSnapshot right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(RoleStateSnapshot left, RoleStateSnapshot right)
-        {
-            return !left.Equals(right);
+            return new CharacterStateData()
+            {
+                Pos = Pos.Value,
+                Rot = Rot.Value,
+            };
         }
     }
 }

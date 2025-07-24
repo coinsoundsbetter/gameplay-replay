@@ -31,11 +31,10 @@ namespace KillCam.Server
 
         private void OnC2S_SendInput(int senderId, C2S_SendInput message)
         {
-            var roleMgr = Get<Server_CharacterManager>();
+            var roleMgr = Get<CharacterManager>();
             if (roleMgr.RoleActors.TryGetValue(senderId, out var actor))
             {
                 ref var ipData = ref actor.GetDataReadWrite<CharacterInputData>();
-                ipData.IsValid = true;
                 ipData.Move = message.Move;
             }
         }

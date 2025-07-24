@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using KillCam.Client.Replay;
+using UnityEngine;
 
 namespace KillCam.Client
 {
@@ -28,11 +29,19 @@ namespace KillCam.Client
 
         public static void StartReplay(byte[] data)
         {
-            if (Instance != null)
+            if (Instance == null)
             {
+                return;
+            }
+            
+            ClientData.Instance.IsReplayPrepare = true;
+            DelayUtils.SetDelay(1f, () =>
+            {
+                Debug.Log("Start Replay!");
                 Instance.replayPlayer.SetData(data);
                 Instance.replayPlayer.Play();
-            }
+                ClientData.Instance.IsReplaying = true;
+            });
         }
     }
 }

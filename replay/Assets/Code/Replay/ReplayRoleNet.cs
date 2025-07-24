@@ -3,7 +3,7 @@ namespace KillCam.Client.Replay
     public class ReplayRoleNet : IClientRoleNet
     {
         public int Id;
-        public RoleStateSnapshot Data;
+        public CharacterStateData Data;
         
         public int GetId()
         {
@@ -20,7 +20,7 @@ namespace KillCam.Client.Replay
             return false;
         }
 
-        public RoleStateSnapshot GetData()
+        public CharacterStateData GetData()
         {
             return Data;
         }

@@ -4,16 +4,17 @@ namespace KillCam.Client
 {
     public class ClientInitialize : InitializeFeature
     {
-        private readonly Client_Network network;
-        private Client_SpawnProvider spawnProvider;
+        private readonly Network network;
+        private SpawnProvider spawnProvider;
 
         public ClientInitialize(NetworkManager manager)
         {
-            network = new Client_Network(manager);
+            network = new Network(manager);
         }
 
         public override void OnCreate()
         {
+            ClientData.Create();
             ClientWorldsChannel.Create();
             AddClientFeatures();
             network.Start(() =>
@@ -26,14 +27,16 @@ namespace KillCam.Client
         {
             network.Stop();
             ClientWorldsChannel.Destroy();
+            ClientData.Destroy();
         }
 
         private void AddClientFeatures()
         {
             world.Add(network);
-            world.Add(spawnProvider = new Client_SpawnProvider());
+            world.Add(spawnProvider = new SpawnProvider());
             world.Add(new ActorManager());
-            world.Add(new Client_RoleManager(spawnProvider));
+            world.Add(new CharacterManager(spawnProvider));
+            world.Add(new CameraManager());
         }
     }
 }

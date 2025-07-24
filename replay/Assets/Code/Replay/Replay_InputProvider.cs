@@ -1,14 +1,21 @@
-﻿namespace KillCam.Client.Replay
+﻿using UnityEngine;
+
+namespace KillCam.Client.Replay
 {
     public class Replay_InputProvider : Feature
     {
         public void SetInput(S2C_Replay_WorldStateSnapshot snapshot)
         {
-            foreach (var kvp in snapshot.RoleStateSnapshots)
+            var characters = Get<CharacterManager>().Characters;
+            if (snapshot.CharacterSnapshot.InputData.IsEmpty)
             {
-                var dict = world.Get<Client_RoleManager>().Characters;
-                var role = dict[kvp.Key];
-             //   role.Input.SetInputData(kvp.Value.MoveInput.x, kvp.Value.MoveInput.y);
+                return;
+            }
+            
+            foreach (var kvp in snapshot.CharacterSnapshot.InputData)
+            {
+                ref var data = ref characters[kvp.Key].GetDataReadWrite<CharacterInputData>();
+                data.Move = kvp.Value.Move;
             }
         }
     }

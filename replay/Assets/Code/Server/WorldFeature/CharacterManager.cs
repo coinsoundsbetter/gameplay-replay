@@ -2,10 +2,10 @@ using System.Collections.Generic;
 
 namespace KillCam.Server
 {
-    public class Server_CharacterManager : Feature
+    public class CharacterManager : Feature
     {
-        private readonly Dictionary<int, Server_Character> roleActors = new();
-        public IReadOnlyDictionary<int, Server_Character> RoleActors => roleActors;
+        private readonly Dictionary<int, Character> roleActors = new();
+        public IReadOnlyDictionary<int, Character> RoleActors => roleActors;
         
         public override void OnCreate()
         {
@@ -22,7 +22,7 @@ namespace KillCam.Server
         private void OnRoleNetSpawn(IServerRoleNet net)
         {
             var id = net.GetId();
-            var character = new Server_Character()
+            var character = new Character()
             {
                 Net = net,
             };
@@ -35,8 +35,8 @@ namespace KillCam.Server
             });
             character.SetupData(new CharacterInputData());
             character.SetupData(new CharacterStateData());
-            character.SetupCapability<Server_CharacterMovement>(TickGroup.FixedStep);
-            character.SetupCapability<Server_CharacterView>(TickGroup.FrameStep);
+            character.SetupCapability<CharacterMovement>(TickGroup.FixedStep);
+            character.SetupCapability<CharacterView>(TickGroup.FrameStep);
             Get<ActorManager>().RegisterActor(character);
             roleActors.Add(id, character);
         }

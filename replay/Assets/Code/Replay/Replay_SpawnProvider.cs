@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace KillCam.Client.Replay {
     
@@ -11,20 +10,21 @@ namespace KillCam.Client.Replay {
 
         public void EnsureSpawn(S2C_Replay_WorldStateSnapshot snapshot)
         {
-            if (snapshot.RoleStateSnapshots == null)
+            if (snapshot.CharacterSnapshot.IsEmpty())
             {
                 return;
             }
 
-            foreach (var id in snapshot.RoleStateSnapshots.Keys)
+            foreach (var kvp in snapshot.CharacterSnapshot.StateData)
             {
+                var id = kvp.Key;
+                var character = kvp.Value;
                 if (spawnRoleIds.Add(id))
                 {
-                    Debug.Log("生成角色!");
                     OnRoleSpawn?.Invoke(new ReplayRoleNet()
                     {
                         Id = id,
-                        Data = snapshot.RoleStateSnapshots[id],
+                        Data = character,
                     });
                 }
             }

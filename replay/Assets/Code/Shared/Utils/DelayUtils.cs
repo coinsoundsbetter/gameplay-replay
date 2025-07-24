@@ -8,7 +8,7 @@ namespace KillCam
     {
         private static DelayUtils _instance;
 
-        private struct DelayAction
+        private class DelayAction
         {
             public float countDown;
             public Action trigger;
@@ -26,9 +26,8 @@ namespace KillCam
             for (int i = 0; i < delayActions.Count; i++)
             {
                 var task = delayActions[i];
-                var countdown = task.countDown;
-                countdown -= Time.deltaTime;
-                if (countdown <= 0)
+                task.countDown -= Time.deltaTime;
+                if (task.countDown <= 0)
                 {
                     task.trigger?.Invoke();
                     pendingRemoves.Enqueue(i);

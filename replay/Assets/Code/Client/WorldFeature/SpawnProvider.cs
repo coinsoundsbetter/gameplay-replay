@@ -2,7 +2,7 @@
 
 namespace KillCam.Client
 {
-    public class Client_SpawnProvider : Feature, IRoleSpawnProvider
+    public class SpawnProvider : Feature, IRoleSpawnProvider
     {
         public event Action<IClientRoleNet> OnRoleSpawn;
         public event Action<IClientRoleNet> OnRoleDespawn;

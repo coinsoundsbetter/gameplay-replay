@@ -5,7 +5,7 @@
         int GetId();
         bool IsClientOwned();
         bool IsControlTarget();
-        RoleStateSnapshot GetData();
+        CharacterStateData GetData();
     }
 
     public interface IClientRoleNet : IRoleNet
@@ -15,7 +15,7 @@
 
     public interface IServerRoleNet : IRoleNet
     {
-        void SetServerSyncData(RoleStateSnapshot syncData);
+        void SetServerSyncData(CharacterStateData syncData);
         void Rpc(INetworkSerialize data);
     }
 }

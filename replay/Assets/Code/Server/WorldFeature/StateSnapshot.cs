@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace KillCam.Server
 {
-    public class Server_StateSnapshot : Feature
+    public class StateSnapshot : Feature
     {
         private readonly SortedList<uint, AllCharacterSnapshot> characterSnapshots = new();
         private int stateSnapshotCountdown = 0;
@@ -32,6 +32,11 @@ namespace KillCam.Server
 
         public override void OnDestroy()
         {
+            foreach (var data in characterSnapshots.Values)
+            {
+                data.Dispose();
+            }
+            characterSnapshots.Clear();
             world.RemoveLogicUpdate(OnLogicTick);
         }
 
@@ -39,7 +44,8 @@ namespace KillCam.Server
         {
             var snapshot = new AllCharacterSnapshot()
             {
-                StateData = new NativeHashMap<int, CharacterStateData>(4, Allocator.Persistent)
+                StateData = new NativeHashMap<int, CharacterStateData>(4, Allocator.Persistent),
+                InputData = new NativeHashMap<int, CharacterInputData>(4, Allocator.Persistent),
             };
             characterSnapshots.Add(GetTick(), snapshot);
             
@@ -55,7 +61,7 @@ namespace KillCam.Server
 
         private void TakeCharacterStateSnapshot(ref AllCharacterSnapshot snapshot)
         {
-            var characterMgr = Get<Server_CharacterManager>();
+            var characterMgr = Get<CharacterManager>();
             foreach (var (id, character) in characterMgr.RoleActors)
             {
                 var stateData = character.GetDataReadOnly<CharacterStateData>();
@@ -65,7 +71,7 @@ namespace KillCam.Server
 
         private void TakeCharacterInputSnapshot(ref AllCharacterSnapshot snapshot)
         {
-            var characterMgr = Get<Server_CharacterManager>();
+            var characterMgr = Get<CharacterManager>();
             foreach (var (id, character) in characterMgr.RoleActors)
             {
                 var inputData = character.GetDataReadOnly<CharacterInputData>();
@@ -130,6 +136,8 @@ namespace KillCam.Server
                 string filePath = Path.Combine(Application.dataPath, "world_streams.txt");
                 File.WriteAllBytes(filePath, packData);
             }
+
+            worldSnapshots.Dispose();
         }
 
         private void ReplayWorld()

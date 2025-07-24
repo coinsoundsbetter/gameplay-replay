@@ -54,9 +54,16 @@ namespace KillCam.Client.Replay
             var spawnMgr = world.Get<Replay_SpawnProvider>();
             spawnMgr.EnsureSpawn(state);
             
+            // 纠正状态
+            var stateMgr = world.Get<Replay_StateProvider>();
+            stateMgr.SetState(state);
+            
             // 重放输入数据
             var inputMgr = world.Get<Replay_InputProvider>();
             inputMgr.SetInput(state);
+            
+            // 用完了清理非托管资源
+            state.CharacterSnapshot.Dispose();
         }
 
         public void Send(INetworkSerialize data)

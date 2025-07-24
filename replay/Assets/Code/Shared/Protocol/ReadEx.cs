@@ -1,67 +1,59 @@
 ﻿using FishNet.Serializing;
+using Unity.Collections;
 
 namespace KillCam
 {
     public static class ReadEx
     {
-        public static RoleStateSnapshot ReadRoleSnapshot(this Reader reader)
-        {
-            var data = new RoleStateSnapshot
-            {
-                Pos = reader.ReadVector3(),
-                Rot = reader.ReadQuaternion64(),
-                Health = reader.ReadInt32(),
-                MoveInput = reader.ReadVector2Int(),
-            };
-            return data;
-        }
-        
         public static AllCharacterSnapshot ReadAllCharacterSnapshot(this Reader reader)
         {
+            var res = new AllCharacterSnapshot();
+            
             int stateDataCnt = reader.ReadInt32();
+            if (stateDataCnt > 0)
+            {
+                res.StateData = new NativeHashMap<int, CharacterStateData>(4, Allocator.Persistent);
+            }
             for (int i = 0; i < stateDataCnt; i++)
             {
-                
+                var id = reader.ReadInt32();
+                var stateData = reader.ReadCharacterStateData();
+                res.StateData.Add(id, stateData);
+            }
+            
+            int inputDataCnt = reader.ReadInt32();
+            if (inputDataCnt > 0)
+            {
+                res.InputData = new NativeHashMap<int, CharacterInputData>(4, Allocator.Persistent);
+            }
+            for (int i = 0; i < stateDataCnt; i++)
+            {
+                var id = reader.ReadInt32();
+                var inputData = reader.ReadCharacterInputData();
+                res.InputData.Add(id, inputData);
             }
 
-            /*if (data.StateData.IsCreated)
-            {
-                writer.Write(data.StateData.Count);
-                foreach (var kvp in data.StateData)
-                {
-                    writer.Write(kvp.Key);
-                    writer.WriteCharacterStateData(kvp.Value);
-                }
-            }
-            else
-            {
-                writer.Write(0);
-            }
-
-            if (data.InputData.IsCreated)
-            {
-                writer.Write(data.InputData.Count);
-                foreach (var kvp in data.InputData)
-                {
-                    writer.Write(kvp.Key);
-                    writer.WriteCharacterInputData(kvp.Value);
-                }
-            }
-            else
-            {
-                writer.Write(0);
-            }*/
+            return res;
         }
 
-        /*public static void WriteCharacterStateData(this Writer writer, CharacterStateData data)
+        public static CharacterStateData ReadCharacterStateData(this Reader reader)
         {
-            writer.WriteVector3(data.Pos);
-            writer.WriteQuaternion64(data.Rot);
-        }*/
+            var res = new CharacterStateData
+            {
+                Pos = reader.ReadVector3(),
+                Rot = reader.ReadQuaternion64()
+            };
+            return res;
+        }
         
-        /*public static void WriteCharacterInputData(this Writer writer, CharacterInputData data)
+        public static CharacterInputData ReadCharacterInputData(this Reader reader)
         {
-            writer.WriteVector2Int(data.Move);
-        }*/
+            var res = new CharacterInputData()
+            {
+                Move = reader.ReadVector2Int(),
+            };
+
+            return res;
+        }
     }
 }

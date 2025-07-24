@@ -8,13 +8,13 @@ using Object = UnityEngine.Object;
 
 namespace KillCam.Server
 {
-    public class Server_Network : Feature, INetwork
+    public class Network : Feature, INetwork
     {
         private NetworkManager manager;
         private Action startAction;
         private int clientUniqueId;
         
-        public Server_Network(NetworkManager networkManager)
+        public Network(NetworkManager networkManager)
         {
             manager = networkManager;
         }
@@ -63,7 +63,7 @@ namespace KillCam.Server
 
         public void Rpc(INetworkSerialize data)
         {
-            var roleMgr = Get<Server_CharacterManager>();
+            var roleMgr = Get<CharacterManager>();
             foreach (var actor in roleMgr.RoleActors.Values)
             {
                 actor.Net?.Rpc(data);

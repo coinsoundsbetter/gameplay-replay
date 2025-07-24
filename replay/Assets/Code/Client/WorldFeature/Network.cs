@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace KillCam.Client
 {
-    public class Client_Network : Feature, INetwork
+    public class Network : Feature, INetwork
     {
         private readonly NetworkManager manager;
         private IClientRoleNet sender;
@@ -13,7 +13,7 @@ namespace KillCam.Client
         public event Action<IClientRoleNet> AfterRoleSpawn;
         public event Action<IClientRoleNet> AfterRoleDespawn;
 
-        public Client_Network(NetworkManager mgr)
+        public Network(NetworkManager mgr)
         {
             manager = mgr;
         }

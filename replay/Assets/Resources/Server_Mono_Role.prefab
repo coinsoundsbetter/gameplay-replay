@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 793947407087468141}
   - component: {fileID: 4592143310602994849}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -67,7 +67,7 @@ GameObject:
   m_Component:
   - component: {fileID: 580258912987318585}
   - component: {fileID: 1825311944216827385}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Server_Mono_Role
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 7269761058714476651}
   - component: {fileID: 3424322529118128582}
   - component: {fileID: 8602372077789631212}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Color
   m_TagString: Untagged
   m_Icon: {fileID: 0}

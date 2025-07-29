@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using FishNet.Serializing;
-using KillCam.Client;
+//using KillCam.Client;
 using Unity.Collections;
 using UnityEngine;
 
@@ -150,7 +150,7 @@ namespace KillCam.Server
             }
             
             var byteData = File.ReadAllBytes(filePath);
-            ClientWorldsChannel.StartReplay(byteData);
+            //ClientWorldsChannel.StartReplay(byteData);
         }
     }
 }

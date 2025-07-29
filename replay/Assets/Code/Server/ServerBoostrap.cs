@@ -2,13 +2,14 @@ using FishNet.Managing;
 
 namespace KillCam.Server
 {
-    public class ServerInitialize : InitializeFeature
+    [UnityEngine.Scripting.Preserve]
+    public class ServerBoostrap : ServerInitialize
     {
         private readonly Network network;
-        
-        public ServerInitialize(NetworkManager mgr)
+
+        public ServerBoostrap(NetworkManager manager) : base(manager)
         {
-            network = new Network(mgr);
+            network = new Network(manager);
         }
 
         public override void OnCreate()

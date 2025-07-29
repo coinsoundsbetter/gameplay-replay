@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using FishNet.Serializing;
-using Unity.Collections;
+﻿using FishNet.Serializing;
 
 namespace KillCam {
     
@@ -26,9 +23,6 @@ namespace KillCam {
             CharacterSnapshot = reader.ReadAllCharacterSnapshot();
         }
 
-        public NetworkMsg GetMsgType()
-        {
-            return NetworkMsg.S2C_Replay_WorldStateSnapshot;
-        }
+        public ushort GetMsgType() => (ushort)NetworkMsg.S2C_Replay_WorldStateSnapshot;
     }
 }

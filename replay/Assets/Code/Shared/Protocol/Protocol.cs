@@ -31,6 +31,6 @@ namespace KillCam
             Move = reader.ReadVector2Int();
         }
 
-        public NetworkMsg GetMsgType() => NetworkMsg.C2S_SendInput;
+        public ushort GetMsgType() => (ushort)NetworkMsg.C2S_SendInput;
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using FishNet.Serializing;
 using System.Runtime.CompilerServices;
+using FishNet.Managing;
 using UnityEngine;
 
 namespace KillCam
@@ -10,8 +11,21 @@ namespace KillCam
     /// 用于启动完整的功能
     /// 这样,我们可以只在需要的时机启动一些功能
     /// </summary>
-    public class InitializeFeature : Feature
-    {
+    public class InitializeFeature : Feature { }
+
+    public class ClientInitialize : InitializeFeature {
+        public ClientInitialize(NetworkManager manager) {
+            
+        }
+    }
+
+    public class ServerInitialize : InitializeFeature {
+        public ServerInitialize(NetworkManager manager) {
+            
+        }
+    }
+
+    public class ReplayInitialize : InitializeFeature {
     }
 
     /// <summary>
@@ -41,12 +55,31 @@ namespace KillCam
 
         protected uint GetTick() => world.Network.GetTick();
     }
-
+    
+    public interface INetwork
+    {
+        void Send(INetworkSerialize data);
+        void Rpc(INetworkSerialize data);
+        uint GetTick();
+    }
+    
+    public delegate void FrameUpdateDelegate(float delta);
+    public delegate void LogicUpdateDelegate(double delta);
+    
+    [System.Flags]
+    public enum WorldFlag
+    {
+        Default = 0,
+        Client = 1 << 0,
+        Server = 1 << 1,
+        Replay = 1 << 2,
+    }
+    
     public interface INetworkSerialize
     {
         byte[] Serialize(Writer writer);
         void Deserialize(Reader reader);
-        NetworkMsg GetMsgType();
+        ushort GetMsgType();
     }
 
     public class RefStorageBase : IDisposable

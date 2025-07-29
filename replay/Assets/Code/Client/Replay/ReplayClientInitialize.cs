@@ -4,7 +4,8 @@ using FishNet.Serializing;
 
 namespace KillCam.Client.Replay
 {
-    public class ReplayIInitialize : InitializeFeature, IReplayPlayer
+    [UnityEngine.Scripting.Preserve]
+    public class ReplayIInitialize : ReplayInitialize, IReplayPlayer
     {
         private bool isPrepareFeatures;
         private byte[] playData;

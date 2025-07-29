@@ -1,28 +1,8 @@
 using System;
 using System.Collections.Generic;
-using FishNet.Managing;
 
 namespace KillCam
 {
-    public delegate void FrameUpdateDelegate(float delta);
-    public delegate void LogicUpdateDelegate(double delta);
-
-    [System.Flags]
-    public enum WorldFlag
-    {
-        Default = 0,
-        Client = 1 << 0,
-        Server = 1 << 1,
-        Replay = 1 << 2,
-    }
-
-    public interface INetwork
-    {
-        void Send(INetworkSerialize data);
-        void Rpc(INetworkSerialize data);
-        uint GetTick();
-    }
-    
     public class BattleWorld
     {
         public WorldFlag Flags { get; private set; }

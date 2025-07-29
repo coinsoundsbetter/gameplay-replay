@@ -2,12 +2,13 @@ using FishNet.Managing;
 
 namespace KillCam.Client
 {
-    public class ClientInitialize : InitializeFeature
+    [UnityEngine.Scripting.Preserve]
+    public class ClientBoostrap : ClientInitialize
     {
         private readonly Network network;
         private SpawnProvider spawnProvider;
 
-        public ClientInitialize(NetworkManager manager)
+        public ClientBoostrap(NetworkManager manager) : base(manager)
         {
             network = new Network(manager);
         }

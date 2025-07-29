@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using KillCam.Client.Replay;
 using UnityEngine;
 

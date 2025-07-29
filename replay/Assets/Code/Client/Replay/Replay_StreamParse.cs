@@ -56,14 +56,12 @@ namespace KillCam.Client.Replay {
             state.CharacterSnapshot.Dispose();
         }
 
-        public void Send(INetworkSerialize data) {
-        }
-
-        public void Rpc(INetworkSerialize data) {
-        }
-
         public new uint GetTick() {
             return playTick;
         }
+
+        public void Send<T>(T message) where T : INetworkMsg { }
+        public void Rpc<T>(T message) where T : INetworkMsg { }
+        public void TargetRpc<T>(int id, T message) where T : INetworkMsg { }
     }
 }

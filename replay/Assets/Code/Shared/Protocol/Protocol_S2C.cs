@@ -2,7 +2,7 @@
 using FishNet.Serializing;
 
 namespace KillCam {
-    public struct S2C_WorldStateSnapshot : INetworkSerialize, IDisposable {
+    public struct S2C_WorldStateSnapshot : INetworkMsg, IDisposable {
         public uint Tick;
         public AllCharacterSnapshot CharacterSnapshot;
 
@@ -27,7 +27,7 @@ namespace KillCam {
         }
     }
 
-    public struct S2C_StartReplay : INetworkSerialize {
+    public struct S2C_StartReplay : INetworkMsg {
         public byte[] FullData;
         
         public byte[] Serialize(Writer writer) {

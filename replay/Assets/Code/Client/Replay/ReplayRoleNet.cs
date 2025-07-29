@@ -19,7 +19,6 @@ namespace KillCam.Client.Replay {
             return Data;
         }
 
-        public void Send(INetworkSerialize data) {
-        }
+        public void Send<T>(T data) where T : INetworkMsg { }
     }
 }

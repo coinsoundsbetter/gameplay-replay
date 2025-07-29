@@ -1,7 +1,6 @@
 ﻿using System;
 using FishNet.Managing;
 using FishNet.Transporting;
-using UnityEngine;
 
 namespace KillCam.Client {
     public class Network : Feature, INetwork {
@@ -60,15 +59,19 @@ namespace KillCam.Client {
             });
         }
 
-        public void Send(INetworkSerialize data) {
-            sender?.Send(data);
-        }
-
-        public void Rpc(INetworkSerialize data) {
+        public void Rpc(INetworkMsg data) {
         }
 
         public new uint GetTick() {
             return manager.TimeManager.LocalTick;
         }
+
+        public void Send<T>(T message) where T : INetworkMsg {
+            sender?.Send(message);
+        }
+        
+        public void Rpc<T>(T message) where T : INetworkMsg { }
+        
+        public void TargetRpc<T>(int id, T message) where T : INetworkMsg { }
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace KillCam {
     
 
-    public struct C2S_SendInput : INetworkSerialize {
+    public struct C2S_SendInput : INetworkMsg {
         public uint LocalTick;
         public Vector2Int Move;
 

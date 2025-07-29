@@ -58,9 +58,7 @@ namespace KillCam {
         protected uint GetTick() => world.Network.GetTick();
     }
 
-    public interface INetwork {
-        void Send(INetworkSerialize data);
-        void Rpc(INetworkSerialize data);
+    public interface INetwork : INetworkClient, INetworkServer {
         uint GetTick();
     }
 
@@ -76,10 +74,19 @@ namespace KillCam {
         Replay = 1 << 2,
     }
 
-    public interface INetworkSerialize {
+    public interface INetworkMsg {
         byte[] Serialize(Writer writer);
         void Deserialize(Reader reader);
         ushort GetMsgType();
+    }
+
+    public interface INetworkClient {
+        void Send<T>(T message) where T : INetworkMsg;
+    }
+
+    public interface INetworkServer {
+        void Rpc<T>(T message) where T : INetworkMsg;
+        void TargetRpc<T>(int id, T message) where T : INetworkMsg;
     }
 
     public class RefStorageBase : IDisposable {

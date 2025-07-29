@@ -35,5 +35,8 @@ namespace KillCam.Client {
                 Object.Destroy(role.gameObject);
             }
         }
+
+        private void AnimationState() {
+        }
     }
 }

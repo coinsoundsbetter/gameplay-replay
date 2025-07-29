@@ -43,23 +43,21 @@ namespace KillCam {
         }
 
         // 客户端发送消息
-        public void Send(INetworkSerialize serialize) {
+        public void Send<T>(T message) where T : INetworkMsg {
             var writer = new Writer();
-            writer.WriteUInt16((ushort)serialize.GetMsgType());
-            serialize.Serialize(writer);
+            writer.WriteUInt16((ushort)message.GetMsgType());
+            message.Serialize(writer);
             RpcToServer(writer.GetBuffer());
         }
 
-        // 服务器下发消息
-        public void SetServerSyncData(CharacterStateData syncData) {
-        }
-
-        public void Rpc(INetworkSerialize serialize) {
+        public void Rpc<T>(T message) where T : INetworkMsg {
             var writer = new Writer();
-            writer.WriteUInt16((ushort)serialize.GetMsgType());
-            serialize.Serialize(writer);
+            writer.WriteUInt16((ushort)message.GetMsgType());
+            message.Serialize(writer);
             RpcToClient(writer.GetBuffer());
         }
+
+        public void TargetRpc<T>(int id, T message) where T : INetworkMsg { }
 
         [ObserversRpc]
         private void RpcToClient(byte[] data) {

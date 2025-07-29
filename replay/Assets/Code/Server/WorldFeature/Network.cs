@@ -50,10 +50,10 @@ namespace KillCam.Server {
             manager.ServerManager.Spawn(networkObj, conn);
         }
 
-        public void Send(INetworkSerialize data) {
+        public void Send(INetworkMsg data) {
         }
 
-        public void Rpc(INetworkSerialize data) {
+        public void Rpc(INetworkMsg data) {
             var roleMgr = Get<CharacterManager>();
             foreach (var actor in roleMgr.RoleActors.Values) {
                 actor.Net?.Rpc(data);
@@ -63,5 +63,9 @@ namespace KillCam.Server {
         public new uint GetTick() {
             return manager.TimeManager.LocalTick;
         }
+
+        public void Send<T>(T message) where T : INetworkMsg { }
+        public void Rpc<T>(T message) where T : INetworkMsg { }
+        public void TargetRpc<T>(int id, T message) where T : INetworkMsg { }
     }
 }

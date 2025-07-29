@@ -1,7 +1,4 @@
-namespace KillCam
-{
-    public class RoleView : Capability
-    {
-        
+namespace KillCam {
+    public class RoleView : Capability {
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
 
-namespace KillCam.Client
-{
-    public interface IRoleSpawnProvider
-    {
+namespace KillCam.Client {
+    public interface IRoleSpawnProvider {
         event Action<IClientRoleNet> OnRoleSpawn;
         event Action<IClientRoleNet> OnRoleDespawn;
     }

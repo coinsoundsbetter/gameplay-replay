@@ -1,27 +1,21 @@
 using UnityEngine;
 
-namespace KillCam.Client
-{
-    public class CharacterInput : Capability
-    {
-        protected override void OnDeactivate()
-        {
+namespace KillCam.Client {
+    public class CharacterInput : Capability {
+        protected override void OnDeactivate() {
             ref var data = ref Owner.GetDataReadWrite<CharacterInputData>();
             data.Move = new Vector2Int(0, 0);
         }
 
-        public override bool OnShouldActivate()
-        {
-            if (World.HasFlag(WorldFlag.Replay))
-            {
+        public override bool OnShouldActivate() {
+            if (World.HasFlag(WorldFlag.Replay)) {
                 return false;
             }
 
             return true;
         }
 
-        protected override void OnTickActive()
-        {
+        protected override void OnTickActive() {
             ref var data = ref Owner.GetDataReadWrite<CharacterInputData>();
             var h = Input.GetAxis("Horizontal");
             var v = Input.GetAxis("Vertical");
@@ -30,8 +24,7 @@ namespace KillCam.Client
             if (v > 0) v = 1;
             else if (v < 0) v = -1;
             data.Move = new Vector2Int((int)h, (int)v);
-            World.Send(new C2S_SendInput()
-            {
+            World.Send(new C2S_SendInput() {
                 LocalTick = World.Network.GetTick(),
                 Move = data.Move,
             });

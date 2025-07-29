@@ -1,33 +1,24 @@
 using FishNet.Managing;
 
-namespace KillCam.Server
-{
+namespace KillCam.Server {
     [UnityEngine.Scripting.Preserve]
-    public class ServerBoostrap : ServerInitialize
-    {
+    public class ServerBoostrap : ServerInitialize {
         private readonly Network network;
 
-        public ServerBoostrap(NetworkManager manager) : base(manager)
-        {
+        public ServerBoostrap(NetworkManager manager) : base(manager) {
             network = new Network(manager);
         }
 
-        public override void OnCreate()
-        {
+        public override void OnCreate() {
             world.Add(network);
-            network.Start(() =>
-            {
-                AddFeatures();
-            });
+            network.Start(() => { AddFeatures(); });
         }
 
-        public override void OnDestroy()
-        {
+        public override void OnDestroy() {
             network.Stop();
         }
-        
-        private void AddFeatures()
-        {
+
+        private void AddFeatures() {
             world.Add(new ActorManager());
             world.Add(new CharacterManager());
             world.Add(new Server_C2SHandle());

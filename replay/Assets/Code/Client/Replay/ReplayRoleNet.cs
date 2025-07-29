@@ -1,30 +1,25 @@
-namespace KillCam.Client.Replay
-{
-    public class ReplayRoleNet : IClientRoleNet
-    {
+namespace KillCam.Client.Replay {
+    public class ReplayRoleNet : IClientRoleNet {
         public int Id;
         public CharacterStateData Data;
-        
-        public int GetId()
-        {
+
+        public int GetId() {
             return Id;
         }
 
-        public bool IsClientOwned()
-        {
+        public bool IsClientOwned() {
             return false;
         }
 
-        public bool IsControlTarget()
-        {
+        public bool IsControlTarget() {
             return false;
         }
 
-        public CharacterStateData GetData()
-        {
+        public CharacterStateData GetData() {
             return Data;
         }
 
-        public void Send(INetworkSerialize data) { }
+        public void Send(INetworkSerialize data) {
+        }
     }
 }

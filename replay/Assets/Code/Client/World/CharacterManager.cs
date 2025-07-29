@@ -1,45 +1,36 @@
 using System.Collections.Generic;
 
-namespace KillCam.Client
-{
-    public class CharacterManager : Feature
-    {
+namespace KillCam.Client {
+    public class CharacterManager : Feature {
         private readonly IRoleSpawnProvider provider;
         private readonly Dictionary<int, Character> characters = new();
         public IReadOnlyDictionary<int, Character> Characters => characters;
-        
-        public CharacterManager(IRoleSpawnProvider provider)
-        {
+
+        public CharacterManager(IRoleSpawnProvider provider) {
             this.provider = provider;
         }
 
-        public override void OnCreate()
-        {
+        public override void OnCreate() {
             provider.OnRoleSpawn += OnRoleSpawn;
             provider.OnRoleDespawn += OnRoleDespawn;
         }
 
-        public override void OnDestroy()
-        {
+        public override void OnDestroy() {
             provider.OnRoleSpawn -= OnRoleSpawn;
             provider.OnRoleDespawn -= OnRoleDespawn;
         }
 
-        private void OnRoleSpawn(IClientRoleNet net)
-        {
+        private void OnRoleSpawn(IClientRoleNet net) {
             var playerId = net.GetId();
-            if (characters.ContainsKey(playerId))
-            {
+            if (characters.ContainsKey(playerId)) {
                 return;
             }
 
-            var characterActor = new Character()
-            {
+            var characterActor = new Character() {
                 Net = net,
             };
             characterActor.SetupWorld(world);
-            characterActor.SetupData(new CharacterIdentifier()
-            {
+            characterActor.SetupData(new CharacterIdentifier() {
                 PlayerId = playerId,
                 IsControlTarget = net.IsClientOwned(),
                 PlayerName = $"玩家{playerId}"
@@ -52,12 +43,10 @@ namespace KillCam.Client
             Get<ActorManager>().RegisterActor(characterActor);
             characters.Add(playerId, characterActor);
         }
-        
-        private void OnRoleDespawn(IRoleNet net)
-        {
+
+        private void OnRoleDespawn(IRoleNet net) {
             var playerId = net.GetId();
-            if (characters.Remove(playerId, out var character))
-            {
+            if (characters.Remove(playerId, out var character)) {
                 character.OnOwnerDestroyed();
                 Get<ActorManager>().UnregisterActor(character);
             }

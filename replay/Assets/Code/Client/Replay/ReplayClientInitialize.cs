@@ -23,14 +23,14 @@ namespace KillCam.Client.Replay {
         }
 
         public void Play() {
-            var worldStreams = new List<S2C_Replay_WorldStateSnapshot>();
+            var worldStreams = new List<S2C_WorldStateSnapshot>();
             using (var ms = new MemoryStream(playData))
             using (var br = new BinaryReader(ms)) {
                 int count = br.ReadInt32();
                 for (int i = 0; i < count; i++) {
                     int len = br.ReadInt32();
                     byte[] data = br.ReadBytes(len);
-                    var snapshot = new S2C_Replay_WorldStateSnapshot();
+                    var snapshot = new S2C_WorldStateSnapshot();
                     snapshot.Deserialize(new Reader(data, null));
                     worldStreams.Add(snapshot);
                 }

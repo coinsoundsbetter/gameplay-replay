@@ -2,7 +2,7 @@
 
 namespace KillCam.Client.Replay {
     public class Replay_InputProvider : Feature {
-        public void SetInput(S2C_Replay_WorldStateSnapshot snapshot) {
+        public void SetInput(S2C_WorldStateSnapshot snapshot) {
             var characters = Get<CharacterManager>().Characters;
             if (snapshot.CharacterSnapshot.InputData.IsEmpty) {
                 return;

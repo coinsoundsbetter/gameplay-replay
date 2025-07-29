@@ -27,7 +27,6 @@ namespace KillCam.Client {
 
             ClientData.Instance.IsReplayPrepare = true;
             DelayUtils.SetDelay(1f, () => {
-                Debug.Log("Start Replay!");
                 Instance.replayPlayer.SetData(data);
                 Instance.replayPlayer.Play();
                 ClientData.Instance.IsReplaying = true;

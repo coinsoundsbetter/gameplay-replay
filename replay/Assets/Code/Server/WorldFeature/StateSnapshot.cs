@@ -66,10 +66,10 @@ namespace KillCam.Server {
         }
 
         private void SaveWorld() {
-            NativeList<S2C_Replay_WorldStateSnapshot> worldSnapshots =
-                new NativeList<S2C_Replay_WorldStateSnapshot>(Allocator.Temp);
+            NativeList<S2C_WorldStateSnapshot> worldSnapshots =
+                new NativeList<S2C_WorldStateSnapshot>(Allocator.Temp);
             foreach (var (tick, snapshot) in characterSnapshots) {
-                var s2cSnapshot = new S2C_Replay_WorldStateSnapshot() {
+                var s2cSnapshot = new S2C_WorldStateSnapshot() {
                     Tick = tick,
                     CharacterSnapshot = new AllCharacterSnapshot() {
                         StateData = new NativeHashMap<int, CharacterStateData>(4, Allocator.Temp),
@@ -125,7 +125,10 @@ namespace KillCam.Server {
             }
 
             var byteData = File.ReadAllBytes(filePath);
-            //ClientWorldsChannel.StartReplay(byteData);
+            var startReplayData = new S2C_StartReplay {
+                FullData = byteData
+            };
+            world.Rpc(startReplayData);
         }
     }
 }

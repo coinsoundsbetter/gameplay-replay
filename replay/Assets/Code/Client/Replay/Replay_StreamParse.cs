@@ -3,10 +3,10 @@
 namespace KillCam.Client.Replay {
     public class Replay_StreamParse : Feature, INetwork {
         private bool isNeedHandle;
-        private List<S2C_Replay_WorldStateSnapshot> playStreams = new();
+        private List<S2C_WorldStateSnapshot> playStreams = new();
         private uint playTick;
 
-        public void StartHandleStream(List<S2C_Replay_WorldStateSnapshot> streams) {
+        public void StartHandleStream(List<S2C_WorldStateSnapshot> streams) {
             playStreams = streams;
         }
 
@@ -24,7 +24,7 @@ namespace KillCam.Client.Replay {
             playTick++;
 
             bool isPlayNextState = false;
-            S2C_Replay_WorldStateSnapshot nextPlayState = default;
+            S2C_WorldStateSnapshot nextPlayState = default;
             if (playStreams.Count > 0) {
                 nextPlayState = playStreams[0];
             }
@@ -39,7 +39,7 @@ namespace KillCam.Client.Replay {
             }
         }
 
-        private void OnPlayState(S2C_Replay_WorldStateSnapshot state) {
+        private void OnPlayState(S2C_WorldStateSnapshot state) {
             // 确保角色生成
             var spawnMgr = world.Get<Replay_SpawnProvider>();
             spawnMgr.EnsureSpawn(state);

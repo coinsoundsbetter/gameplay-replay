@@ -3,13 +3,7 @@ using FishNet.Serializing;
 using UnityEngine;
 
 namespace KillCam {
-    public enum NetworkMsg : ushort {
-        C2S_SendInput,
-
-
-        S2C_Replay_WorldStateSnapshot,
-        S2C_Replay_SpawnState,
-    }
+    
 
     public struct C2S_SendInput : INetworkSerialize {
         public uint LocalTick;

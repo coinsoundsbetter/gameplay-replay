@@ -7,7 +7,7 @@ namespace KillCam.Client.Replay {
         public event Action<IClientRoleNet> OnRoleDespawn;
         private readonly HashSet<int> spawnRoleIds = new();
 
-        public void EnsureSpawn(S2C_Replay_WorldStateSnapshot snapshot) {
+        public void EnsureSpawn(S2C_WorldStateSnapshot snapshot) {
             if (snapshot.CharacterSnapshot.IsEmpty()) {
                 return;
             }

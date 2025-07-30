@@ -1,5 +1,5 @@
 namespace KillCam.Client.Replay {
-    public class ReplayRoleNet : IClientRoleNet {
+    public class ReplayCharacterNet : IClientCharacterNet {
         public int Id;
         public CharacterStateData Data;
 

@@ -42,9 +42,9 @@ namespace KillCam.Server {
         }
 
         private void SpawnRoleNet(NetworkConnection conn, Login loginInfo) {
-            var asset = Resources.Load<GameObject>("RoleNet");
+            var asset = Resources.Load<GameObject>("Shared/CharacterNet");
             var instance = Object.Instantiate(asset);
-            var role = instance.GetComponent<RoleNet>();
+            var role = instance.GetComponent<CharacterNet>();
             role.Id.Value = ++clientUniqueId;
             var networkObj = instance.GetComponent<NetworkObject>();
             manager.ServerManager.Spawn(networkObj, conn);

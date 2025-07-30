@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace KillCam {
-    public class Mono_Role : MonoBehaviour {
+    public class CharacterViewBinder : MonoBehaviour {
         public Transform cameraTarget;
         public CharacterController cc;
         public Animator animator;

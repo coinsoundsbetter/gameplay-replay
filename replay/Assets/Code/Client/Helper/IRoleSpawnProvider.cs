@@ -2,7 +2,7 @@
 
 namespace KillCam.Client {
     public interface IRoleSpawnProvider {
-        event Action<IClientRoleNet> OnRoleSpawn;
-        event Action<IClientRoleNet> OnRoleDespawn;
+        event Action<IClientCharacterNet> OnRoleSpawn;
+        event Action<IClientCharacterNet> OnRoleDespawn;
     }
 }

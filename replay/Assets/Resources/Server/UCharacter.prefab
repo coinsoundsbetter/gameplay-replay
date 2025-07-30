@@ -68,7 +68,7 @@ GameObject:
   - component: {fileID: 580258912987318585}
   - component: {fileID: 1825311944216827385}
   m_Layer: 6
-  m_Name: Server_Mono_Role
+  m_Name: UCharacter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -56,6 +56,9 @@ namespace KillCam {
         }
 
         protected uint GetTick() => world.Network.GetTick();
+
+        protected float FrameDelta => world.FrameTickDelta;
+        protected double LogicDelta => world.LogicTickDelta;
     }
 
     public interface INetwork : INetworkClient, INetworkServer {

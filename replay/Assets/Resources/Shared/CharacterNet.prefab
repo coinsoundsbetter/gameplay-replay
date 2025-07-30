@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8157982406543824764}
   - component: {fileID: 1144315201041626525}
   m_Layer: 0
-  m_Name: RoleNet
+  m_Name: CharacterNet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52,8 +52,7 @@ MonoBehaviour:
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1144315201041626525}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -78,9 +77,9 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 2
+  <PrefabId>k__BackingField: 1
   <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 13015683479428063985
+  <AssetPathHash>k__BackingField: 7127099016132040501
   <SceneId>k__BackingField: 0
   SerializedTransformProperties:
     Position: {x: 0, y: 0, z: 0}
@@ -99,6 +98,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdbd37823c20d804991f682773ea287e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 0
   _addedNetworkObject: {fileID: 8157982406543824764}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 8157982406543824764}

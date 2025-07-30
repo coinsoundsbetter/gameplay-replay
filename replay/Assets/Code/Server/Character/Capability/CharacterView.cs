@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace KillCam.Server {
     public class CharacterView : RoleView {
-        private Mono_Role role;
+        private CharacterViewBinder viewBinder;
 
         protected override void OnActivate() {
             var state = Owner.GetDataReadOnly<CharacterStateData>();
@@ -15,20 +15,20 @@ namespace KillCam.Server {
 
         protected override void OnTickActive() {
             var state = Owner.GetDataReadOnly<CharacterStateData>();
-            role.transform.position = state.Pos;
+            viewBinder.transform.position = state.Pos;
         }
 
         private void Load(Vector3 pos, Quaternion rot) {
-            var asset = Resources.Load("Server_Mono_Role");
+            var asset = Resources.Load("Server/UCharacter");
             var instance = (GameObject)Object.Instantiate(asset);
-            role = instance.GetComponent<Mono_Role>();
-            role.transform.position = pos;
-            role.transform.rotation = rot;
+            viewBinder = instance.GetComponent<CharacterViewBinder>();
+            viewBinder.transform.position = pos;
+            viewBinder.transform.rotation = rot;
         }
 
         private void Unload() {
-            if (role) {
-                Object.Destroy(role.gameObject);
+            if (viewBinder) {
+                Object.Destroy(viewBinder.gameObject);
             }
         }
     }

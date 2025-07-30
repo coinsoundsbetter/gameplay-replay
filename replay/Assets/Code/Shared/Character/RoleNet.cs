@@ -5,12 +5,11 @@ using FishNet.Serializing;
 using UnityEngine;
 
 namespace KillCam {
-    public class RoleNet : NetworkBehaviour, IClientRoleNet, IServerRoleNet {
+    public class CharacterNet : NetworkBehaviour, IClientCharacterNet, IServerCharacterNet {
         /// <summary>
         /// 角色同步状态
         /// </summary>
         public readonly SyncVar<int> Id = new(new SyncTypeSettings(WritePermission.ServerOnly));
-
         public readonly SyncVar<Vector3> Pos = new(new SyncTypeSettings(WritePermission.ServerOnly));
         public readonly SyncVar<Quaternion> Rot = new(new SyncTypeSettings(WritePermission.ServerOnly));
         public readonly SyncVar<int> Health = new(new SyncTypeSettings(WritePermission.ServerOnly));
@@ -18,11 +17,10 @@ namespace KillCam {
         /// <summary>
         /// 全局事件
         /// </summary>
-        public static event Action<IServerRoleNet> OnServerSpawn;
-
-        public static event Action<IServerRoleNet> OnServerDespawn;
-        public static event Action<IClientRoleNet> OnClientSpawn;
-        public static event Action<IClientRoleNet> OnClientDespawn;
+        public static event Action<IServerCharacterNet> OnServerSpawn;
+        public static event Action<IServerCharacterNet> OnServerDespawn;
+        public static event Action<IClientCharacterNet> OnClientSpawn;
+        public static event Action<IClientCharacterNet> OnClientDespawn;
         public static event Action<byte[]> OnClientReceiveData;
         public static event Action<int, byte[]> OnServerReceiveData;
 
@@ -57,8 +55,6 @@ namespace KillCam {
             RpcToClient(writer.GetBuffer());
         }
 
-        public void TargetRpc<T>(int id, T message) where T : INetworkMsg { }
-
         [ObserversRpc]
         private void RpcToClient(byte[] data) {
             OnClientReceiveData?.Invoke(data);
@@ -75,10 +71,6 @@ namespace KillCam {
 
         public bool IsClientOwned() {
             return IsOwner;
-        }
-
-        public bool IsControlTarget() {
-            return IsController;
         }
 
         public CharacterStateData GetData() {

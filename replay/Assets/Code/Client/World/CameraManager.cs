@@ -17,6 +17,7 @@ namespace KillCam.Client {
         private void OnFrameTick(float delta) {
             CheckEnable();
             Movement();
+            SendCameraData();
         }
         
         private void LoadCamera() {
@@ -54,14 +55,20 @@ namespace KillCam.Client {
             Vector3 desiredPos = ass.target.position + ass.target.rotation * ass.offsetInLocal;
 
             // 2. 平滑插值到目标位置
-            uCamera.transform.position = Vector3.Lerp(uCamera.transform.position, desiredPos, Time.deltaTime * ass.followSpeed);
+            uCamera.transform.position = Vector3.Lerp(uCamera.transform.position, desiredPos, FrameDelta * ass.followSpeed);
 
             // 3. 计算朝向
             Vector3 lookDir = ass.target.position - uCamera.transform.position;
             if (lookDir.sqrMagnitude > 0.001f) {
                 Quaternion desiredRot = Quaternion.LookRotation(lookDir.normalized);
-                uCamera.transform.rotation = Quaternion.Slerp(uCamera.transform.rotation, desiredRot, Time.deltaTime * ass.rotateSpeed);
+                uCamera.transform.rotation = Quaternion.Slerp(uCamera.transform.rotation, desiredRot, FrameDelta * ass.rotateSpeed);
             }
+        }
+
+        private void SendCameraData() {
+            world.Send(new C2S_SendCameraData() {
+                Rotation = uCamera.transform.rotation,
+            });
         }
 
         public void SetFollowTarget(CameraTargetAssociation association) {

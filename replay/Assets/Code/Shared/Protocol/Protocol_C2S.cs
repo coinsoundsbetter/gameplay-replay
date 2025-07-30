@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using FishNet.Serializing;
+﻿using FishNet.Serializing;
 using UnityEngine;
 
 namespace KillCam {
@@ -22,16 +21,17 @@ namespace KillCam {
     }
 
     public struct C2S_SendCameraData : INetworkMsg {
+        public Quaternion Rotation;
+        
         public byte[] Serialize(Writer writer) {
-            
+            writer.WriteQuaternion64(Rotation);
+            return writer.GetBuffer();
         }
 
         public void Deserialize(Reader reader) {
-            
+            Rotation = reader.ReadQuaternion64();
         }
 
-        public ushort GetMsgType() {
-           
-        }
+        public ushort GetMsgType() => (ushort)NetworkMsg.C2S_SendCameraData;
     }
 }

@@ -2,24 +2,24 @@
 
 namespace KillCam.Client {
     public class SpawnProvider : Feature, IRoleSpawnProvider {
-        public event Action<IClientRoleNet> OnRoleSpawn;
-        public event Action<IClientRoleNet> OnRoleDespawn;
+        public event Action<IClientCharacterNet> OnRoleSpawn;
+        public event Action<IClientCharacterNet> OnRoleDespawn;
 
         public override void OnCreate() {
-            RoleNet.OnClientSpawn += OnClientSpawn;
-            RoleNet.OnClientDespawn += OnClientDespawn;
+            CharacterNet.OnClientSpawn += OnClientSpawn;
+            CharacterNet.OnClientDespawn += OnClientDespawn;
         }
 
         public override void OnDestroy() {
-            RoleNet.OnClientSpawn -= OnClientSpawn;
-            RoleNet.OnClientDespawn -= OnClientDespawn;
+            CharacterNet.OnClientSpawn -= OnClientSpawn;
+            CharacterNet.OnClientDespawn -= OnClientDespawn;
         }
 
-        private void OnClientSpawn(IClientRoleNet net) {
+        private void OnClientSpawn(IClientCharacterNet net) {
             OnRoleSpawn?.Invoke(net);
         }
 
-        private void OnClientDespawn(IClientRoleNet net) {
+        private void OnClientDespawn(IClientCharacterNet net) {
             OnRoleDespawn?.Invoke(net);
         }
     }

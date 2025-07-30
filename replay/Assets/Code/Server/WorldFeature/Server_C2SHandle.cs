@@ -4,11 +4,11 @@ using UnityEngine;
 namespace KillCam.Server {
     public class Server_C2SHandle : Feature {
         public override void OnCreate() {
-            RoleNet.OnServerReceiveData += HandleClientRequest;
+            CharacterNet.OnServerReceiveData += HandleClientRequest;
         }
 
         public override void OnDestroy() {
-            RoleNet.OnServerReceiveData -= HandleClientRequest;
+            CharacterNet.OnServerReceiveData -= HandleClientRequest;
         }
 
         private void HandleClientRequest(int senderId, byte[] data) {

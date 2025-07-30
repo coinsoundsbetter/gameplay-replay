@@ -20,7 +20,7 @@ namespace KillCam.Client {
             provider.OnRoleDespawn -= OnRoleDespawn;
         }
 
-        private void OnRoleSpawn(IClientRoleNet net) {
+        private void OnRoleSpawn(IClientCharacterNet net) {
             var playerId = net.GetId();
             if (characters.ContainsKey(playerId)) {
                 return;
@@ -44,7 +44,7 @@ namespace KillCam.Client {
             characters.Add(playerId, characterActor);
         }
 
-        private void OnRoleDespawn(IRoleNet net) {
+        private void OnRoleDespawn(ICharacterNet net) {
             var playerId = net.GetId();
             if (characters.Remove(playerId, out var character)) {
                 character.OnOwnerDestroyed();

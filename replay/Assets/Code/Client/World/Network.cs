@@ -5,10 +5,10 @@ using FishNet.Transporting;
 namespace KillCam.Client {
     public class Network : Feature, INetwork {
         private readonly NetworkManager manager;
-        private IClientRoleNet sender;
+        private IClientCharacterNet sender;
         private Action startAction;
-        public event Action<IClientRoleNet> AfterRoleSpawn;
-        public event Action<IClientRoleNet> AfterRoleDespawn;
+        public event Action<IClientCharacterNet> AfterRoleSpawn;
+        public event Action<IClientCharacterNet> AfterRoleDespawn;
 
         public Network(NetworkManager mgr) {
             manager = mgr;
@@ -17,8 +17,8 @@ namespace KillCam.Client {
         public void Start(Action started) {
             startAction = started;
             world.SetNetwork(this);
-            RoleNet.OnClientSpawn += OnClientSpawn;
-            RoleNet.OnClientDespawn += OnClientDespawn;
+            CharacterNet.OnClientSpawn += OnClientSpawn;
+            CharacterNet.OnClientDespawn += OnClientDespawn;
             manager.ClientManager.OnClientConnectionState += OnLocalConnectState;
             manager.ClientManager.StartConnection();
         }
@@ -26,12 +26,12 @@ namespace KillCam.Client {
         public void Stop() {
             world.RemoveNetwork(this);
             manager.ClientManager.StopConnection();
-            RoleNet.OnClientSpawn -= OnClientSpawn;
-            RoleNet.OnClientDespawn -= OnClientDespawn;
+            CharacterNet.OnClientSpawn -= OnClientSpawn;
+            CharacterNet.OnClientDespawn -= OnClientDespawn;
             manager.ClientManager.OnClientConnectionState -= OnLocalConnectState;
         }
 
-        private void OnClientSpawn(IClientRoleNet net) {
+        private void OnClientSpawn(IClientCharacterNet net) {
             if (net.IsClientOwned()) {
                 sender = net;
             }
@@ -39,7 +39,7 @@ namespace KillCam.Client {
             AfterRoleSpawn?.Invoke(net);
         }
 
-        private void OnClientDespawn(IClientRoleNet net) {
+        private void OnClientDespawn(IClientCharacterNet net) {
             if (net.IsClientOwned()) {
                 sender = null;
             }

@@ -3,11 +3,11 @@
 namespace KillCam.Client {
     public class S2CHandle : Feature {
         public override void OnCreate() {
-            RoleNet.OnClientReceiveData += OnReceived;
+            CharacterNet.OnClientReceiveData += OnReceived;
         }
 
         public override void OnDestroy() {
-            RoleNet.OnClientReceiveData -= OnReceived;
+            CharacterNet.OnClientReceiveData -= OnReceived;
         }
 
         private void OnReceived(byte[] data) {

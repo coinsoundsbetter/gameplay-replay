@@ -1,11 +1,15 @@
 ﻿namespace KillCam {
-    public interface IRoleNet {
+    public interface ICharacterNet {
         int GetId();
-        bool IsClientOwned();
-        bool IsControlTarget();
         CharacterStateData GetData();
     }
 
-    public interface IClientRoleNet : IRoleNet, INetworkClient { }
-    public interface IServerRoleNet : IRoleNet, INetworkServer { }
+    public interface IClientCharacterNet : ICharacterNet {
+        bool IsClientOwned();
+        void Send<T>(T message) where T : INetworkMsg;
+    }
+
+    public interface IServerCharacterNet : ICharacterNet {
+        void Rpc<T>(T message) where T : INetworkMsg;
+    }
 }

@@ -6,16 +6,16 @@ namespace KillCam.Server {
         public IReadOnlyDictionary<int, Character> RoleActors => roleActors;
 
         public override void OnCreate() {
-            RoleNet.OnServerSpawn += OnRoleNetSpawn;
-            RoleNet.OnServerDespawn += OnRoleNetDespawn;
+            CharacterNet.OnServerSpawn += OnRoleNetSpawn;
+            CharacterNet.OnServerDespawn += OnRoleNetDespawn;
         }
 
         public override void OnDestroy() {
-            RoleNet.OnServerSpawn -= OnRoleNetSpawn;
-            RoleNet.OnServerDespawn -= OnRoleNetDespawn;
+            CharacterNet.OnServerSpawn -= OnRoleNetSpawn;
+            CharacterNet.OnServerDespawn -= OnRoleNetDespawn;
         }
 
-        private void OnRoleNetSpawn(IServerRoleNet net) {
+        private void OnRoleNetSpawn(IServerCharacterNet net) {
             var id = net.GetId();
             var character = new Character() {
                 Net = net,
@@ -34,7 +34,7 @@ namespace KillCam.Server {
             roleActors.Add(id, character);
         }
 
-        private void OnRoleNetDespawn(IServerRoleNet net) {
+        private void OnRoleNetDespawn(IServerCharacterNet net) {
             if (roleActors.Remove(net.GetId(), out var character)) {
                 character.OnOwnerDestroyed();
                 Get<ActorManager>().UnregisterActor(character);

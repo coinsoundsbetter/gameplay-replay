@@ -116,11 +116,11 @@ namespace KillCam {
             return default;
         }
 
-        public void Send(INetworkMsg request) {
+        public void Send<T>(T request) where T : INetworkMsg {
             Network?.Send(request);
         }
 
-        public void Rpc(INetworkMsg notify) {
+        public void Rpc<T>(T notify) where T : INetworkMsg {
             Network?.Rpc(notify);
         }
 

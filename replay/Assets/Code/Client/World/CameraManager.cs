@@ -3,6 +3,7 @@
 namespace KillCam.Client {
     public class CameraManager : Feature {
         private Camera uCamera;
+        private CameraTargetAssociation ass;
 
         public override void OnCreate() {
             LoadCamera();
@@ -14,23 +15,10 @@ namespace KillCam.Client {
         }
 
         private void OnFrameTick(float delta) {
-            bool isBlock = false;
-
-            // 非回放世界
-            if (!world.HasFlag(WorldFlag.Replay) &&
-                (ClientData.Instance.IsReplaying || ClientData.Instance.IsReplayPrepare)) {
-                isBlock = true;
-            }
-
-            // 回放世界
-            if (world.HasFlag(WorldFlag.Replay) &&
-                (ClientData.Instance.IsReplaying)) {
-                isBlock = false;
-            }
-
-            uCamera.enabled = !isBlock;
+            CheckEnable();
+            Movement();
         }
-
+        
         private void LoadCamera() {
             var asset = Resources.Load("Camera");
             var go = (GameObject)Object.Instantiate(asset);
@@ -42,5 +30,61 @@ namespace KillCam.Client {
                 uCamera.cullingMask |= (1 << LayerDefine.replayCharacterLayer);
             }
         }
+
+        private void CheckEnable() {
+            // 非回放世界
+            bool isBlock = !world.HasFlag(WorldFlag.Replay) &&
+                           (ClientData.Instance.IsReplaying || ClientData.Instance.IsReplayPrepare);
+
+            // 回放世界
+            if (world.HasFlag(WorldFlag.Replay) &&
+                (ClientData.Instance.IsReplaying)) {
+                isBlock = false;
+            }
+
+            uCamera.enabled = !isBlock;
+        }
+        
+        private void Movement() {
+            if (ass == null || ass.target == null) {
+                return;
+            }
+
+            // 1. 计算目标位置（使用本地 offset ）
+            Vector3 desiredPos = ass.target.position + ass.target.rotation * ass.offsetInLocal;
+
+            // 2. 平滑插值到目标位置
+            uCamera.transform.position = Vector3.Lerp(uCamera.transform.position, desiredPos, Time.deltaTime * ass.followSpeed);
+
+            // 3. 计算朝向
+            Vector3 lookDir = ass.target.position - uCamera.transform.position;
+            if (lookDir.sqrMagnitude > 0.001f) {
+                Quaternion desiredRot = Quaternion.LookRotation(lookDir.normalized);
+                uCamera.transform.rotation = Quaternion.Slerp(uCamera.transform.rotation, desiredRot, Time.deltaTime * ass.rotateSpeed);
+            }
+        }
+
+        public void SetFollowTarget(CameraTargetAssociation association) {
+            ass = association;
+        }
+
+        public CameraData GetCameraData() {
+            var data = new CameraData() {
+                lookForward = uCamera.transform.forward,
+            };
+
+            return data;
+        }
+    }
+
+    public struct CameraData {
+        public Vector3 lookForward;
+    }
+
+    public class CameraTargetAssociation {
+        public Transform target;
+        public Vector3 offsetInLocal;
+        public float followSpeed;
+        public float rotateSpeed;
     }
 }

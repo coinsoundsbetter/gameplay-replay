@@ -3,8 +3,6 @@ using FishNet.Serializing;
 using UnityEngine;
 
 namespace KillCam {
-    
-
     public struct C2S_SendInput : INetworkMsg {
         public uint LocalTick;
         public Vector2Int Move;
@@ -21,5 +19,19 @@ namespace KillCam {
         }
 
         public ushort GetMsgType() => (ushort)NetworkMsg.C2S_SendInput;
+    }
+
+    public struct C2S_SendCameraData : INetworkMsg {
+        public byte[] Serialize(Writer writer) {
+            
+        }
+
+        public void Deserialize(Reader reader) {
+            
+        }
+
+        public ushort GetMsgType() {
+           
+        }
     }
 }

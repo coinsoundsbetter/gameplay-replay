@@ -40,6 +40,7 @@ namespace KillCam.Client {
             characterActor.SetupCapability<CharacterInput>(TickGroup.FixedStep);
             characterActor.SetupCapability<CharacterMovement>(TickGroup.FixedStep);
             characterActor.SetupCapability<CharacterView>(TickGroup.FrameStep);
+            characterActor.SetupCapability<CharacterAnim>(TickGroup.FrameStep);
             Get<ActorManager>().RegisterActor(characterActor);
             characters.Add(playerId, characterActor);
         }

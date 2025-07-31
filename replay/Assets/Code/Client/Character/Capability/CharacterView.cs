@@ -21,6 +21,8 @@ namespace KillCam.Client {
 
         protected override void OnTickActive() {
             RotateBody();
+            UpdateCameraPitch();
+            ApplyPos();
         }
 
         private void Load(Vector3 pos, Quaternion rot) {
@@ -33,9 +35,10 @@ namespace KillCam.Client {
             viewBinder.transform.position = pos;
             viewBinder.transform.rotation = rot;
             cameraManager.SetFollowTarget(association = new CameraTargetAssociation() {
-                followSpeed = 10f,
-                rotateSpeed = 30f,
-                offsetInLocal = new Vector3(0, 3, -5),
+                pitch = 20f,
+                pitchRange = new Vector2(-40f, 55f),
+                yaw = 0,
+                offsetFromTarget = new Vector3(0, 3, -5),
                 target = viewBinder.cameraTarget,
             }); 
         }
@@ -48,8 +51,25 @@ namespace KillCam.Client {
 
         private void RotateBody() {
             var inputData = Owner.GetDataReadOnly<CharacterInputData>();
-            var mouseX = inputData.MouseX;
+            var mouseX = inputData.Yaw;
             viewBinder.transform.Rotate(Vector3.up, mouseX * (float)TickDelta * 300f, Space.Self);
+            ref var stateData = ref Owner.GetDataReadWrite<CharacterStateData>();
+            stateData.Rot = viewBinder.transform.rotation;
+        }
+
+        private void UpdateCameraPitch() {
+            if (association == null) {
+                return;
+            }
+            
+            var inputData = Owner.GetDataReadOnly<CharacterInputData>();
+            var mouseY = inputData.Pitch;
+            association.pitch += -mouseY * (float)TickDelta * 300f;
+        }
+
+        private void ApplyPos() {
+            var stateData = Owner.GetDataReadOnly<CharacterStateData>();
+            viewBinder.transform.position = stateData.Pos;
         }
     }
 }

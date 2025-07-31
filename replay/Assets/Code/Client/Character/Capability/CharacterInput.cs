@@ -24,7 +24,8 @@ namespace KillCam.Client {
             if (v > 0) v = 1;
             else if (v < 0) v = -1;
             data.Move = new Vector2Int((int)h, (int)v);
-            data.MouseX = Input.GetAxis("Mouse X");
+            data.Yaw = Input.GetAxis("Mouse X");
+            data.Pitch = Input.GetAxis("Mouse Y");
             World.Send(new C2S_SendInput() {
                 LocalTick = World.Network.GetTick(),
                 Move = data.Move,

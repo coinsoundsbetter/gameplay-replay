@@ -78,6 +78,7 @@ namespace KillCam.Client {
         public CameraData GetCameraData() {
             var data = new CameraData() {
                 lookForward = uCamera.transform.forward,
+                forwardNoY = new Vector3(uCamera.transform.forward.x, 0, uCamera.transform.forward.z),
             };
 
             return data;
@@ -86,6 +87,7 @@ namespace KillCam.Client {
 
     public struct CameraData {
         public Vector3 lookForward;
+        public Vector3 forwardNoY;
     }
 
     public class CameraTargetAssociation {

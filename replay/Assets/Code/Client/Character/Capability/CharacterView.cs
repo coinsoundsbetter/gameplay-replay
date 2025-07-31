@@ -20,10 +20,7 @@ namespace KillCam.Client {
         }
 
         protected override void OnTickActive() {
-            var cState = Owner.GetDataReadOnly<CharacterStateData>();
-            viewBinder.transform.position = cState.Pos;
-            viewBinder.transform.rotation = cState.Rot;
-            AnimationState();
+            RotateBody();
         }
 
         private void Load(Vector3 pos, Quaternion rot) {
@@ -49,10 +46,10 @@ namespace KillCam.Client {
             }
         }
 
-        private void AnimationState() {
-            var inputState = Owner.GetDataReadOnly<CharacterInputData>();
-            var move = inputState.Move;
-            
+        private void RotateBody() {
+            var inputData = Owner.GetDataReadOnly<CharacterInputData>();
+            var mouseX = inputData.MouseX;
+            viewBinder.transform.Rotate(Vector3.up, mouseX * (float)TickDelta * 300f, Space.Self);
         }
     }
 }

@@ -5,6 +5,7 @@ namespace KillCam {
     public struct C2S_SendInput : INetworkMsg {
         public uint LocalTick;
         public Vector2Int Move;
+        public float MouseX;
 
         public byte[] Serialize(Writer writer) {
             writer.WriteUInt32(LocalTick);

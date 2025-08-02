@@ -113,6 +113,7 @@ namespace KillCam {
         private readonly Dictionary<Type, RefStorageBase> unmanagedDataSet = new();
         private readonly Dictionary<Type, object> managedDataSet = new();
         private readonly Dictionary<string, Capability> capabilities = new();
+        private readonly List<Capability> inputCapabilities = new();
         private readonly List<Capability> fixedCapabilities = new();
         private readonly List<Capability> frameCapabilities = new();
 
@@ -167,6 +168,9 @@ namespace KillCam {
                 var capability = new T();
                 capabilities.Add(typeName, capability);
                 switch (tickGroup) {
+                    case TickGroup.Input:
+                        inputCapabilities.Add(capability);
+                        break;
                     case TickGroup.FixedStep:
                         fixedCapabilities.Add(capability);
                         break;
@@ -184,8 +188,10 @@ namespace KillCam {
                 c.Destroy();
             }
 
+            inputCapabilities.Clear();
             frameCapabilities.Clear();
             fixedCapabilities.Clear();
+            capabilities.Clear();
 
             foreach (var dataObj in managedDataSet.Values) {
                 if (dataObj is IDisposable disposable) {
@@ -203,30 +209,30 @@ namespace KillCam {
         }
 
         public void TickLogic(double deltaTime) {
+            foreach (var c in inputCapabilities) {
+                TryTickCapability(c, deltaTime);
+            }
+            
             foreach (var c in fixedCapabilities) {
-                if (!c.IsActive && c.OnShouldActivate()) {
-                    c.Activate();
-                } else if (c.IsActive && c.OnShouldDeactivate()) {
-                    c.Deactivate();
-                }
-
-                if (c.IsActive) {
-                    c.TickActive(deltaTime);
-                }
+                TryTickCapability(c, deltaTime);
             }
         }
 
         public void TickFrame(float deltaTime) {
             foreach (var c in frameCapabilities) {
-                if (!c.IsActive && c.OnShouldActivate()) {
-                    c.Activate();
-                } else if (c.IsActive && c.OnShouldDeactivate()) {
-                    c.Deactivate();
-                }
+                TryTickCapability(c, deltaTime);
+            }
+        }
 
-                if (c.IsActive) {
-                    c.TickActive(deltaTime);
-                }
+        private void TryTickCapability(Capability c, double deltaTime) {
+            if (!c.IsActive && c.OnShouldActivate()) {
+                c.Activate();
+            } else if (c.IsActive && c.OnShouldDeactivate()) {
+                c.Deactivate();
+            }
+
+            if (c.IsActive) {
+                c.TickActive(deltaTime);
             }
         }
     }
@@ -298,6 +304,7 @@ namespace KillCam {
     }
 
     public enum TickGroup {
+        Input,
         FixedStep,
         FrameStep,
     }

@@ -4,7 +4,7 @@ namespace KillCam.Client {
     public class CameraManager : Feature {
         private Camera uCamera;
         private Transform uCameraTrans => uCamera.transform;
-        private CameraTargetAssociation ass;
+        private CameraDataSource ass;
 
         public override void OnCreate() {
             LoadCamera();
@@ -19,6 +19,10 @@ namespace KillCam.Client {
             CheckEnable();
             Movement();
             SendCameraData();
+        }
+        
+        public void SetDataSource(CameraDataSource association) {
+            ass = association;
         }
 
         private void LoadCamera() {
@@ -85,10 +89,6 @@ namespace KillCam.Client {
             });
         }
 
-        public void SetFollowTarget(CameraTargetAssociation association) {
-            ass = association;
-        }
-
         public CameraData GetCameraData() {
             var data = new CameraData() {
                 lookForward = uCamera.transform.forward,
@@ -104,7 +104,7 @@ namespace KillCam.Client {
         public Vector3 forwardNoY;
     }
 
-    public class CameraTargetAssociation {
+    public class CameraDataSource {
         public Transform target;
         public Vector3 offsetFromTarget;
         public float pitch;

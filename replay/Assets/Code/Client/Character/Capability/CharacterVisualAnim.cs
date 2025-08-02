@@ -1,5 +1,5 @@
 namespace KillCam.Client {
-    public class CharacterAnim : Capability {
+    public class CharacterVisualAnim : Capability {
         
         protected override void OnTickActive() {
             base.OnTickActive();

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace KillCam.Server {
     public class CharacterView : RoleView {
-        private CharacterViewBinder viewBinder;
+        private UCharacter viewBinder;
 
         protected override void OnActivate() {
             var state = Owner.GetDataReadOnly<CharacterStateData>();
@@ -21,7 +21,7 @@ namespace KillCam.Server {
         private void Load(Vector3 pos, Quaternion rot) {
             var asset = Resources.Load("Server/UCharacter");
             var instance = (GameObject)Object.Instantiate(asset);
-            viewBinder = instance.GetComponent<CharacterViewBinder>();
+            viewBinder = instance.GetComponent<UCharacter>();
             viewBinder.transform.position = pos;
             viewBinder.transform.rotation = rot;
         }

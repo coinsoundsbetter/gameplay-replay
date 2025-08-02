@@ -30,6 +30,7 @@ namespace KillCam.Client {
                 Net = net,
             };
             characterActor.SetupWorld(world);
+            // 设置数据
             characterActor.SetupData(new CharacterIdentifier() {
                 PlayerId = playerId,
                 IsControlTarget = net.IsClientOwned(),
@@ -37,10 +38,14 @@ namespace KillCam.Client {
             });
             characterActor.SetupData(new CharacterInputData());
             characterActor.SetupData(new CharacterStateData());
-            characterActor.SetupCapability<CharacterInput>(TickGroup.FixedStep);
+            characterActor.SetupDataManaged(new UCharacterRef());
+            characterActor.SetupData(new CharacterSkinData());
+            // 设置逻辑
+            characterActor.SetupCapability<CharacterInput>(TickGroup.Input);
             characterActor.SetupCapability<CharacterMovement>(TickGroup.FixedStep);
             characterActor.SetupCapability<CharacterView>(TickGroup.FrameStep);
-            characterActor.SetupCapability<CharacterAnim>(TickGroup.FrameStep);
+            characterActor.SetupCapability<CharacterVisualSkin>(TickGroup.FrameStep);
+            characterActor.SetupCapability<CharacterVisualAnim>(TickGroup.FrameStep);
             Get<ActorManager>().RegisterActor(characterActor);
             characters.Add(playerId, characterActor);
         }

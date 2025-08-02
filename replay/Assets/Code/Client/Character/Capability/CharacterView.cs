@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace KillCam.Client {
     public class CharacterView : RoleView {
-        private CharacterViewBinder viewBinder;
+        private UCharacter viewBinder;
         private CameraManager cameraManager;
-        private CameraTargetAssociation association;
+        private CameraDataSource association;
         
         protected override void OnSetup() {
             cameraManager = World.Get<CameraManager>();
@@ -31,10 +31,10 @@ namespace KillCam.Client {
             instance.SetLayerRecursively(World.HasFlag(WorldFlag.Replay)
                 ? LayerDefine.replayCharacterLayer
                 : LayerDefine.characterLayer);
-            viewBinder = instance.GetComponent<CharacterViewBinder>();
+            viewBinder = instance.GetComponent<UCharacter>();
             viewBinder.transform.position = pos;
             viewBinder.transform.rotation = rot;
-            cameraManager.SetFollowTarget(association = new CameraTargetAssociation() {
+            cameraManager.SetDataSource(association = new CameraDataSource() {
                 pitch = 20f,
                 pitchRange = new Vector2(-40f, 55f),
                 yaw = 0,

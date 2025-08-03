@@ -53,7 +53,7 @@ namespace KillCam.Client.Replay {
             inputMgr.SetInput(state);
 
             // 用完了清理非托管资源
-            state.CharacterSnapshot.Dispose();
+            state.HeroSnapshot.Dispose();
         }
 
         public new uint GetTick() {

@@ -2,7 +2,7 @@
 
 namespace KillCam {
     public static class WriteEx {
-        public static void WriteAllCharacterSnapshot(this Writer writer, AllCharacterSnapshot data) {
+        public static void WriteAllCharacterSnapshot(this Writer writer, AllHeroSnapshot data) {
             if (data.StateData.IsCreated) {
                 writer.Write(data.StateData.Count);
                 foreach (var kvp in data.StateData) {
@@ -24,12 +24,12 @@ namespace KillCam {
             }
         }
 
-        public static void WriteCharacterStateData(this Writer writer, CharacterStateData data) {
+        public static void WriteCharacterStateData(this Writer writer, HeroMoveData data) {
             writer.WriteVector3(data.Pos);
             writer.WriteQuaternion64(data.Rot);
         }
 
-        public static void WriteCharacterInputData(this Writer writer, CharacterInputData data) {
+        public static void WriteCharacterInputData(this Writer writer, HeroInputData data) {
             writer.WriteVector2Int(data.Move);
         }
     }

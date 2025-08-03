@@ -1,7 +1,7 @@
 namespace KillCam.Client.Replay {
-    public class ReplayCharacterNet : IClientCharacterNet {
+    public class ReplayHeroNet : IClientHeroNet {
         public int Id;
-        public CharacterStateData Data;
+        public HeroMoveData Data;
 
         public int GetId() {
             return Id;
@@ -15,7 +15,7 @@ namespace KillCam.Client.Replay {
             return false;
         }
 
-        public CharacterStateData GetData() {
+        public HeroMoveData GetData() {
             return Data;
         }
 

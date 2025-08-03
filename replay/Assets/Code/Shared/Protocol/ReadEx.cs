@@ -3,12 +3,12 @@ using Unity.Collections;
 
 namespace KillCam {
     public static class ReadEx {
-        public static AllCharacterSnapshot ReadAllCharacterSnapshot(this Reader reader) {
-            var res = new AllCharacterSnapshot();
+        public static AllHeroSnapshot ReadAllCharacterSnapshot(this Reader reader) {
+            var res = new AllHeroSnapshot();
 
             int stateDataCnt = reader.ReadInt32();
             if (stateDataCnt > 0) {
-                res.StateData = new NativeHashMap<int, CharacterStateData>(4, Allocator.Persistent);
+                res.StateData = new NativeHashMap<int, HeroMoveData>(4, Allocator.Persistent);
             }
 
             for (int i = 0; i < stateDataCnt; i++) {
@@ -19,7 +19,7 @@ namespace KillCam {
 
             int inputDataCnt = reader.ReadInt32();
             if (inputDataCnt > 0) {
-                res.InputData = new NativeHashMap<int, CharacterInputData>(4, Allocator.Persistent);
+                res.InputData = new NativeHashMap<int, HeroInputData>(4, Allocator.Persistent);
             }
 
             for (int i = 0; i < stateDataCnt; i++) {
@@ -31,16 +31,16 @@ namespace KillCam {
             return res;
         }
 
-        public static CharacterStateData ReadCharacterStateData(this Reader reader) {
-            var res = new CharacterStateData {
+        public static HeroMoveData ReadCharacterStateData(this Reader reader) {
+            var res = new HeroMoveData {
                 Pos = reader.ReadVector3(),
                 Rot = reader.ReadQuaternion64()
             };
             return res;
         }
 
-        public static CharacterInputData ReadCharacterInputData(this Reader reader) {
-            var res = new CharacterInputData() {
+        public static HeroInputData ReadCharacterInputData(this Reader reader) {
+            var res = new HeroInputData() {
                 Move = reader.ReadVector2Int(),
             };
 

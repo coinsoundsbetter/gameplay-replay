@@ -59,7 +59,7 @@ namespace KillCam.Client.Replay {
             world.Add<ActorManager>();
             world.Add<Replay_StateProvider>();
             world.Add<Replay_InputProvider>();
-            world.Add(new CharacterManager(spawnProvider));
+            world.Add(new HeroManager(spawnProvider));
             world.Add<CameraManager>();
         }
     }

@@ -20,7 +20,7 @@ namespace KillCam.Server {
 
         private void AddFeatures() {
             world.Add(new ActorManager());
-            world.Add(new CharacterManager());
+            world.Add(new HeroManager());
             world.Add(new Server_C2SHandle());
             world.Add(new StateSnapshot());
         }

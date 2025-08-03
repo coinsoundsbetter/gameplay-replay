@@ -28,7 +28,7 @@ namespace KillCam.Client {
             world.Add(spawnProvider = new SpawnProvider());
             world.Add(new S2CHandle());
             world.Add(new ActorManager());
-            world.Add(new CharacterManager(spawnProvider));
+            world.Add(new HeroManager(spawnProvider));
             world.Add(new CameraManager());
         }
     }

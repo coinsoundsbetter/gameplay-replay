@@ -1,13 +1,13 @@
 namespace KillCam.Client.Replay {
     public class Replay_StateProvider : Feature {
         public void SetState(S2C_WorldStateSnapshot snapshot) {
-            var characters = Get<CharacterManager>().Characters;
-            if (snapshot.CharacterSnapshot.StateData.IsEmpty) {
+            var characters = Get<HeroManager>().Characters;
+            if (snapshot.HeroSnapshot.StateData.IsEmpty) {
                 return;
             }
 
-            foreach (var kvp in snapshot.CharacterSnapshot.StateData) {
-                ref var stateData = ref characters[kvp.Key].GetDataReadWrite<CharacterStateData>();
+            foreach (var kvp in snapshot.HeroSnapshot.StateData) {
+                ref var stateData = ref characters[kvp.Key].GetDataReadWrite<HeroMoveData>();
                 stateData.Pos = kvp.Value.Pos;
                 stateData.Rot = kvp.Value.Rot;
             }

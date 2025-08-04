@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f65dad55ebcee4f42b7309c79b72d48d, type: 3}
   m_Name: PlayerCameraSO
   m_EditorClassIdentifier: 
-  offset: {x: 0, y: 0, z: 0}
-  rotateSpeed: 0
-  followSpeed: 0
+  initPitch: 0
+  pitchRange: {x: -60, y: 20}
+  initYaw: 0
+  offsetFromTarget: {x: 0, y: 2.11, z: -1.86}

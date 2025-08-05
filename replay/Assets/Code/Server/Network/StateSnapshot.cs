@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using FishNet.Serializing;
-//using KillCam.Client;
 using Unity.Collections;
 using UnityEngine;
 
 namespace KillCam.Server {
-    public class StateSnapshot : Feature {
+    public class StateSnapshot : Capability {
         private readonly SortedList<uint, AllHeroSnapshot> characterSnapshots = new();
         private int stateSnapshotCountdown = 0;
 
-        public override void OnCreate() {
-            world.AddLogicUpdate(OnLogicTick);
+        protected override void OnSetup() {
             BattleInitializer.OnGUIContent += () => {
                 if (GUILayout.Button("Save World")) {
                     SaveWorld();
@@ -24,21 +22,20 @@ namespace KillCam.Server {
             };
         }
 
-        public override void OnDestroy() {
+        protected override void OnDestroy() {
             foreach (var data in characterSnapshots.Values) {
                 data.Dispose();
             }
 
             characterSnapshots.Clear();
-            world.RemoveLogicUpdate(OnLogicTick);
         }
 
-        private void OnLogicTick(double delta) {
+        protected override void OnTickActive() {
             var snapshot = new AllHeroSnapshot() {
                 StateData = new NativeHashMap<int, HeroMoveData>(4, Allocator.Persistent),
                 InputData = new NativeHashMap<int, HeroInputData>(4, Allocator.Persistent),
             };
-            characterSnapshots.Add(GetTick(), snapshot);
+            characterSnapshots.Add(World.GetTick(), snapshot);
 
             stateSnapshotCountdown--;
             if (stateSnapshotCountdown < 0) {
@@ -50,7 +47,7 @@ namespace KillCam.Server {
         }
 
         private void TakeCharacterStateSnapshot(ref AllHeroSnapshot snapshot) {
-            var characterMgr = Get<HeroManager>();
+            var characterMgr = World.GetFunction<HeroManager>();
             foreach (var (id, character) in characterMgr.RoleActors) {
                 var stateData = character.GetDataReadOnly<HeroMoveData>();
                 snapshot.StateData.Add(id, stateData);
@@ -58,7 +55,7 @@ namespace KillCam.Server {
         }
 
         private void TakeCharacterInputSnapshot(ref AllHeroSnapshot snapshot) {
-            var characterMgr = Get<HeroManager>();
+            var characterMgr = World.GetFunction<HeroManager>();
             foreach (var (id, character) in characterMgr.RoleActors) {
                 var inputData = character.GetDataReadOnly<HeroInputData>();
                 snapshot.InputData.Add(id, inputData);
@@ -128,7 +125,7 @@ namespace KillCam.Server {
             var startReplayData = new S2C_StartReplay {
                 FullData = byteData
             };
-            world.Rpc(startReplayData);
+            World.Rpc(startReplayData);
         }
     }
 }

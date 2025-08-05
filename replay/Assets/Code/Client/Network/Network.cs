@@ -3,20 +3,19 @@ using FishNet.Managing;
 using FishNet.Transporting;
 
 namespace KillCam.Client {
-    public class Network : Feature, INetwork {
+    public class NetworkClient : Capability, INetworkClient {
         private readonly NetworkManager manager;
         private IClientHeroNet sender;
         private Action startAction;
         public event Action<IClientHeroNet> AfterRoleSpawn;
         public event Action<IClientHeroNet> AfterRoleDespawn;
 
-        public Network(NetworkManager mgr) {
+        public NetworkClient(NetworkManager mgr) {
             manager = mgr;
         }
 
         public void Start(Action started) {
             startAction = started;
-            world.SetNetwork(this);
             HeroNet.OnClientSpawn += OnClientSpawn;
             HeroNet.OnClientDespawn += OnClientDespawn;
             manager.ClientManager.OnClientConnectionState += OnLocalConnectState;
@@ -24,7 +23,6 @@ namespace KillCam.Client {
         }
 
         public void Stop() {
-            world.RemoveNetwork(this);
             manager.ClientManager.StopConnection();
             HeroNet.OnClientSpawn -= OnClientSpawn;
             HeroNet.OnClientDespawn -= OnClientDespawn;
@@ -59,17 +57,20 @@ namespace KillCam.Client {
             });
         }
 
-        public void Rpc(INetworkMsg data) {
-        }
-
-        public new uint GetTick() {
-            return manager.TimeManager.LocalTick;
+        protected override void OnTickActive() {
+            ref var worldTime = ref World.GetWorldDataRW<WorldTime>();
+            worldTime.Tick = manager.TimeManager.LocalTick;
         }
 
         public void Send<T>(T message) where T : INetworkMsg {
             sender?.Send(message);
         }
-        
+
+        public uint GetTick() {
+            var worldTime = World.GetWorldDataRO<WorldTime>();
+            return worldTime.Tick;
+        }
+
         public void Rpc<T>(T message) where T : INetworkMsg { }
         
         public void TargetRpc<T>(int id, T message) where T : INetworkMsg { }

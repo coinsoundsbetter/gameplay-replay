@@ -33,7 +33,7 @@ namespace KillCam.Client {
             data.Yaw = Input.GetAxis("Mouse X");
             data.Pitch = Input.GetAxis("Mouse Y");
             World.Send(new C2S_SendInput() {
-                LocalTick = World.Network.GetTick(),
+                LocalTick = World.GetTick(),
                 Move = data.Move,
             });
         }

@@ -1,20 +1,21 @@
 using System.Collections.Generic;
 using System.IO;
+using FishNet.Managing;
 using FishNet.Serializing;
 
 namespace KillCam.Client.Replay {
     [UnityEngine.Scripting.Preserve]
-    public class ReplayIInitialize : ReplayInitialize, IReplayPlayer {
+    public class ReplayIBoostrap : ReplayBoostrapBase, IReplayPlayer {
         private bool isPrepareFeatures;
         private byte[] playData;
         private Replay_StreamParse streamParse;
         private Replay_SpawnProvider spawnProvider;
 
-        public override void OnCreate() {
+        protected override void OnBeforeInitialize() {
             ClientWorldsChannel.SetReplayPlayer(this);
         }
 
-        public override void OnDestroy() {
+        protected override void OnAfterCleanup() {
             ClientWorldsChannel.SetReplayPlayer(null);
         }
 
@@ -54,13 +55,14 @@ namespace KillCam.Client.Replay {
                 return;
             }
 
-            world.Add(streamParse = new Replay_StreamParse());
-            world.Add(spawnProvider = new Replay_SpawnProvider());
-            world.Add<ActorManager>();
-            world.Add<Replay_StateProvider>();
-            world.Add<Replay_InputProvider>();
-            world.Add(new HeroManager(spawnProvider));
-            world.Add<CameraManager>();
+            var worldActor = MyWorldActor;
+            worldActor.SetupData(new WorldTime());
+            worldActor.SetupCapability(streamParse = new Replay_StreamParse(), TickGroup.InitializeLogic);
+            worldActor.SetupCapability(spawnProvider = new Replay_SpawnProvider(), TickGroup.InitializeLogic);
+            worldActor.SetupCapability<Replay_StateProvider>(TickGroup.InitializeLogic);
+            worldActor.SetupCapability<Replay_InputProvider>(TickGroup.InitializeLogic);
+            worldActor.SetupCapability(new HeroManager(spawnProvider), TickGroup.InitializeLogic);
+            worldActor.SetupCapability<CameraManager>(TickGroup.CameraFrame);
         }
     }
 }

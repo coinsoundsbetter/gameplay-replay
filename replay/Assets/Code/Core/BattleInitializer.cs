@@ -24,16 +24,16 @@ namespace KillCam {
                 LoadClient();
             }
 
-            manager.TimeManager.OnUpdate += OnFrameUpdate;
-            manager.TimeManager.OnTick += OnLogicUpdate;
+            manager.TimeManager.OnUpdate += OnFrameTick;
+            manager.TimeManager.OnTick += OnFixedTick;
         }
 
         private void OnDestroy() {
-            manager.TimeManager.OnUpdate -= OnFrameUpdate;
-            manager.TimeManager.OnTick -= OnLogicUpdate;
-            replayClient?.Dispose();
-            server?.Dispose();
-            client?.Dispose();
+            manager.TimeManager.OnUpdate -= OnFrameTick;
+            manager.TimeManager.OnTick -= OnFixedTick;
+            replayClient?.Cleanup();
+            server?.Cleanup();
+            client?.Cleanup();
             OnGUIContent = null;
         }
 
@@ -41,14 +41,14 @@ namespace KillCam {
             OnGUIContent?.Invoke();
         }
 
-        private void OnFrameUpdate() {
+        private void OnFrameTick() {
             var delta = Time.deltaTime;
             server?.FrameUpdate(delta);
             client?.FrameUpdate(delta);
             replayClient?.FrameUpdate(delta);
         }
 
-        private void OnLogicUpdate() {
+        private void OnFixedTick() {
             var delta = manager.TimeManager.TickDelta;
             server?.LogicUpdate(delta);
             client?.LogicUpdate(delta);
@@ -59,7 +59,7 @@ namespace KillCam {
             var assembly = AppDomain.CurrentDomain.GetAssemblies()
                 .FirstOrDefault(asm => asm.GetName().Name?.Contains("KillCam.Server") == true);
             var types = assembly.GetTypes().Where(t =>
-                !t.IsAbstract && !t.IsInterface && typeof(ServerInitialize).IsAssignableFrom(t));
+                !t.IsAbstract && !t.IsInterface && typeof(ServerBoostrapBase).IsAssignableFrom(t));
             var enumerable = types as Type[] ?? types.ToArray();
             if (!enumerable.Any() || enumerable.Length > 1) {
                 UnityEngine.Debug.LogError($"Load Server Failed");
@@ -69,9 +69,9 @@ namespace KillCam {
             var getType = enumerable.First();
             var ctor = getType.GetConstructor(new[] { typeof(NetworkManager) });
             if (ctor != null) {
-                var instance = ctor.Invoke(new object[] { manager });
-                server = new BattleWorld(WorldFlag.Server);
-                server.Add((Feature)instance);
+                var instance = ctor.Invoke(new object[] { manager }) as ServerBoostrapBase;
+                server = new BattleWorld();
+                server.Init(WorldFlag.Server, instance, "ServerWorld");
             }
         }
 
@@ -86,7 +86,7 @@ namespace KillCam {
 
             // 处理 ClientInitialize
             var clientType = assembly.GetTypes()
-                .FirstOrDefault(t => !t.IsAbstract && !t.IsInterface && typeof(ClientInitialize).IsAssignableFrom(t));
+                .FirstOrDefault(t => !t.IsAbstract && !t.IsInterface && typeof(ClientBoostrapBase).IsAssignableFrom(t));
 
             if (clientType == null) {
                 UnityEngine.Debug.LogError("Load Client Failed");
@@ -99,15 +99,15 @@ namespace KillCam {
                 return;
             }
 
-            var clientFeature = ctor.Invoke(new object[] { manager }) as Feature;
-            client = new BattleWorld(WorldFlag.Client);
-            client.Add(clientFeature);
+            var boostrap = ctor.Invoke(new object[] { manager }) as Boostrap;
+            client = new BattleWorld();
+            client.Init(WorldFlag.Client, boostrap, "ClientWorld");
 
             // 处理 ReplayInitialize
             if (isOpenReplayFunction) {
                 var replayType = assembly.GetTypes()
                     .FirstOrDefault(
-                        t => !t.IsAbstract && !t.IsInterface && typeof(ReplayInitialize).IsAssignableFrom(t));
+                        t => !t.IsAbstract && !t.IsInterface && typeof(ReplayBoostrapBase).IsAssignableFrom(t));
 
                 if (replayType == null) {
                     UnityEngine.Debug.LogError("Load Client Replay Failed");
@@ -120,9 +120,9 @@ namespace KillCam {
                     return;
                 }
 
-                var replayFeature = ctorReplay.Invoke(null) as Feature;
-                replayClient = new BattleWorld(WorldFlag.Client | WorldFlag.Replay);
-                replayClient.Add(replayFeature);
+                var replayBoostrap = ctorReplay.Invoke(null) as Boostrap;
+                replayClient = new BattleWorld();
+                replayClient.Init(WorldFlag.Client | WorldFlag.Replay, replayBoostrap, "ReplayWorld");
             }
         }
     }

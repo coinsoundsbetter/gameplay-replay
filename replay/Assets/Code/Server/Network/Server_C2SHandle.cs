@@ -2,12 +2,13 @@ using FishNet.Serializing;
 using UnityEngine;
 
 namespace KillCam.Server {
-    public class Server_C2SHandle : Feature {
-        public override void OnCreate() {
+    public class Server_C2SHandle : Capability {
+        
+        protected override void OnSetup() {
             HeroNet.OnServerReceiveData += HandleClientRequest;
         }
 
-        public override void OnDestroy() {
+        protected override void OnDestroy() {
             HeroNet.OnServerReceiveData -= HandleClientRequest;
         }
 
@@ -24,7 +25,7 @@ namespace KillCam.Server {
         }
 
         private void OnC2S_SendInput(int senderId, C2S_SendInput message) {
-            var roleMgr = Get<HeroManager>();
+            var roleMgr = World.GetFunction<HeroManager>();
             if (roleMgr.RoleActors.TryGetValue(senderId, out var actor)) {
                 ref var ipData = ref actor.GetDataReadWrite<HeroInputData>();
                 ipData.Move = message.Move;

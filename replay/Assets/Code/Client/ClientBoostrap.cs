@@ -2,34 +2,34 @@ using FishNet.Managing;
 
 namespace KillCam.Client {
     [UnityEngine.Scripting.Preserve]
-    public class ClientBoostrap : ClientInitialize {
-        private readonly Network network;
+    public class ClientBoostrap : ClientBoostrapBase {
+        private readonly NetworkClient network;
         private SpawnProvider spawnProvider;
 
         public ClientBoostrap(NetworkManager manager) : base(manager) {
-            network = new Network(manager);
+            network = new NetworkClient(manager);
         }
 
-        public override void OnCreate() {
+        protected override void OnBeforeInitialize() {
             ClientData.Create();
             ClientWorldsChannel.Create();
             AddClientFeatures();
             network.Start(() => { network.SendLoginRequest("Coin"); });
         }
 
-        public override void OnDestroy() {
+        protected override void OnAfterCleanup() {
             network.Stop();
             ClientWorldsChannel.Destroy();
             ClientData.Destroy();
         }
-
+        
         private void AddClientFeatures() {
-            world.Add(network);
-            world.Add(spawnProvider = new SpawnProvider());
-            world.Add(new S2CHandle());
-            world.Add(new ActorManager());
-            world.Add(new HeroManager(spawnProvider));
-            world.Add(new CameraManager());
+            MyWorldActor.SetupData(new WorldTime());
+            MyWorldActor.SetupCapability(network, TickGroup.InitializeLogic);
+            MyWorldActor.SetupCapability(spawnProvider = new SpawnProvider(), TickGroup.InitializeLogic);
+            MyWorldActor.SetupCapability<S2CHandle>(TickGroup.InitializeLogic);
+            MyWorldActor.SetupCapability(new HeroManager(spawnProvider), TickGroup.InitializeLogic);
+            MyWorldActor.SetupCapability<CameraManager>(TickGroup.CameraFrame);
         }
     }
 }

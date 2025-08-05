@@ -1,12 +1,13 @@
 ﻿using FishNet.Serializing;
 
 namespace KillCam.Client {
-    public class S2CHandle : Feature {
-        public override void OnCreate() {
+    public class S2CHandle : Capability {
+        
+        protected override void OnSetup() {
             HeroNet.OnClientReceiveData += OnReceived;
         }
-
-        public override void OnDestroy() {
+        
+        protected override void OnDestroy() {
             HeroNet.OnClientReceiveData -= OnReceived;
         }
 

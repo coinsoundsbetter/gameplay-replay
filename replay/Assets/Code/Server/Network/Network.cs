@@ -7,18 +7,17 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace KillCam.Server {
-    public class Network : Feature, INetwork {
+    public class NetworkServer : Capability {
         private NetworkManager manager;
         private Action startAction;
         private int clientUniqueId;
 
-        public Network(NetworkManager networkManager) {
+        public NetworkServer(NetworkManager networkManager) {
             manager = networkManager;
         }
 
         public void Start(Action started) {
             startAction = started;
-            world.SetNetwork(this);
             manager.ServerManager.OnServerConnectionState += OnConnectState;
             manager.ServerManager.RegisterBroadcast<Login>(OnLogin);
             manager.ServerManager.StartConnection();
@@ -28,7 +27,11 @@ namespace KillCam.Server {
             manager.ServerManager.StopConnection(false);
             manager.ServerManager.OnServerConnectionState -= OnConnectState;
             manager.ServerManager.UnregisterBroadcast<Login>(OnLogin);
-            world.RemoveNetwork(this);
+        }
+
+        protected override void OnTickActive() {
+            ref var worldTime = ref World.GetWorldDataRW<WorldTime>();
+            worldTime.Tick = manager.TimeManager.LocalTick;
         }
 
         private void OnConnectState(ServerConnectionStateArgs args) {
@@ -50,22 +53,17 @@ namespace KillCam.Server {
             manager.ServerManager.Spawn(networkObj, conn);
         }
 
-        public void Send(INetworkMsg data) {
+        public uint GetTick() {
+            var worldTime = World.GetWorldDataRO<WorldTime>();
+            return worldTime.Tick;
         }
-
-        public void Rpc(INetworkMsg data) {
-            var roleMgr = Get<HeroManager>();
+        
+        public void Rpc<T>(T message) where T : INetworkMsg {
+            var roleMgr = World.GetFunction<HeroManager>();
             foreach (var actor in roleMgr.RoleActors.Values) {
-                actor.Net?.Rpc(data);
+                actor.GetDataManaged<ServerHeroNetLink>()?.NetServer?.Rpc(message);
             }
         }
-
-        public new uint GetTick() {
-            return manager.TimeManager.LocalTick;
-        }
-
-        public void Send<T>(T message) where T : INetworkMsg { }
-        public void Rpc<T>(T message) where T : INetworkMsg { }
         public void TargetRpc<T>(int id, T message) where T : INetworkMsg { }
     }
 }

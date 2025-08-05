@@ -1,16 +1,16 @@
 ﻿using System;
 
 namespace KillCam.Client {
-    public class SpawnProvider : Feature, IRoleSpawnProvider {
+    public class SpawnProvider : Capability, IRoleSpawnProvider {
         public event Action<IClientHeroNet> OnRoleSpawn;
         public event Action<IClientHeroNet> OnRoleDespawn;
 
-        public override void OnCreate() {
+        protected override void OnSetup() {
             HeroNet.OnClientSpawn += OnClientSpawn;
             HeroNet.OnClientDespawn += OnClientDespawn;
         }
 
-        public override void OnDestroy() {
+        protected override void OnDestroy() {
             HeroNet.OnClientSpawn -= OnClientSpawn;
             HeroNet.OnClientDespawn -= OnClientDespawn;
         }

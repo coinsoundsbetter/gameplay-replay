@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 namespace KillCam.Client.Replay {
-    public class Replay_StreamParse : Feature, INetwork {
+    public class Replay_StreamParse : Capability {
         private bool isNeedHandle;
         private List<S2C_WorldStateSnapshot> playStreams = new();
         private uint playTick;
@@ -10,19 +10,12 @@ namespace KillCam.Client.Replay {
             playStreams = streams;
         }
 
-        public override void OnCreate() {
-            world.SetNetwork(this);
-            world.AddLogicUpdate(OnLogicTick);
-        }
-
-        public override void OnDestroy() {
-            world.RemoveNetwork(this);
-            world.RemoveLogicUpdate(OnLogicTick);
-        }
-
-        private void OnLogicTick(double delta) {
+        protected override void OnTickActive() {
             playTick++;
 
+            ref var worldTime = ref World.GetWorldDataRW<WorldTime>();
+            worldTime.Tick = playTick;
+            
             bool isPlayNextState = false;
             S2C_WorldStateSnapshot nextPlayState = default;
             if (playStreams.Count > 0) {
@@ -41,15 +34,15 @@ namespace KillCam.Client.Replay {
 
         private void OnPlayState(S2C_WorldStateSnapshot state) {
             // 确保角色生成
-            var spawnMgr = world.Get<Replay_SpawnProvider>();
+            var spawnMgr = World.GetFunction<Replay_SpawnProvider>();
             spawnMgr.EnsureSpawn(state);
 
             // 纠正状态
-            var stateMgr = world.Get<Replay_StateProvider>();
+            var stateMgr = World.GetFunction<Replay_StateProvider>();
             stateMgr.SetState(state);
 
             // 重放输入数据
-            var inputMgr = world.Get<Replay_InputProvider>();
+            var inputMgr = World.GetFunction<Replay_InputProvider>();
             inputMgr.SetInput(state);
 
             // 用完了清理非托管资源
@@ -59,9 +52,5 @@ namespace KillCam.Client.Replay {
         public new uint GetTick() {
             return playTick;
         }
-
-        public void Send<T>(T message) where T : INetworkMsg { }
-        public void Rpc<T>(T message) where T : INetworkMsg { }
-        public void TargetRpc<T>(int id, T message) where T : INetworkMsg { }
     }
 }

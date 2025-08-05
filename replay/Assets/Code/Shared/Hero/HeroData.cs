@@ -47,6 +47,14 @@ namespace KillCam {
     public class UnityHeroLink {
         public IUnityHero Actor;
     }
+
+    public class ClientHeroNetLink {
+        public IClientHeroNet NetClient;
+    }
+
+    public class ServerHeroNetLink {
+        public IServerHeroNet NetServer;
+    }
     
     public static class HeroAnimKeys {
         public const string IsMove = "IsMove";

@@ -1,21 +1,16 @@
 ﻿using UnityEngine;
 
 namespace KillCam.Client {
-    public class CameraManager : Feature {
+    public class CameraManager : Capability {
         private Camera uCamera;
         private Transform uCameraTrans => uCamera.transform;
         private CameraDataSource ass;
 
-        public override void OnCreate() {
+        protected override void OnSetup() {
             LoadCamera();
-            world.AddFrameUpdate(OnFrameTick);
         }
 
-        public override void OnDestroy() {
-            world.RemoveFrameUpdate(OnFrameTick);
-        }
-
-        private void OnFrameTick(float delta) {
+        protected override void OnTickActive() {
             CheckEnable();
             Movement();
             SendCameraData();
@@ -30,7 +25,7 @@ namespace KillCam.Client {
             var go = (GameObject)Object.Instantiate(asset);
             uCamera = go.GetComponent<Camera>();
             uCamera.transform.position = new Vector3(0, 0, -10);
-            if (world.HasFlag(WorldFlag.Replay)) {
+            if (World.HasFlag(WorldFlag.Replay)) {
                 uCamera.cullingMask &= ~ (1 << LayerDefine.characterLayer);
             }
             else {
@@ -40,11 +35,11 @@ namespace KillCam.Client {
 
         private void CheckEnable() {
             // 非回放世界
-            bool isBlock = !world.HasFlag(WorldFlag.Replay) &&
+            bool isBlock = !World.HasFlag(WorldFlag.Replay) &&
                            (ClientData.Instance.IsReplaying || ClientData.Instance.IsReplayPrepare);
 
             // 回放世界
-            if (world.HasFlag(WorldFlag.Replay) &&
+            if (World.HasFlag(WorldFlag.Replay) &&
                 (ClientData.Instance.IsReplaying)) {
                 isBlock = false;
             }
@@ -83,7 +78,7 @@ namespace KillCam.Client {
         }
 
         private void SendCameraData() {
-            world.Send(new C2S_SendCameraData() {
+            World.Send(new C2S_SendCameraData() {
                 Rotation = uCamera.transform.rotation,
             });
         }

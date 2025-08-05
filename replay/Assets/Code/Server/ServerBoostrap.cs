@@ -2,27 +2,26 @@ using FishNet.Managing;
 
 namespace KillCam.Server {
     [UnityEngine.Scripting.Preserve]
-    public class ServerBoostrap : ServerInitialize {
-        private readonly Network network;
+    public class ServerBoostrap : ServerBoostrapBase {
+        private readonly NetworkServer networkServer;
 
         public ServerBoostrap(NetworkManager manager) : base(manager) {
-            network = new Network(manager);
+            networkServer = new NetworkServer(manager);
+        }
+        
+        protected override void OnBeforeInitialize() {
+            var worldActor = MyWorldActor;
+            MyWorldActor.SetupData(new WorldTime());
+            worldActor.SetupCapability(networkServer, TickGroup.InitializeLogic);
+            networkServer.Start(() => {
+                worldActor.SetupCapability<HeroManager>(TickGroup.InitializeLogic);
+                worldActor.SetupCapability<Server_C2SHandle>(TickGroup.InitializeLogic);
+                worldActor.SetupCapability<StateSnapshot>(TickGroup.InitializeLogic);
+            });
         }
 
-        public override void OnCreate() {
-            world.Add(network);
-            network.Start(() => { AddFeatures(); });
-        }
-
-        public override void OnDestroy() {
-            network.Stop();
-        }
-
-        private void AddFeatures() {
-            world.Add(new ActorManager());
-            world.Add(new HeroManager());
-            world.Add(new Server_C2SHandle());
-            world.Add(new StateSnapshot());
+        protected override void OnAfterCleanup() {
+            networkServer.Stop();
         }
     }
 }

@@ -2,21 +2,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace KillCam.Client {
-    public class HeroManager : Feature {
+    public class HeroManager : Capability {
         private readonly IRoleSpawnProvider provider;
-        private readonly Dictionary<int, Hero> characters = new();
-        public IReadOnlyDictionary<int, Hero> Characters => characters;
+        private readonly Dictionary<int, GameplayActor> characters = new();
+        public IReadOnlyDictionary<int, GameplayActor> Characters => characters;
 
         public HeroManager(IRoleSpawnProvider provider) {
             this.provider = provider;
         }
 
-        public override void OnCreate() {
+        protected override void OnSetup() {
             provider.OnRoleSpawn += OnRoleSpawn;
             provider.OnRoleDespawn += OnRoleDespawn;
         }
 
-        public override void OnDestroy() {
+        protected override void OnDestroy() {
             provider.OnRoleSpawn -= OnRoleSpawn;
             provider.OnRoleDespawn -= OnRoleDespawn;
         }
@@ -27,10 +27,7 @@ namespace KillCam.Client {
                 return;
             }
 
-            var characterActor = new Hero() {
-                Net = net,
-            };
-            characterActor.SetupWorld(world);
+            var characterActor = World.CreateActor(ActorGroup.Player);
             // 设置数据
             characterActor.SetupData(new HeroIdentifier() {
                 PlayerId = playerId,
@@ -42,24 +39,24 @@ namespace KillCam.Client {
             characterActor.SetupData(new HeroSkinData());
             characterActor.SetupData(new HeroAnimData());
             characterActor.SetupDataManaged(new UnityHeroLink());
+            characterActor.SetupDataManaged(new ClientHeroNetLink() {
+                NetClient = net,
+            });
             
             // 设置逻辑
             characterActor.SetupCapability<HeroInput>(TickGroup.Input);
-            characterActor.SetupCapability<HeroMovement>(TickGroup.FixedStep);
-            characterActor.SetupCapability<HeroVisualSkin>(TickGroup.FrameStep);
-            characterActor.SetupCapability<HeroVisualAnim>(TickGroup.FrameStep);
-            characterActor.SetupCapability<HeroVisualMove>(TickGroup.FrameStep);
-            characterActor.SetupCapability<HeroVisualCamera>(TickGroup.FrameStep);
-         //   characterActor.SetupCapability<herovisua>();
-            Get<ActorManager>().RegisterActor(characterActor);
+            characterActor.SetupCapability<HeroMovement>(TickGroup.PlayerLogic);
+            characterActor.SetupCapability<HeroVisualSkin>(TickGroup.PlayerLogic);
+            characterActor.SetupCapability<HeroVisualAnim>(TickGroup.PlayerFrame);
+            characterActor.SetupCapability<HeroVisualMove>(TickGroup.PlayerFrame);
+            characterActor.SetupCapability<HeroVisualCamera>(TickGroup.PlayerFrame);
             characters.Add(playerId, characterActor);
         }
 
         private void OnRoleDespawn(IHeroNet net) {
             var playerId = net.GetId();
             if (characters.Remove(playerId, out var character)) {
-                character.OnOwnerDestroyed();
-                Get<ActorManager>().UnregisterActor(character);
+                character.Destroy();
             }
         }
     }

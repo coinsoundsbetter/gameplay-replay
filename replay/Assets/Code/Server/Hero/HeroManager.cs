@@ -1,26 +1,23 @@
 using System.Collections.Generic;
 
 namespace KillCam.Server {
-    public class HeroManager : Feature {
-        private readonly Dictionary<int, Hero> roleActors = new();
-        public IReadOnlyDictionary<int, Hero> RoleActors => roleActors;
-
-        public override void OnCreate() {
+    public class HeroManager : Capability {
+        private readonly Dictionary<int, GameplayActor> roleActors = new();
+        public IReadOnlyDictionary<int, GameplayActor> RoleActors => roleActors;
+        
+        protected override void OnSetup() {
             HeroNet.OnServerSpawn += OnRoleNetSpawn;
             HeroNet.OnServerDespawn += OnRoleNetDespawn;
         }
 
-        public override void OnDestroy() {
+        protected override void OnDestroy() {
             HeroNet.OnServerSpawn -= OnRoleNetSpawn;
             HeroNet.OnServerDespawn -= OnRoleNetDespawn;
         }
 
         private void OnRoleNetSpawn(IServerHeroNet net) {
             var id = net.GetId();
-            var character = new Hero() {
-                Net = net,
-            };
-            character.SetupWorld(world);
+            var character = World.CreateActor(ActorGroup.Player);
             character.SetupData(new HeroIdentifier() {
                 IsControlTarget = false,
                 PlayerId = net.GetId(),
@@ -28,16 +25,14 @@ namespace KillCam.Server {
             });
             character.SetupData(new HeroInputData());
             character.SetupData(new HeroMoveData());
-            character.SetupCapability<CharacterMovement>(TickGroup.FixedStep);
+            character.SetupCapability<CharacterMovement>(TickGroup.PlayerLogic);
             //character.SetupCapability<CharacterView>(TickGroup.FrameStep);
-            Get<ActorManager>().RegisterActor(character);
             roleActors.Add(id, character);
         }
 
         private void OnRoleNetDespawn(IServerHeroNet net) {
             if (roleActors.Remove(net.GetId(), out var character)) {
-                character.OnOwnerDestroyed();
-                Get<ActorManager>().UnregisterActor(character);
+                character.Destroy();
             }
         }
     }

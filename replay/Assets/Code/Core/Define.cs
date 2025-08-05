@@ -10,64 +10,45 @@ namespace KillCam {
     /// 用于启动完整的功能
     /// 这样,我们可以只在需要的时机启动一些功能
     /// </summary>
-    public class InitializeFeature : Feature {
+    public abstract class Boostrap {
+        protected BattleWorld MyWorld { get; private set; }
+        protected GameplayActor MyWorldActor { get; private set; }
+        
+        public void Start(BattleWorld world) {
+            MyWorld = world;
+            MyWorldActor = world.CreateActor(ActorGroup.World);
+            OnBeforeInitialize();
+        }
+
+        public void End() {
+            OnAfterCleanup();
+        }
+        
+        protected abstract void OnBeforeInitialize();
+        protected abstract void OnAfterCleanup();
     }
 
     /// <summary>
     /// 客户端初始化
     /// </summary>
-    public class ClientInitialize : InitializeFeature {
-        public ClientInitialize(NetworkManager manager) {
+    public abstract class ClientBoostrapBase : Boostrap {
+        public ClientBoostrapBase(NetworkManager manager) {
         }
     }
 
     /// <summary>
     /// 回放初始化
     /// </summary>
-    public class ReplayInitialize : InitializeFeature {
+    public abstract class ReplayBoostrapBase : Boostrap {
     }
 
     /// <summary>
     /// 服务器初始化
     /// </summary>
-    public class ServerInitialize : InitializeFeature {
-        public ServerInitialize(NetworkManager manager) {
+    public abstract class ServerBoostrapBase : Boostrap {
+        public ServerBoostrapBase(NetworkManager manager) {
         }
     }
-
-    /// <summary>
-    /// 世界范围的功能继承它
-    /// </summary>
-    public class Feature {
-        protected BattleWorld world { get; private set; }
-
-        public void SetWorld(BattleWorld w) {
-            world = w;
-        }
-
-        public virtual void OnCreate() {
-        }
-
-        public virtual void OnDestroy() {
-        }
-
-        protected T Get<T>() where T : Feature {
-            return world.Get<T>();
-        }
-
-        protected uint GetTick() => world.Network.GetTick();
-
-        protected float FrameDelta => world.FrameTickDelta;
-        protected double LogicDelta => world.LogicTickDelta;
-    }
-
-    public interface INetwork : INetworkClient, INetworkServer {
-        uint GetTick();
-    }
-
-    public delegate void FrameUpdateDelegate(float delta);
-
-    public delegate void LogicUpdateDelegate(double delta);
 
     [System.Flags]
     public enum WorldFlag {
@@ -85,11 +66,13 @@ namespace KillCam {
 
     public interface INetworkClient {
         void Send<T>(T message) where T : INetworkMsg;
+        uint GetTick();
     }
 
     public interface INetworkServer {
         void Rpc<T>(T message) where T : INetworkMsg;
         void TargetRpc<T>(int id, T message) where T : INetworkMsg;
+        uint GetTick();
     }
 
     public class RefStorageBase : IDisposable {
@@ -110,145 +93,58 @@ namespace KillCam {
 
     public class GameplayActor {
         public BattleWorld MyWorld { get; private set; }
-        private readonly Dictionary<Type, RefStorageBase> unmanagedDataSet = new();
-        private readonly Dictionary<Type, object> managedDataSet = new();
-        private readonly Dictionary<string, Capability> capabilities = new();
-        private readonly List<Capability> inputCapabilities = new();
-        private readonly List<Capability> fixedCapabilities = new();
-        private readonly List<Capability> frameCapabilities = new();
 
         public void SetupWorld(BattleWorld world) {
             MyWorld = world;
         }
 
         public void SetupData<T>(T instance) where T : unmanaged {
-            var type = typeof(T);
-            if (!unmanagedDataSet.ContainsKey(type)) {
-                unmanagedDataSet.Add(type, new RefStorage<T>() { Value = instance, });
-            }
+            MyWorld.SetupData(this, instance);
         }
 
         public void SetupDataManaged<T>(T instance) where T : class {
-            var type = typeof(T);
-            if (!managedDataSet.ContainsKey(type)) {
-                managedDataSet.Add(type, instance);
-            }
+            MyWorld.SetupDataManaged(this, instance);
         }
 
         public ref T GetDataReadWrite<T>() where T : unmanaged {
-            var type = typeof(T);
-            if (unmanagedDataSet.TryGetValue(type, out var storage)) {
-                return ref ((RefStorage<T>)storage).GetRef();
-            }
-
-            throw new KeyNotFoundException("no unmanaged data found");
+            return ref MyWorld.GetDataReadWrite<T>(this);
         }
 
         public T GetDataReadOnly<T>() where T : unmanaged {
-            var type = typeof(T);
-            if (unmanagedDataSet.TryGetValue(type, out var storage)) {
-                return ((RefStorage<T>)storage).Value;
-            }
-
-            return default;
+            return MyWorld.GetDataReadOnly<T>(this);
         }
 
         public T GetDataManaged<T>() where T : class {
-            var type = typeof(T);
-            if (managedDataSet.TryGetValue(type, out var obj)) {
-                return (T)obj;
-            }
-
-            return default;
+            return MyWorld.GetDataManaged<T>(this);
         }
 
         public void SetupCapability<T>(TickGroup tickGroup) where T : Capability, new() {
-            var typeName = typeof(T).Name;
-            if (!capabilities.ContainsKey(typeName)) {
-                var capability = new T();
-                capabilities.Add(typeName, capability);
-                switch (tickGroup) {
-                    case TickGroup.Input:
-                        inputCapabilities.Add(capability);
-                        break;
-                    case TickGroup.FixedStep:
-                        fixedCapabilities.Add(capability);
-                        break;
-                    case TickGroup.FrameStep:
-                        frameCapabilities.Add(capability);
-                        break;
-                }
-
-                capability.Setup(this, tickGroup);
-            }
+            MyWorld.SetupCapability<T>(this, tickGroup);
         }
 
-        public void OnOwnerDestroyed() {
-            foreach (var c in capabilities.Values) {
-                c.Destroy();
-            }
-
-            inputCapabilities.Clear();
-            frameCapabilities.Clear();
-            fixedCapabilities.Clear();
-            capabilities.Clear();
-
-            foreach (var dataObj in managedDataSet.Values) {
-                if (dataObj is IDisposable disposable) {
-                    disposable.Dispose();
-                }
-            }
-
-            managedDataSet.Clear();
-
-            foreach (var dataUnmanaged in unmanagedDataSet.Values) {
-                dataUnmanaged.Dispose();
-            }
-
-            unmanagedDataSet.Clear();
+        public void SetupCapability(Capability capability, TickGroup tickGroup) {
+            MyWorld.SetupCapability(this, capability, tickGroup);
         }
 
-        public void TickLogic(double deltaTime) {
-            foreach (var c in inputCapabilities) {
-                TryTickCapability(c, deltaTime);
-            }
-            
-            foreach (var c in fixedCapabilities) {
-                TryTickCapability(c, deltaTime);
-            }
+        public void Destroy() {
+            MyWorld.DestroyActor(this);
         }
+    }
 
-        public void TickFrame(float deltaTime) {
-            foreach (var c in frameCapabilities) {
-                TryTickCapability(c, deltaTime);
-            }
-        }
-
-        private void TryTickCapability(Capability c, double deltaTime) {
-            if (!c.IsActive && c.OnShouldActivate()) {
-                c.Activate();
-            } else if (c.IsActive && c.OnShouldDeactivate()) {
-                c.Deactivate();
-            }
-
-            if (c.IsActive) {
-                c.TickActive(deltaTime);
-            }
-        }
+    public interface ICapability {
+        
     }
 
     public abstract class Capability {
         protected GameplayActor Owner { get; private set; }
         protected BattleWorld World { get; private set; }
-        public TickGroup MyTickGroup { get; private set; }
         public bool IsActive { get; private set; }
         public List<GameplayTag> Tags = new();
         protected double TickDelta { get; private set; }
 
-        public void Setup(GameplayActor gameplayActor, TickGroup tickGroup) {
+        public void Setup(GameplayActor gameplayActor) {
             Owner = gameplayActor;
             World = gameplayActor.MyWorld;
-            MyTickGroup = tickGroup;
             IsActive = false;
             OnSetup();
         }
@@ -304,9 +200,19 @@ namespace KillCam {
     }
 
     public enum TickGroup {
+        InitializeLogic,
         Input,
-        FixedStep,
-        FrameStep,
+        PlayerLogic,
+        
+        InitializeFrame,
+        PlayerFrame,
+        CameraFrame,
+    }
+
+    public enum ActorGroup {
+        Default,
+        Player,
+        World,
     }
 
     public class LayerDefine {

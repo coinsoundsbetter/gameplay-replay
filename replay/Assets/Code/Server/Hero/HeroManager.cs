@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 namespace KillCam.Server {
-    public class HeroManager : Capability {
+    public class HeroManager : Feature {
         private readonly Dictionary<int, GameplayActor> roleActors = new();
         public IReadOnlyDictionary<int, GameplayActor> RoleActors => roleActors;
         

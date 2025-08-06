@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace KillCam.Client {
-    public class HeroManager : Capability {
+    public class HeroManager : Feature {
         private readonly IRoleSpawnProvider provider;
         private readonly Dictionary<int, GameplayActor> characters = new();
         public IReadOnlyDictionary<int, GameplayActor> Characters => characters;

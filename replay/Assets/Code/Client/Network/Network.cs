@@ -3,7 +3,7 @@ using FishNet.Managing;
 using FishNet.Transporting;
 
 namespace KillCam.Client {
-    public class NetworkClient : Capability, INetworkClient {
+    public class NetworkClient : Feature, INetworkClient {
         private readonly NetworkManager manager;
         private IClientHeroNet sender;
         private Action startAction;

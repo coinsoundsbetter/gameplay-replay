@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 namespace KillCam.Client.Replay {
-    public class Replay_StreamParse : Capability {
+    public class Replay_StreamParse : Feature {
         private bool isNeedHandle;
         private List<S2C_WorldStateSnapshot> playStreams = new();
         private uint playTick;
@@ -34,15 +34,15 @@ namespace KillCam.Client.Replay {
 
         private void OnPlayState(S2C_WorldStateSnapshot state) {
             // 确保角色生成
-            var spawnMgr = World.GetFunction<Replay_SpawnProvider>();
+            var spawnMgr = World.GetWorldFunction<Replay_SpawnProvider>();
             spawnMgr.EnsureSpawn(state);
 
             // 纠正状态
-            var stateMgr = World.GetFunction<Replay_StateProvider>();
+            var stateMgr = World.GetWorldFunction<Replay_StateProvider>();
             stateMgr.SetState(state);
 
             // 重放输入数据
-            var inputMgr = World.GetFunction<Replay_InputProvider>();
+            var inputMgr = World.GetWorldFunction<Replay_InputProvider>();
             inputMgr.SetInput(state);
 
             // 用完了清理非托管资源

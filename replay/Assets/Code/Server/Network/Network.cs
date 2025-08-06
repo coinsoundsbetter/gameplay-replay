@@ -7,7 +7,7 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace KillCam.Server {
-    public class NetworkServer : Capability {
+    public class NetworkServer : Feature {
         private NetworkManager manager;
         private Action startAction;
         private int clientUniqueId;
@@ -59,7 +59,7 @@ namespace KillCam.Server {
         }
         
         public void Rpc<T>(T message) where T : INetworkMsg {
-            var roleMgr = World.GetFunction<HeroManager>();
+            var roleMgr = World.GetWorldFunction<HeroManager>();
             foreach (var actor in roleMgr.RoleActors.Values) {
                 actor.GetDataManaged<ServerHeroNetLink>()?.NetServer?.Rpc(message);
             }

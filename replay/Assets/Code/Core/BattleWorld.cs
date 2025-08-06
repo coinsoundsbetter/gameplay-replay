@@ -11,9 +11,9 @@ namespace KillCam {
 
         private Boostrap boostrap;
         private GameplayActor worldActor;
-        private readonly Dictionary<TickGroup, List<Capability>> tickGroups = new();
+        private readonly Dictionary<TickGroup, List<Feature>> tickGroups = new();
         private readonly Dictionary<ActorGroup, List<GameplayActor>> actorGroups = new();
-        private readonly Dictionary<GameplayActor, Dictionary<string, Capability>> actorCapabilitySet = new();
+        private readonly Dictionary<GameplayActor, Dictionary<string, Feature>> actorCapabilitySet = new();
         private readonly Dictionary<GameplayActor, Dictionary<Type, object>> actorDataManagedSet = new();
         private readonly Dictionary<GameplayActor, Dictionary<Type, RefStorageBase>> actorDataUnmanagedSet = new();
 
@@ -43,10 +43,10 @@ namespace KillCam {
                 actorGroups.Add(actorGroupType, new List<GameplayActor>());
             }
             foreach (var logicTickGroupType in logicTickOrders) {
-                tickGroups.Add(logicTickGroupType, new List<Capability>());
+                tickGroups.Add(logicTickGroupType, new List<Feature>());
             }
             foreach (var frameTickGroupType in frameTickOrders) {
-                tickGroups.Add(frameTickGroupType, new List<Capability>());
+                tickGroups.Add(frameTickGroupType, new List<Feature>());
             }
 
             worldActor = CreateActor(ActorGroup.World);
@@ -82,7 +82,7 @@ namespace KillCam {
         public GameplayActor CreateActor(ActorGroup group = ActorGroup.Default) {
             var newActor = new GameplayActor();
             actorGroups[group].Add(newActor);
-            actorCapabilitySet.Add(newActor, new Dictionary<string, Capability>());
+            actorCapabilitySet.Add(newActor, new Dictionary<string, Feature>());
             actorDataManagedSet.Add(newActor, new Dictionary<Type, object>());
             actorDataUnmanagedSet.Add(newActor, new Dictionary<Type, RefStorageBase>());
             newActor.SetupWorld(this);
@@ -153,18 +153,18 @@ namespace KillCam {
             }
         }
 
-        public void SetupCapability<T>(GameplayActor actor, TickGroup tickGroup) where T : Capability, new() {
+        public void SetupFeature<T>(GameplayActor actor, TickGroup tickGroup) where T : Feature, new() {
             var t = new T();
             actorCapabilitySet[actor].Add(typeof(T).Name, t);
             tickGroups[tickGroup].Add(t);
             t.Setup(actor);
         }
 
-        public void SetupCapability(GameplayActor actor, Capability capability, TickGroup tickGroup) {
-            var type = capability.GetType();
-            actorCapabilitySet[actor].Add(type.Name, capability);
-            tickGroups[tickGroup].Add(capability);
-            capability.Setup(actor);
+        public void SetupFeature(GameplayActor actor, Feature feature, TickGroup tickGroup) {
+            var type = feature.GetType();
+            actorCapabilitySet[actor].Add(type.Name, feature);
+            tickGroups[tickGroup].Add(feature);
+            feature.Setup(actor);
         }
 
         public void SetupData<T>(GameplayActor actor, T instance) where T : unmanaged {
@@ -177,7 +177,7 @@ namespace KillCam {
             actorDataManagedSet[actor].Add(type, instance);
         }
         
-        public ref T GetDataReadWrite<T>(GameplayActor actor) where T : unmanaged {
+        public ref T GetDataRW<T>(GameplayActor actor) where T : unmanaged {
             var type = typeof(T);
             if (actorDataUnmanagedSet[actor].TryGetValue(type, out var storage)) {
                 return ref ((RefStorage<T>)storage).GetRef();
@@ -186,13 +186,13 @@ namespace KillCam {
             throw new KeyNotFoundException("no unmanaged data found");
         }
 
-        public T GetDataReadOnly<T>(GameplayActor actor) where T : unmanaged {
-            var type = typeof(T);
-            if (actorDataUnmanagedSet[actor].TryGetValue(type, out var storage)) {
-                return ((RefStorage<T>)storage).Value;
+        public ref readonly T GetDataRO<T>(GameplayActor actor) where T : unmanaged {
+            var set = actorDataUnmanagedSet[actor];
+            if (set.TryGetValue(typeof(T), out var v)) {
+                return ref ((RefStorage<T>)v).Value;
             }
 
-            return default;
+            throw new KeyNotFoundException($"No data of type {typeof(T)}");
         }
 
         public T GetDataManaged<T>(GameplayActor actor) where T : class {
@@ -204,7 +204,9 @@ namespace KillCam {
             return default;
         }
 
-        public T GetFunction<T>() where T : Capability {
+        #region World
+        
+        public T GetWorldFunction<T>() where T : Feature {
             var set = actorCapabilitySet[worldActor];
             if (set.TryGetValue(typeof(T).Name, out var c)) {
                 return (T)c;
@@ -213,24 +215,29 @@ namespace KillCam {
             return default;
         }
 
-        public ref readonly T GetWorldDataRO<T>() where T : unmanaged {
-            var set = actorDataUnmanagedSet[worldActor];
-            if (set.TryGetValue(typeof(T), out var v)) {
-                return ref ((RefStorage<T>)v).Value;
-            }
+        public void AddWorldFunc<T>(TickGroup tickGroup) where T : Feature, new() 
+            => SetupFeature<T>(worldActor, tickGroup);
 
-            throw new KeyNotFoundException($"No data of type {typeof(T)}");
+        public void AddWorldFunc(Feature feature, TickGroup tickGroup) 
+            => SetupFeature(worldActor, feature, tickGroup);
+        
+        public void AddWorldData<T>(T instance) where T : unmanaged
+            => SetupData(worldActor, instance);
+        
+
+        public void AddWorldDataManaged<T>(T instance) where T : class 
+            => SetupDataManaged(worldActor, instance);
+
+        public ref readonly T GetWorldDataRO<T>() where T : unmanaged 
+            => ref GetDataRO<T>(worldActor);
+
+        public ref T GetWorldDataRW<T>() where T : unmanaged 
+            => ref GetDataRW<T>(worldActor);
+
+        public T GetWorldDataManaged<T>() where T : class {
+            return GetDataManaged<T>(worldActor);
         }
-
-        public ref T GetWorldDataRW<T>() where T : unmanaged {
-            var set = actorDataManagedSet[worldActor];
-            if (set.TryGetValue(typeof(T), out var v)) {
-                return ref ((RefStorage<T>)v).Value;
-            }
-            
-            throw new KeyNotFoundException($"No data of type {typeof(T)}");
-        }
-
+        
         public bool HasFlag(WorldFlag check) {
             if ((Flags & check) != 0) {
                 return true;
@@ -238,5 +245,7 @@ namespace KillCam {
 
             return false;
         }
+
+        #endregion
     }
 }

@@ -1,4 +1,4 @@
 namespace KillCam {
-    public class RoleView : Capability {
+    public class RoleView : Feature {
     }
 }

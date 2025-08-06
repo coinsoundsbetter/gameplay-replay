@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace KillCam.Client {
-    public class HeroInput : Capability {
+    public class HeroInput : Feature {
         protected override void OnDeactivate() {
             ref var data = ref Owner.GetDataReadWrite<HeroInputData>();
             data.Move = new Vector2Int(0, 0);

@@ -24,12 +24,12 @@ namespace KillCam.Client {
         }
         
         private void AddClientFeatures() {
-            MyWorldActor.SetupData(new WorldTime());
-            MyWorldActor.SetupCapability(network, TickGroup.InitializeLogic);
-            MyWorldActor.SetupCapability(spawnProvider = new SpawnProvider(), TickGroup.InitializeLogic);
-            MyWorldActor.SetupCapability<S2CHandle>(TickGroup.InitializeLogic);
-            MyWorldActor.SetupCapability(new HeroManager(spawnProvider), TickGroup.InitializeLogic);
-            MyWorldActor.SetupCapability<CameraManager>(TickGroup.CameraFrame);
+            world.AddWorldData(new WorldTime());
+            world.AddWorldFunc(network, TickGroup.InitializeLogic);
+            world.AddWorldFunc(spawnProvider = new SpawnProvider(), TickGroup.InitializeLogic);
+            world.AddWorldFunc<NetMsgHandle>(TickGroup.InitializeLogic);
+            world.AddWorldFunc(new HeroManager(spawnProvider), TickGroup.InitializeLogic);
+            world.AddWorldFunc<CameraManager>(TickGroup.CameraFrame);
         }
     }
 }

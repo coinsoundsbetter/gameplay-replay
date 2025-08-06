@@ -11,12 +11,10 @@ namespace KillCam {
     /// 这样,我们可以只在需要的时机启动一些功能
     /// </summary>
     public abstract class Boostrap {
-        protected BattleWorld MyWorld { get; private set; }
-        protected GameplayActor MyWorldActor { get; private set; }
+        protected BattleWorld world { get; private set; }
         
-        public void Start(BattleWorld world) {
-            MyWorld = world;
-            MyWorldActor = world.CreateActor(ActorGroup.World);
+        public void Start(BattleWorld myWorld) {
+            world = myWorld;
             OnBeforeInitialize();
         }
 
@@ -107,23 +105,23 @@ namespace KillCam {
         }
 
         public ref T GetDataReadWrite<T>() where T : unmanaged {
-            return ref MyWorld.GetDataReadWrite<T>(this);
+            return ref MyWorld.GetDataRW<T>(this);
         }
 
         public T GetDataReadOnly<T>() where T : unmanaged {
-            return MyWorld.GetDataReadOnly<T>(this);
+            return MyWorld.GetDataRO<T>(this);
         }
 
         public T GetDataManaged<T>() where T : class {
             return MyWorld.GetDataManaged<T>(this);
         }
 
-        public void SetupCapability<T>(TickGroup tickGroup) where T : Capability, new() {
-            MyWorld.SetupCapability<T>(this, tickGroup);
+        public void SetupCapability<T>(TickGroup tickGroup) where T : Feature, new() {
+            MyWorld.SetupFeature<T>(this, tickGroup);
         }
 
-        public void SetupCapability(Capability capability, TickGroup tickGroup) {
-            MyWorld.SetupCapability(this, capability, tickGroup);
+        public void SetupCapability(Feature feature, TickGroup tickGroup) {
+            MyWorld.SetupFeature(this, feature, tickGroup);
         }
 
         public void Destroy() {
@@ -135,7 +133,7 @@ namespace KillCam {
         
     }
 
-    public abstract class Capability {
+    public abstract class Feature {
         protected GameplayActor Owner { get; private set; }
         protected BattleWorld World { get; private set; }
         public bool IsActive { get; private set; }

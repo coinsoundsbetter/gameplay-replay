@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace KillCam.Client {
-    public class HeroVisualAnim : Capability {
+    public class HeroVisualAnim : Feature {
         private UnityHeroLink unityHero;
         
         public override bool OnShouldActivate() {

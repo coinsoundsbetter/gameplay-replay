@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 namespace KillCam.Client {
-    public class HeroVisualSkin : Capability {
+    public class HeroVisualSkin : Feature {
         private GameObject instance;
         
         protected override void OnActivate() {

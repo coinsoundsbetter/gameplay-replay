@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace KillCam.Client.Replay {
-    public class Replay_SpawnProvider : Capability, IRoleSpawnProvider {
+    public class Replay_SpawnProvider : Feature, IRoleSpawnProvider {
         public event Action<IClientHeroNet> OnRoleSpawn;
         public event Action<IClientHeroNet> OnRoleDespawn;
         private readonly HashSet<int> spawnRoleIds = new();

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace KillCam.Client {
-    public class HeroVisualCamera : Capability {
+    public class HeroVisualCamera : Feature {
         private CameraDataSource link;
         
         public override bool OnShouldActivate() {
@@ -14,7 +14,7 @@ namespace KillCam.Client {
         }
 
         protected override void OnActivate() {
-            var cameraMgr = World.GetFunction<CameraManager>();
+            var cameraMgr = World.GetWorldFunction<CameraManager>();
             cameraMgr.SetDataSource(link = new CameraDataSource() {
                 target = Owner.GetDataManaged<UnityHeroLink>().Actor.GetCameraTarget(),
                 pitch = 20f,

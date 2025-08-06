@@ -10,13 +10,12 @@ namespace KillCam.Server {
         }
         
         protected override void OnBeforeInitialize() {
-            var worldActor = MyWorldActor;
-            MyWorldActor.SetupData(new WorldTime());
-            worldActor.SetupCapability(networkServer, TickGroup.InitializeLogic);
+            world.AddWorldData(new WorldTime());
+            world.AddWorldFunc(networkServer, TickGroup.InitializeLogic);
             networkServer.Start(() => {
-                worldActor.SetupCapability<HeroManager>(TickGroup.InitializeLogic);
-                worldActor.SetupCapability<Server_C2SHandle>(TickGroup.InitializeLogic);
-                worldActor.SetupCapability<StateSnapshot>(TickGroup.InitializeLogic);
+                world.AddWorldFunc<HeroManager>(TickGroup.InitializeLogic);
+                world.AddWorldFunc<NetMessageHandle>(TickGroup.InitializeLogic);
+                world.AddWorldFunc<StateSnapshot>(TickGroup.InitializeLogic);
             });
         }
 

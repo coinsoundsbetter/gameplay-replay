@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
 namespace KillCam.Client.Replay {
-    public class Replay_InputProvider : Capability {
+    public class Replay_InputProvider : Feature {
         public void SetInput(S2C_WorldStateSnapshot snapshot) {
-            var characters = World.GetFunction<HeroManager>().Characters;
+            var characters = World.GetWorldFunction<HeroManager>().Characters;
             if (snapshot.HeroSnapshot.InputData.IsEmpty) {
                 return;
             }

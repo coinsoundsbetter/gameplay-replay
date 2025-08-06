@@ -6,7 +6,7 @@ using Unity.Collections;
 using UnityEngine;
 
 namespace KillCam.Server {
-    public class StateSnapshot : Capability {
+    public class StateSnapshot : Feature {
         private readonly SortedList<uint, AllHeroSnapshot> characterSnapshots = new();
         private int stateSnapshotCountdown = 0;
 
@@ -47,7 +47,7 @@ namespace KillCam.Server {
         }
 
         private void TakeCharacterStateSnapshot(ref AllHeroSnapshot snapshot) {
-            var characterMgr = World.GetFunction<HeroManager>();
+            var characterMgr = World.GetWorldFunction<HeroManager>();
             foreach (var (id, character) in characterMgr.RoleActors) {
                 var stateData = character.GetDataReadOnly<HeroMoveData>();
                 snapshot.StateData.Add(id, stateData);
@@ -55,7 +55,7 @@ namespace KillCam.Server {
         }
 
         private void TakeCharacterInputSnapshot(ref AllHeroSnapshot snapshot) {
-            var characterMgr = World.GetFunction<HeroManager>();
+            var characterMgr = World.GetWorldFunction<HeroManager>();
             foreach (var (id, character) in characterMgr.RoleActors) {
                 var inputData = character.GetDataReadOnly<HeroInputData>();
                 snapshot.InputData.Add(id, inputData);

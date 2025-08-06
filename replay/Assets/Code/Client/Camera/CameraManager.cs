@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 namespace KillCam.Client {
-    public class CameraManager : Capability {
+    public class CameraManager : Feature {
         private Camera uCamera;
         private Transform uCameraTrans => uCamera.transform;
         private CameraDataSource ass;

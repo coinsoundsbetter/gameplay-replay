@@ -36,11 +36,11 @@ namespace KillCam.Client {
         private void CheckEnable() {
             // 非回放世界
             bool isBlock = !World.HasFlag(WorldFlag.Replay) &&
-                           (ClientData.Instance.IsReplaying || ClientData.Instance.IsReplayPrepare);
+                           (AppData.Instance.IsReplaying || AppData.Instance.IsReplayPrepare);
 
             // 回放世界
             if (World.HasFlag(WorldFlag.Replay) &&
-                (ClientData.Instance.IsReplaying)) {
+                (AppData.Instance.IsReplaying)) {
                 isBlock = false;
             }
 

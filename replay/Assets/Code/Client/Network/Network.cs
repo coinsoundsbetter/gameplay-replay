@@ -58,7 +58,7 @@ namespace KillCam.Client {
         }
 
         protected override void OnTickActive() {
-            ref var worldTime = ref World.GetWorldDataRW<WorldTime>();
+            ref var worldTime = ref World.GetDataRW<WorldTime>();
             worldTime.Tick = manager.TimeManager.LocalTick;
         }
 
@@ -67,7 +67,7 @@ namespace KillCam.Client {
         }
 
         public uint GetTick() {
-            var worldTime = World.GetWorldDataRO<WorldTime>();
+            var worldTime = World.GetDataRO<WorldTime>();
             return worldTime.Tick;
         }
 

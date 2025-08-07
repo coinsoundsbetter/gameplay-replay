@@ -44,12 +44,12 @@ namespace KillCam.Client {
             });
             
             // 设置逻辑
-            characterActor.SetupCapability<HeroInput>(TickGroup.Input);
-            characterActor.SetupCapability<HeroMovement>(TickGroup.PlayerLogic);
-            characterActor.SetupCapability<HeroVisualSkin>(TickGroup.PlayerLogic);
-            characterActor.SetupCapability<HeroVisualAnim>(TickGroup.PlayerFrame);
-            characterActor.SetupCapability<HeroVisualMove>(TickGroup.PlayerFrame);
-            characterActor.SetupCapability<HeroVisualCamera>(TickGroup.PlayerFrame);
+            characterActor.SetupFeature<HeroInput>(TickGroup.Input);
+            characterActor.SetupFeature<HeroMovement>(TickGroup.PlayerLogic);
+            characterActor.SetupFeature<HeroVisualSkin>(TickGroup.PlayerLogic);
+            characterActor.SetupFeature<HeroVisualAnim>(TickGroup.PlayerFrame);
+            characterActor.SetupFeature<HeroVisualMove>(TickGroup.PlayerFrame);
+            characterActor.SetupFeature<HeroVisualCamera>(TickGroup.PlayerFrame);
             characters.Add(playerId, characterActor);
         }
 

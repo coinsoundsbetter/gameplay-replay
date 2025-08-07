@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
 namespace KillCam.Client {
-    public class ClientData {
-        public static ClientData Instance { get; private set; }
+    public class AppData {
+        public static AppData Instance { get; private set; }
 
         public static void Create() {
             if (Instance != null) {
@@ -10,7 +10,7 @@ namespace KillCam.Client {
                 return;
             }
 
-            Instance = new ClientData();
+            Instance = new AppData();
         }
 
         public static void Destroy() {

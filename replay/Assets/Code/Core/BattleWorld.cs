@@ -9,11 +9,12 @@ namespace KillCam {
         public float FrameTickDelta { get; private set; }
         public double LogicTickDelta { get; private set; }
 
-        private Boostrap boostrap;
+        private GameEntry boostrap;
         private GameplayActor worldActor;
         private readonly Dictionary<TickGroup, List<Feature>> tickGroups = new();
-        private readonly Dictionary<ActorGroup, List<GameplayActor>> actorGroups = new();
-        private readonly Dictionary<GameplayActor, Dictionary<string, Feature>> actorCapabilitySet = new();
+        private readonly Dictionary<ActorGroup, List<GameplayActor>> groupActors = new();
+        private readonly Dictionary<GameplayActor, ActorGroup> actorGroupMap = new();
+        private readonly Dictionary<GameplayActor, Dictionary<string, Feature>> actorFeatureSet = new();
         private readonly Dictionary<GameplayActor, Dictionary<Type, object>> actorDataManagedSet = new();
         private readonly Dictionary<GameplayActor, Dictionary<Type, RefStorageBase>> actorDataUnmanagedSet = new();
 
@@ -29,18 +30,18 @@ namespace KillCam {
             TickGroup.CameraFrame,
         };
 
-        private readonly ActorGroup[] actorGroupTypes = {
+        private readonly ActorGroup[] actorRemoveOrders = {
             ActorGroup.Default,
-            ActorGroup.World,
             ActorGroup.Player,
+            ActorGroup.World,
         };
 
-        public void Init(WorldFlag flag, Boostrap bs, FixedString32Bytes worldName) {
+        public void Init(WorldFlag flag, GameEntry bs, FixedString32Bytes worldName) {
             Flags = flag;
             Name = worldName;
             boostrap = bs;
-            foreach (var actorGroupType in actorGroupTypes) {
-                actorGroups.Add(actorGroupType, new List<GameplayActor>());
+            foreach (var actorGroupType in actorRemoveOrders) {
+                groupActors.Add(actorGroupType, new List<GameplayActor>());
             }
             foreach (var logicTickGroupType in logicTickOrders) {
                 tickGroups.Add(logicTickGroupType, new List<Feature>());
@@ -53,36 +54,29 @@ namespace KillCam {
             boostrap.Start(this);
         }
         
-        public void Cleanup() {
-            if (actorGroups.Remove(ActorGroup.Default, out var defaultList)) {
-                foreach (var actor in defaultList) {
-                    actor.Destroy();
-                }
-                defaultList.Clear();
+        public void Destroy() {
+            foreach (var actorGroup in actorRemoveOrders) {
+                DestroyGroupAllActors(actorGroup);    
             }
-            
-            if (actorGroups.Remove(ActorGroup.Player, out var playerList)) {
-                foreach (var actor in playerList) {
-                    actor.Destroy();
-                }
-                playerList.Clear();
-            }
-
-            if (actorGroups.Remove(ActorGroup.World, out var worldList)) {
-                foreach (var actor in worldList) {
-                    actor.Destroy();
-                }
-                worldList.Clear();
-            }
-            
-            actorGroups.Clear();
             boostrap.End();
         }
 
+        private void DestroyGroupAllActors(ActorGroup actorGroup) {
+            if (groupActors.TryGetValue(actorGroup, out var actorList)) {
+                int len = actorList.Count;
+                for (int i = len - 1; i >= 0; i--) {
+                    DestroyActor(actorList[i]);
+                }
+                
+                groupActors.Remove(actorGroup);
+            }
+        }
+        
         public GameplayActor CreateActor(ActorGroup group = ActorGroup.Default) {
             var newActor = new GameplayActor();
-            actorGroups[group].Add(newActor);
-            actorCapabilitySet.Add(newActor, new Dictionary<string, Feature>());
+            actorGroupMap.Add(newActor, group);
+            groupActors[group].Add(newActor);
+            actorFeatureSet.Add(newActor, new Dictionary<string, Feature>());
             actorDataManagedSet.Add(newActor, new Dictionary<Type, object>());
             actorDataUnmanagedSet.Add(newActor, new Dictionary<Type, RefStorageBase>());
             newActor.SetupWorld(this);
@@ -90,53 +84,39 @@ namespace KillCam {
         }
 
         public void DestroyActor(GameplayActor actor) {
-            if (actorGroups[ActorGroup.Default].Remove(actor)) {
-                CleanupActorBody();
-                return;
-            }
+            actorGroupMap.Remove(actor, out var group);
+            groupActors[group].Remove(actor);
             
-            if (actorGroups[ActorGroup.Player].Remove(actor)) {
-                CleanupActorBody();
-                return;
+            foreach (var c in actorFeatureSet[actor].Values) {
+                c.Destroy();
             }
-            
-            if (actorGroups[ActorGroup.World].Remove(actor)) {
-                CleanupActorBody();
-                return;
+            actorFeatureSet.Remove(actor);
+
+            foreach (var obj in actorDataManagedSet[actor].Values) {
+                if (obj is IDisposable disposable) {
+                    disposable.Dispose();
+                }
             }
+            actorFeatureSet.Remove(actor);
 
-            void CleanupActorBody() {
-                foreach (var c in actorCapabilitySet[actor].Values) {
-                    c.Destroy();
-                }
-                actorCapabilitySet.Remove(actor);
-
-                foreach (var obj in actorDataManagedSet[actor].Values) {
-                    if (obj is IDisposable disposable) {
-                        disposable.Dispose();
-                    }
-                }
-                actorCapabilitySet.Remove(actor);
-
-                foreach (var data in actorDataUnmanagedSet[actor].Values) {
-                    data.Dispose();
-                }
-                actorDataUnmanagedSet.Remove(actor);
+            foreach (var data in actorDataUnmanagedSet[actor].Values) {
+                data.Dispose();
             }
+            actorDataUnmanagedSet.Remove(actor);
         }
 
         public void FrameUpdate(float delta) {
             FrameTickDelta = delta;
-            Tick(TickGroup.InitializeFrame, delta);
-            Tick(TickGroup.PlayerFrame, delta);
-            Tick(TickGroup.CameraFrame, delta);
+            foreach (var t in frameTickOrders) {
+                Tick(t, delta);
+            }
         }
 
         public void LogicUpdate(double delta) {
             LogicTickDelta = delta;
-            Tick(TickGroup.InitializeLogic, delta);
-            Tick(TickGroup.Input, delta);
-            Tick(TickGroup.PlayerLogic, delta);
+            foreach (var t in logicTickOrders) {
+                Tick(t, delta);
+            }
         }
 
         private void Tick(TickGroup group, double deltaTime) {
@@ -153,31 +133,31 @@ namespace KillCam {
             }
         }
 
-        public void SetupFeature<T>(GameplayActor actor, TickGroup tickGroup) where T : Feature, new() {
+        public void SetupActorFeature<T>(GameplayActor actor, TickGroup tickGroup) where T : Feature, new() {
             var t = new T();
-            actorCapabilitySet[actor].Add(typeof(T).Name, t);
+            actorFeatureSet[actor].Add(typeof(T).Name, t);
             tickGroups[tickGroup].Add(t);
             t.Setup(actor);
         }
 
-        public void SetupFeature(GameplayActor actor, Feature feature, TickGroup tickGroup) {
+        public void SetupActorFeature(GameplayActor actor, Feature feature, TickGroup tickGroup) {
             var type = feature.GetType();
-            actorCapabilitySet[actor].Add(type.Name, feature);
+            actorFeatureSet[actor].Add(type.Name, feature);
             tickGroups[tickGroup].Add(feature);
             feature.Setup(actor);
         }
 
-        public void SetupData<T>(GameplayActor actor, T instance) where T : unmanaged {
+        public void SetupActorData<T>(GameplayActor actor, T instance) where T : unmanaged {
             var type = typeof(T);
             actorDataUnmanagedSet[actor].Add(type, new RefStorage<T>() { Value = instance });
         }
 
-        public void SetupDataManaged<T>(GameplayActor actor, T instance) where T : class {
+        public void SetupActorDataManaged<T>(GameplayActor actor, T instance) where T : class {
             var type = typeof(T);
             actorDataManagedSet[actor].Add(type, instance);
         }
         
-        public ref T GetDataRW<T>(GameplayActor actor) where T : unmanaged {
+        public ref T GetActorDataRW<T>(GameplayActor actor) where T : unmanaged {
             var type = typeof(T);
             if (actorDataUnmanagedSet[actor].TryGetValue(type, out var storage)) {
                 return ref ((RefStorage<T>)storage).GetRef();
@@ -186,7 +166,7 @@ namespace KillCam {
             throw new KeyNotFoundException("no unmanaged data found");
         }
 
-        public ref readonly T GetDataRO<T>(GameplayActor actor) where T : unmanaged {
+        public ref readonly T GetActorDataRO<T>(GameplayActor actor) where T : unmanaged {
             var set = actorDataUnmanagedSet[actor];
             if (set.TryGetValue(typeof(T), out var v)) {
                 return ref ((RefStorage<T>)v).Value;
@@ -195,7 +175,7 @@ namespace KillCam {
             throw new KeyNotFoundException($"No data of type {typeof(T)}");
         }
 
-        public T GetDataManaged<T>(GameplayActor actor) where T : class {
+        public T GetActorDataManaged<T>(GameplayActor actor) where T : class {
             var type = typeof(T);
             if (actorDataManagedSet[actor].TryGetValue(type, out var obj)) {
                 return (T)obj;
@@ -206,8 +186,8 @@ namespace KillCam {
 
         #region World
         
-        public T GetWorldFunction<T>() where T : Feature {
-            var set = actorCapabilitySet[worldActor];
+        public T GetFeature<T>() where T : Feature {
+            var set = actorFeatureSet[worldActor];
             if (set.TryGetValue(typeof(T).Name, out var c)) {
                 return (T)c;
             }
@@ -215,27 +195,27 @@ namespace KillCam {
             return default;
         }
 
-        public void AddWorldFunc<T>(TickGroup tickGroup) where T : Feature, new() 
-            => SetupFeature<T>(worldActor, tickGroup);
+        public void SetupFeature<T>(TickGroup tickGroup) where T : Feature, new() 
+            => SetupActorFeature<T>(worldActor, tickGroup);
 
-        public void AddWorldFunc(Feature feature, TickGroup tickGroup) 
-            => SetupFeature(worldActor, feature, tickGroup);
+        public void SetupFeature(Feature feature, TickGroup tickGroup) 
+            => SetupActorFeature(worldActor, feature, tickGroup);
         
-        public void AddWorldData<T>(T instance) where T : unmanaged
-            => SetupData(worldActor, instance);
+        public void SetupData<T>(T instance) where T : unmanaged
+            => SetupActorData(worldActor, instance);
         
 
-        public void AddWorldDataManaged<T>(T instance) where T : class 
-            => SetupDataManaged(worldActor, instance);
+        public void SetupDataManaged<T>(T instance) where T : class 
+            => SetupActorDataManaged(worldActor, instance);
 
-        public ref readonly T GetWorldDataRO<T>() where T : unmanaged 
-            => ref GetDataRO<T>(worldActor);
+        public ref readonly T GetDataRO<T>() where T : unmanaged 
+            => ref GetActorDataRO<T>(worldActor);
 
-        public ref T GetWorldDataRW<T>() where T : unmanaged 
-            => ref GetDataRW<T>(worldActor);
+        public ref T GetDataRW<T>() where T : unmanaged 
+            => ref GetActorDataRW<T>(worldActor);
 
-        public T GetWorldDataManaged<T>() where T : class {
-            return GetDataManaged<T>(worldActor);
+        public T GetDataManaged<T>() where T : class {
+            return GetActorDataManaged<T>(worldActor);
         }
         
         public bool HasFlag(WorldFlag check) {

@@ -25,11 +25,11 @@ namespace KillCam.Client {
                 return;
             }
 
-            ClientData.Instance.IsReplayPrepare = true;
+            AppData.Instance.IsReplayPrepare = true;
             DelayUtils.SetDelay(1f, () => {
                 Instance.replayPlayer.SetData(data);
                 Instance.replayPlayer.Play();
-                ClientData.Instance.IsReplaying = true;
+                AppData.Instance.IsReplaying = true;
             });
         }
     }

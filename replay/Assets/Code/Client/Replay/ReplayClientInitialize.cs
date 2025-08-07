@@ -5,17 +5,17 @@ using FishNet.Serializing;
 
 namespace KillCam.Client.Replay {
     [UnityEngine.Scripting.Preserve]
-    public class ReplayIBoostrap : ReplayBoostrapBase, IReplayPlayer {
+    public class ReplayIEntry : ReplayEntryBase, IReplayPlayer {
         private bool isPrepareFeatures;
         private byte[] playData;
         private Replay_StreamParse streamParse;
         private Replay_SpawnProvider spawnProvider;
 
-        protected override void OnBeforeInitialize() {
+        protected override void OnBeforeStart() {
             ClientWorldsChannel.SetReplayPlayer(this);
         }
 
-        protected override void OnAfterCleanup() {
+        protected override void OnAfterDestroy() {
             ClientWorldsChannel.SetReplayPlayer(null);
         }
 
@@ -55,13 +55,13 @@ namespace KillCam.Client.Replay {
                 return;
             }
             
-            world.AddWorldData(new WorldTime());
-            world.AddWorldFunc(streamParse = new Replay_StreamParse(), TickGroup.InitializeLogic);
-            world.AddWorldFunc(spawnProvider = new Replay_SpawnProvider(), TickGroup.InitializeLogic);
-            world.AddWorldFunc<Replay_StateProvider>(TickGroup.InitializeLogic);
-            world.AddWorldFunc<Replay_InputProvider>(TickGroup.InitializeLogic);
-            world.AddWorldFunc(new HeroManager(spawnProvider), TickGroup.InitializeLogic);
-            world.AddWorldFunc<CameraManager>(TickGroup.CameraFrame);
+            world.SetupData(new WorldTime());
+            world.SetupFeature(streamParse = new Replay_StreamParse(), TickGroup.InitializeLogic);
+            world.SetupFeature(spawnProvider = new Replay_SpawnProvider(), TickGroup.InitializeLogic);
+            world.SetupFeature<Replay_StateProvider>(TickGroup.InitializeLogic);
+            world.SetupFeature<Replay_InputProvider>(TickGroup.InitializeLogic);
+            world.SetupFeature(new HeroManager(spawnProvider), TickGroup.InitializeLogic);
+            world.SetupFeature<CameraManager>(TickGroup.CameraFrame);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace KillCam.Client {
         }
 
         private void LoadSkin() {
-            var asset = Resources.Load("Client/UCharacter");
+            var asset = Resources.Load("Shared/Hero");
             instance = (GameObject)Object.Instantiate(asset);
             instance.SetLayerRecursively(World.HasFlag(WorldFlag.Replay)
                 ? LayerDefine.replayCharacterLayer

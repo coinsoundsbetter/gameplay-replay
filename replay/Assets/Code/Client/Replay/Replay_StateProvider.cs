@@ -1,7 +1,7 @@
 namespace KillCam.Client.Replay {
     public class Replay_StateProvider : Feature {
         public void SetState(S2C_WorldStateSnapshot snapshot) {
-            var characters = World.GetWorldFunction<HeroManager>().Characters;
+            var characters = World.GetFeature<HeroManager>().Characters;
             if (snapshot.HeroSnapshot.StateData.IsEmpty) {
                 return;
             }

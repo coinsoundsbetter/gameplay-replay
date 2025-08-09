@@ -44,6 +44,7 @@ namespace KillCam.Client {
             });
             
             // 设置逻辑
+            characterActor.SetupFeature<HeroInput>(TickGroup.Input);
             characterActor.SetupFeature<HeroMovement>(TickGroup.Simulation);
             characterActor.SetupFeature<HeroFire>(TickGroup.Simulation);
             characterActor.SetupFeature<HeroVisualSkin>(TickGroup.Visual);

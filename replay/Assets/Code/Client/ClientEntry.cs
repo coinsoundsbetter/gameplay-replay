@@ -25,6 +25,7 @@ namespace KillCam.Client {
         
         private void AddClientFeatures() {
             world.SetupData(new WorldTime());
+            world.SetupData(new UserInputData());
             
             // 网络相关
             world.SetNetworkContext(network);
@@ -40,8 +41,8 @@ namespace KillCam.Client {
             world.SetupFeature<ProjectileManager>();
             
             // 表现相关
-            world.SetupFeature<HudManager>(TickGroup.Visual);
-            world.SetupFeature<CameraManager>(TickGroup.Visual);
+            world.SetupFeature<HudManager>(TickGroup.PostVisual);
+            world.SetupFeature<CameraManager>(TickGroup.PostVisual);
         }
     }
 }

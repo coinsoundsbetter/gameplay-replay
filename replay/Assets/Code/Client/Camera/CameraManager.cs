@@ -25,10 +25,9 @@ namespace KillCam.Client {
             var go = (GameObject)Object.Instantiate(asset);
             uCamera = go.GetComponent<Camera>();
             uCamera.transform.position = new Vector3(0, 0, -10);
-            if (!HasWorldFlag(WorldFlag.Replay)) {
+            if (HasWorldFlag(WorldFlag.Replay)) {
                 uCamera.cullingMask &= ~ (1 << LayerDefine.characterLayer);
-            }
-            else {
+            }else {
                 uCamera.cullingMask |= (1 << LayerDefine.replayCharacterLayer);
             }
         }

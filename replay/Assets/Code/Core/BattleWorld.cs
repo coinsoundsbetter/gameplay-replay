@@ -30,6 +30,7 @@ namespace KillCam {
 
         private readonly TickGroup[] frameTickOrders = {
             TickGroup.Visual,
+            TickGroup.PostVisual,
         };
 
         private readonly ActorGroup[] actorRemoveOrders = {
@@ -90,9 +91,9 @@ namespace KillCam {
 
         private void Tick(TickGroup group, double deltaTime) {
             foreach (var c in tickGroups[group]) {
-                if (!c.IsActive && c.OnShouldTick()) {
+                if (!c.IsActive && c.OnShouldActivate()) {
                     c.Activate();
-                }else if (c.IsActive && !c.OnShouldTick()) {
+                }else if (c.IsActive && !c.OnShouldActivate()) {
                     c.Deactivate();
                 }
                 

@@ -5,7 +5,7 @@ namespace KillCam {
         public uint Tick;
     }
 
-    public struct InputData {
+    public struct UserInputData {
         public Vector2Int Move;
         public float Yaw;
         public float Pitch;

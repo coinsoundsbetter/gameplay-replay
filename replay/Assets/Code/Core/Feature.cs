@@ -45,7 +45,7 @@ namespace KillCam {
 
         protected virtual void OnTickActive() { }
 
-        public virtual bool OnShouldTick() {
+        public virtual bool OnShouldActivate() {
             return true;
         }
         
@@ -85,7 +85,7 @@ namespace KillCam {
         protected T GetWorldFeature<T>() where T : Feature
             => world.GetFeature<T>();
         
-        protected bool HasWorldFlag(WorldFlag flag) => world.Flags.HasFlag(flag);
+        protected bool HasWorldFlag(WorldFlag flag) => world.HasFlag(flag);
         
         //====================
         // 网络发送

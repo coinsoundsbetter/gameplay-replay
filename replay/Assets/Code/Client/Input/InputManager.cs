@@ -3,12 +3,12 @@ using UnityEngine;
 namespace KillCam.Client {
     public class InputManager : Feature {
         
-        public override bool OnShouldTick() {
-            return Owner.HasData<InputData>();
+        public override bool OnShouldActivate() {
+            return Owner.HasData<UserInputData>();
         }
 
         protected override void OnTickActive() {
-            ref var data = ref Owner.GetDataReadWrite<InputData>();
+            ref var data = ref Owner.GetDataReadWrite<UserInputData>();
             var h = Input.GetAxisRaw("Horizontal");
             var v = Input.GetAxisRaw("Vertical");
             h = h switch {

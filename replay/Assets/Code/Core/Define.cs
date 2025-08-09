@@ -85,6 +85,7 @@ namespace KillCam {
         
         // 视觉组
         Visual,
+        PostVisual,
     }
 
     public enum ActorGroup {

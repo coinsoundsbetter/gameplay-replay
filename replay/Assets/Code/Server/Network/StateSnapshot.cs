@@ -35,7 +35,7 @@ namespace KillCam.Server {
                 StateData = new NativeHashMap<int, HeroMoveData>(4, Allocator.Persistent),
                 InputData = new NativeHashMap<int, HeroInputData>(4, Allocator.Persistent),
             };
-            characterSnapshots.Add(World.GetTick(), snapshot);
+            characterSnapshots.Add(GetTick(), snapshot);
 
             stateSnapshotCountdown--;
             if (stateSnapshotCountdown < 0) {
@@ -47,7 +47,7 @@ namespace KillCam.Server {
         }
 
         private void TakeCharacterStateSnapshot(ref AllHeroSnapshot snapshot) {
-            var characterMgr = World.GetFeature<HeroManager>();
+            var characterMgr = GetWorldFeature<HeroManager>();
             foreach (var (id, character) in characterMgr.RoleActors) {
                 var stateData = character.GetDataReadOnly<HeroMoveData>();
                 snapshot.StateData.Add(id, stateData);
@@ -55,7 +55,7 @@ namespace KillCam.Server {
         }
 
         private void TakeCharacterInputSnapshot(ref AllHeroSnapshot snapshot) {
-            var characterMgr = World.GetFeature<HeroManager>();
+            var characterMgr = GetWorldFeature<HeroManager>();
             foreach (var (id, character) in characterMgr.RoleActors) {
                 var inputData = character.GetDataReadOnly<HeroInputData>();
                 snapshot.InputData.Add(id, inputData);
@@ -125,7 +125,7 @@ namespace KillCam.Server {
             var startReplayData = new S2C_StartReplay {
                 FullData = byteData
             };
-            World.Rpc(startReplayData);
+            Rpc(startReplayData);
         }
     }
 }

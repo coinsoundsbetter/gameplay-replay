@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 
 namespace KillCam {
-    public class BattleWorld {
+    public partial class BattleWorld {
         public WorldFlag Flags { get; private set; }
         public FixedString32Bytes Name { get; private set; }
         public float FrameTickDelta { get; private set; }
@@ -73,39 +73,6 @@ namespace KillCam {
                 groupActors.Remove(actorGroup);
             }
         }
-        
-        public GameplayActor CreateActor(ActorGroup group = ActorGroup.Default) {
-            var newActor = new GameplayActor();
-            actorGroupMap.Add(newActor, group);
-            groupActors[group].Add(newActor);
-            actorFeatureSet.Add(newActor, new Dictionary<string, Feature>());
-            actorDataManagedSet.Add(newActor, new Dictionary<Type, object>());
-            actorDataUnmanagedSet.Add(newActor, new Dictionary<Type, RefStorageBase>());
-            newActor.SetupWorld(this);
-            return newActor;
-        }
-
-        public void DestroyActor(GameplayActor actor) {
-            actorGroupMap.Remove(actor, out var group);
-            groupActors[group].Remove(actor);
-            
-            foreach (var c in actorFeatureSet[actor].Values) {
-                c.Destroy();
-            }
-            actorFeatureSet.Remove(actor);
-
-            foreach (var obj in actorDataManagedSet[actor].Values) {
-                if (obj is IDisposable disposable) {
-                    disposable.Dispose();
-                }
-            }
-            actorFeatureSet.Remove(actor);
-
-            foreach (var data in actorDataUnmanagedSet[actor].Values) {
-                data.Dispose();
-            }
-            actorDataUnmanagedSet.Remove(actor);
-        }
 
         public void FrameUpdate(float delta) {
             FrameTickDelta = delta;
@@ -134,113 +101,5 @@ namespace KillCam {
                 }
             }
         }
-
-        public void SetupActorFeature<T>(GameplayActor actor, TickGroup tickGroup) where T : Feature, new() {
-            var t = new T();
-            actorFeatureSet[actor].Add(typeof(T).Name, t);
-            tickGroups[tickGroup].Add(t);
-            t.Setup(actor);
-        }
-
-        public void SetupActorFeature(GameplayActor actor, Feature feature, TickGroup tickGroup) {
-            var type = feature.GetType();
-            actorFeatureSet[actor].Add(type.Name, feature);
-            tickGroups[tickGroup].Add(feature);
-            feature.Setup(actor);
-        }
-
-        public void SetupActorData<T>(GameplayActor actor, T instance) where T : unmanaged {
-            var type = typeof(T);
-            actorDataUnmanagedSet[actor].Add(type, new RefStorage<T>() { Value = instance });
-        }
-
-        public void SetupActorDataManaged<T>(GameplayActor actor, T instance) where T : class {
-            var type = typeof(T);
-            actorDataManagedSet[actor].Add(type, instance);
-        }
-
-        public bool HasData<T>() where T : unmanaged {
-            return HasActorData<T>(worldActor);
-        }
-
-        public bool HasActorData<T>(GameplayActor actor) where T : unmanaged {
-            var type = typeof(T);
-            if (actorDataUnmanagedSet[actor].ContainsKey(type)) {
-                return true;
-            }
-
-            return false;
-        }
-        
-        public ref T GetActorDataRW<T>(GameplayActor actor) where T : unmanaged {
-            var type = typeof(T);
-            if (actorDataUnmanagedSet[actor].TryGetValue(type, out var storage)) {
-                return ref ((RefStorage<T>)storage).GetRef();
-            }
-
-            throw new KeyNotFoundException("no unmanaged data found");
-        }
-
-        public ref readonly T GetActorDataRO<T>(GameplayActor actor) where T : unmanaged {
-            var set = actorDataUnmanagedSet[actor];
-            if (set.TryGetValue(typeof(T), out var v)) {
-                return ref ((RefStorage<T>)v).Value;
-            }
-
-            throw new KeyNotFoundException($"No data of type {typeof(T)}");
-        }
-
-        public T GetActorDataManaged<T>(GameplayActor actor) where T : class {
-            var type = typeof(T);
-            if (actorDataManagedSet[actor].TryGetValue(type, out var obj)) {
-                return (T)obj;
-            }
-
-            return default;
-        }
-
-        #region World
-        
-        public T GetFeature<T>() where T : Feature {
-            var set = actorFeatureSet[worldActor];
-            if (set.TryGetValue(typeof(T).Name, out var c)) {
-                return (T)c;
-            }
-
-            return default;
-        }
-
-        public void SetupFeature<T>(TickGroup tickGroup = TickGroup.Simulation) where T : Feature, new() 
-            => SetupActorFeature<T>(worldActor, tickGroup);
-
-        public void SetupFeature(Feature feature, TickGroup tickGroup = TickGroup.Simulation) 
-            => SetupActorFeature(worldActor, feature, tickGroup);
-        
-        public void SetupData<T>(T instance) where T : unmanaged
-            => SetupActorData(worldActor, instance);
-        
-
-        public void SetupDataManaged<T>(T instance) where T : class 
-            => SetupActorDataManaged(worldActor, instance);
-
-        public ref readonly T GetDataRO<T>() where T : unmanaged 
-            => ref GetActorDataRO<T>(worldActor);
-
-        public ref T GetDataRW<T>() where T : unmanaged 
-            => ref GetActorDataRW<T>(worldActor);
-
-        public T GetDataManaged<T>() where T : class {
-            return GetActorDataManaged<T>(worldActor);
-        }
-        
-        public bool HasFlag(WorldFlag check) {
-            if ((Flags & check) != 0) {
-                return true;
-            }
-
-            return false;
-        }
-
-        #endregion
     }
 }

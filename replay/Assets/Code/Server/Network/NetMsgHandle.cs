@@ -25,7 +25,7 @@ namespace KillCam.Server {
         }
 
         private void OnC2S_SendInput(int senderId, C2S_SendInput message) {
-            var roleMgr = World.GetFeature<HeroManager>();
+            var roleMgr = GetWorldFeature<HeroManager>();
             if (roleMgr.RoleActors.TryGetValue(senderId, out var actor)) {
                 ref var ipData = ref actor.GetDataReadWrite<HeroInputData>();
                 ipData.Move = message.Move;

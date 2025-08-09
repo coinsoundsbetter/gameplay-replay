@@ -25,7 +25,7 @@ namespace KillCam.Client {
             var go = (GameObject)Object.Instantiate(asset);
             uCamera = go.GetComponent<Camera>();
             uCamera.transform.position = new Vector3(0, 0, -10);
-            if (World.HasFlag(WorldFlag.Replay)) {
+            if (!HasWorldFlag(WorldFlag.Replay)) {
                 uCamera.cullingMask &= ~ (1 << LayerDefine.characterLayer);
             }
             else {
@@ -35,11 +35,11 @@ namespace KillCam.Client {
 
         private void CheckEnable() {
             // 非回放世界
-            bool isBlock = !World.HasFlag(WorldFlag.Replay) &&
+            bool isBlock = !HasWorldFlag(WorldFlag.Replay) &&
                            (AppData.Instance.IsReplaying || AppData.Instance.IsReplayPrepare);
 
             // 回放世界
-            if (World.HasFlag(WorldFlag.Replay) &&
+            if (HasWorldFlag(WorldFlag.Replay) &&
                 (AppData.Instance.IsReplaying)) {
                 isBlock = false;
             }
@@ -78,7 +78,7 @@ namespace KillCam.Client {
         }
 
         private void SendCameraData() {
-            World.Send(new C2S_SendCameraData() {
+            Send(new C2S_SendCameraData() {
                 Rotation = uCamera.transform.rotation,
             });
         }

@@ -1,29 +1,13 @@
 namespace KillCam {
     public abstract class Feature {
         protected GameplayActor Owner { get; private set; }
-        protected BattleWorld World { get; private set; }
+        private BattleWorld world;
         public bool IsActive { get; private set; }
         protected double TickDelta { get; private set; }
 
-        public bool HasData<T>() where T : unmanaged {
-            return World.HasActorData<T>(Owner);
-        }
-
-        public T GetDataRO<T>() where T : unmanaged {
-            return World.GetActorDataRO<T>(Owner);
-        }
-
-        public ref T GetDataRW<T>() where T : unmanaged {
-            return ref World.GetActorDataRW<T>(Owner);
-        }
-
-        public T GetDataManaged<T>() where T : class {
-            return World.GetDataManaged<T>();
-        }
-
         public void Setup(GameplayActor gameplayActor) {
             Owner = gameplayActor;
-            World = gameplayActor.MyWorld;
+            world = gameplayActor.MyWorld;
             IsActive = false;
             OnSetup();
         }
@@ -64,5 +48,56 @@ namespace KillCam {
         public virtual bool OnShouldTick() {
             return true;
         }
+        
+        //====================
+        // Actor 级数据访问
+        //====================
+        protected bool HasData<T>() where T : unmanaged
+            => world.HasActorData<T>(Owner);
+
+        protected ref T GetDataRW<T>() where T : unmanaged
+            => ref world.GetActorDataRW<T>(Owner);
+
+        protected ref readonly T GetDataRO<T>() where T : unmanaged
+            => ref world.GetActorDataRO<T>(Owner);
+
+        protected T GetDataManaged<T>() where T : class
+            => world.GetActorDataManaged<T>(Owner);
+
+        protected GameplayActor CreateActor(ActorGroup actorGroup = ActorGroup.Default)
+            => world.CreateActor(actorGroup);
+        
+        //====================
+        // World 级数据访问
+        //====================
+        protected bool HasWorldData<T>() where T : unmanaged
+            => world.HasData<T>();
+
+        protected ref T GetWorldDataRW<T>() where T : unmanaged
+            => ref world.GetDataRW<T>();
+
+        protected ref readonly T GetWorldDataRO<T>() where T : unmanaged
+            => ref world.GetDataRO<T>();
+
+        protected T GetWorldDataManaged<T>() where T : class
+            => world.GetDataManaged<T>();
+
+        protected T GetWorldFeature<T>() where T : Feature
+            => world.GetFeature<T>();
+        
+        protected bool HasWorldFlag(WorldFlag flag) => world.Flags.HasFlag(flag);
+        
+        //====================
+        // 网络发送
+        //====================
+        protected void Send<T>(T msg) where T : INetworkMsg {
+            world.NetworkContext.SendToServer(msg);
+        }
+
+        protected void Rpc<T>(T msg) where T : INetworkMsg {
+            world.NetworkContext.SendToAllClients(msg);
+        }
+
+        protected uint GetTick() => world.NetworkContext.GetTick();
     }
 }

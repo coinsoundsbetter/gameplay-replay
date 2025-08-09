@@ -1,17 +1,17 @@
 namespace KillCam.Client {
     public class HeroFire : Feature {
         public override bool OnShouldTick() {
-            if (!World.HasData<InputData>()) {
+            if (!HasWorldData<InputData>()) {
                 return false;
             }
 
-            var data = World.GetDataRO<InputData>();
+            var data = GetWorldDataRO<InputData>();
             return data.IsFirePressed;
         }
 
         protected override void OnTickActive() {
-            World.Send(new ProjectileFire() {
-                ClientLocalTick = World.GetTick(),
+            Send(new ProjectileFire() {
+                ClientLocalTick = GetTick(),
             });
         }
     }

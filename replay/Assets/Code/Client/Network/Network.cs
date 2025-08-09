@@ -3,12 +3,15 @@ using FishNet.Managing;
 using FishNet.Transporting;
 
 namespace KillCam.Client {
-    public class NetworkClient : Feature, INetworkClient {
+    public class NetworkClient : Feature, INetworkContext {
         private readonly NetworkManager manager;
         private IClientHeroNet sender;
         private Action startAction;
         public event Action<IClientHeroNet> AfterRoleSpawn;
         public event Action<IClientHeroNet> AfterRoleDespawn;
+        
+        public bool IsServer { get; } = false;
+        public bool IsClient { get; } = true;
 
         public NetworkClient(NetworkManager mgr) {
             manager = mgr;
@@ -58,21 +61,25 @@ namespace KillCam.Client {
         }
 
         protected override void OnTickActive() {
-            ref var worldTime = ref World.GetDataRW<WorldTime>();
+            ref var worldTime = ref GetWorldDataRW<WorldTime>();
             worldTime.Tick = manager.TimeManager.LocalTick;
         }
-
-        public void Send<T>(T message) where T : INetworkMsg {
+        
+        public void SendToServer<T>(T message) where T : INetworkMsg {
             sender?.Send(message);
         }
 
-        public uint GetTick() {
-            var worldTime = World.GetDataRO<WorldTime>();
-            return worldTime.Tick;
+        public void SendToAllClients<T>(T message) where T : INetworkMsg {
+            throw new InvalidOperationException("Client can't broadcast to all");
         }
 
-        public void Rpc<T>(T message) where T : INetworkMsg { }
-        
-        public void TargetRpc<T>(int id, T message) where T : INetworkMsg { }
+        public void SendToTargetClient<T>(int playerId, T message) where T : INetworkMsg {
+            throw new InvalidOperationException("Client can't send to specific client");
+        }
+
+        public uint GetTick() {
+            var worldData = GetWorldDataRO<WorldTime>();
+            return worldData.Tick;
+        }
     }
 }

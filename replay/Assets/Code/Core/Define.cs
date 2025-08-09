@@ -37,6 +37,15 @@ namespace KillCam {
         ushort GetMsgType();
     }
 
+    public interface INetworkContext {
+        bool IsServer { get; }
+        bool IsClient { get; }
+        void SendToServer<T>(T message) where T : INetworkMsg;
+        void SendToAllClients<T>(T message) where T : INetworkMsg;
+        void SendToTargetClient<T>(int playerId, T message) where T : INetworkMsg;
+        uint GetTick();
+    }
+
     public interface INetworkClient {
         void Send<T>(T message) where T : INetworkMsg;
         uint GetTick();

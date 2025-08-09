@@ -15,7 +15,7 @@ namespace KillCam.Client {
         private void LoadSkin() {
             var asset = Resources.Load("Shared/Hero");
             instance = (GameObject)Object.Instantiate(asset);
-            instance.SetLayerRecursively(World.HasFlag(WorldFlag.Replay)
+            instance.SetLayerRecursively(HasWorldFlag(WorldFlag.Replay)
                 ? LayerDefine.replayCharacterLayer
                 : LayerDefine.characterLayer);
             var uCharacterRef = Owner.GetDataManaged<UnityHeroLink>();

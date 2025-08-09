@@ -27,6 +27,7 @@ namespace KillCam.Client {
             world.SetupData(new WorldTime());
             
             // 网络相关
+            world.SetNetworkContext(network);
             world.SetupFeature(network);
             world.SetupFeature(spawnProvider = new SpawnProvider());
             world.SetupFeature<NetMsgHandle>(TickGroup.NetworkReceive);

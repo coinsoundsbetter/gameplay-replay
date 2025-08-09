@@ -7,10 +7,12 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace KillCam.Server {
-    public class NetworkServer : Feature {
+    public class NetworkServer : Feature, INetworkContext {
         private NetworkManager manager;
         private Action startAction;
         private int clientUniqueId;
+        public bool IsServer { get; } = true;
+        public bool IsClient { get; } = false;
 
         public NetworkServer(NetworkManager networkManager) {
             manager = networkManager;
@@ -30,7 +32,7 @@ namespace KillCam.Server {
         }
 
         protected override void OnTickActive() {
-            ref var worldTime = ref World.GetDataRW<WorldTime>();
+            ref var worldTime = ref GetWorldDataRW<WorldTime>();
             worldTime.Tick = manager.TimeManager.LocalTick;
         }
 
@@ -52,18 +54,28 @@ namespace KillCam.Server {
             var networkObj = instance.GetComponent<NetworkObject>();
             manager.ServerManager.Spawn(networkObj, conn);
         }
-
-        public uint GetTick() {
-            var worldTime = World.GetDataRO<WorldTime>();
-            return worldTime.Tick;
-        }
         
-        public void Rpc<T>(T message) where T : INetworkMsg {
-            var roleMgr = World.GetFeature<HeroManager>();
+        public void SendToServer<T>(T message) where T : INetworkMsg {
+            throw new InvalidOperationException("Server doesn't send to server");
+        }
+
+        public void SendToAllClients<T>(T message) where T : INetworkMsg {
+            var roleMgr = GetWorldFeature<HeroManager>();
             foreach (var actor in roleMgr.RoleActors.Values) {
                 actor.GetDataManaged<ServerHeroNetLink>()?.NetServer?.Rpc(message);
             }
         }
-        public void TargetRpc<T>(int id, T message) where T : INetworkMsg { }
+
+        public void SendToTargetClient<T>(int playerId, T message) where T : INetworkMsg {
+            var roleMgr = GetWorldFeature<HeroManager>();
+            if (roleMgr.RoleActors.TryGetValue(playerId, out var role)) {
+                role.GetDataManaged<ServerHeroNetLink>()?.NetServer.Rpc(message);
+            }
+        }
+
+        public new uint GetTick() {
+            var worldTime = GetWorldDataRO<WorldTime>();
+            return worldTime.Tick;
+        }
     }
 }

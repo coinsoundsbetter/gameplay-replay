@@ -17,7 +17,7 @@ namespace KillCam.Server {
 
         private void OnRoleNetSpawn(IServerHeroNet net) {
             var id = net.GetId();
-            var character = World.CreateActor(ActorGroup.Player);
+            var character = CreateActor(ActorGroup.Player);
             character.SetupData(new HeroIdentifier() {
                 IsControlTarget = false,
                 PlayerId = net.GetId(),

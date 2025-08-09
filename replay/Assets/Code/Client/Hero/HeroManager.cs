@@ -27,7 +27,7 @@ namespace KillCam.Client {
                 return;
             }
 
-            var characterActor = World.CreateActor(ActorGroup.Player);
+            var characterActor = CreateActor(ActorGroup.Player);
             // 设置数据
             characterActor.SetupData(new HeroIdentifier() {
                 PlayerId = playerId,

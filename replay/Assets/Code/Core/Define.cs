@@ -65,13 +65,17 @@ namespace KillCam {
     }
 
     public enum TickGroup {
-        InitializeLogic,
+        // 逻辑组
+        NetworkReceive,
+        PreSimulation,
         Input,
-        PlayerLogic,
+        Prediction,
+        Simulation,
+        CollisionAndHits,
+        PostSimulation,
         
-        InitializeFrame,
-        PlayerFrame,
-        CameraFrame,
+        // 视觉组
+        Visual,
     }
 
     public enum ActorGroup {

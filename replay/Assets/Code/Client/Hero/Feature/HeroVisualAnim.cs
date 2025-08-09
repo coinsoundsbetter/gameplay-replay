@@ -4,7 +4,7 @@ namespace KillCam.Client {
     public class HeroVisualAnim : Feature {
         private UnityHeroLink unityHero;
         
-        public override bool OnShouldActivate() {
+        public override bool OnShouldTick() {
             unityHero = Owner.GetDataManaged<UnityHeroLink>();
             if (unityHero.Actor != null) {
                 return true;

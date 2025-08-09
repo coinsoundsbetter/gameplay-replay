@@ -11,11 +11,11 @@ namespace KillCam.Server {
         
         protected override void OnBeforeStart() {
             world.SetupData(new WorldTime());
-            world.SetupFeature(networkServer, TickGroup.InitializeLogic);
+            world.SetupFeature(networkServer);
             networkServer.Start(() => {
-                world.SetupFeature<HeroManager>(TickGroup.InitializeLogic);
-                world.SetupFeature<NetMessageHandle>(TickGroup.InitializeLogic);
-                world.SetupFeature<StateSnapshot>(TickGroup.InitializeLogic);
+                world.SetupFeature<HeroManager>();
+                world.SetupFeature<NetMessageHandle>();
+                world.SetupFeature<StateSnapshot>();
             });
         }
 

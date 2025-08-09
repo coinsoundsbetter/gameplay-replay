@@ -14,6 +14,10 @@ namespace KillCam {
             MyWorld.SetupActorDataManaged(this, instance);
         }
 
+        public bool HasData<T>() where T : unmanaged {
+            return MyWorld.HasActorData<T>(this);
+        }
+
         public ref T GetDataReadWrite<T>() where T : unmanaged {
             return ref MyWorld.GetActorDataRW<T>(this);
         }

@@ -4,7 +4,7 @@ namespace KillCam.Client {
     public class HeroVisualCamera : Feature {
         private CameraDataSource link;
         
-        public override bool OnShouldActivate() {
+        public override bool OnShouldTick() {
             var heroActor = Owner.GetDataManaged<UnityHeroLink>();
             if (heroActor.Actor != null) {
                 return true;

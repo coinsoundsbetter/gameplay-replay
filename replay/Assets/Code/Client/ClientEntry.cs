@@ -25,12 +25,22 @@ namespace KillCam.Client {
         
         private void AddClientFeatures() {
             world.SetupData(new WorldTime());
-            world.SetupFeature(network, TickGroup.InitializeLogic);
-            world.SetupFeature(spawnProvider = new SpawnProvider(), TickGroup.InitializeLogic);
-            world.SetupFeature<NetMsgHandle>(TickGroup.InitializeLogic);
-            world.SetupFeature(new HeroManager(spawnProvider), TickGroup.InitializeLogic);
-            world.SetupFeature<HudManager>(TickGroup.InitializeFrame);
-            world.SetupFeature<CameraManager>(TickGroup.CameraFrame);
+            
+            // 网络相关
+            world.SetupFeature(network);
+            world.SetupFeature(spawnProvider = new SpawnProvider());
+            world.SetupFeature<NetMsgHandle>(TickGroup.NetworkReceive);
+            
+            // 输入
+            world.SetupFeature<InputManager>(TickGroup.Input);
+            
+            // 逻辑模拟
+            world.SetupFeature(new HeroManager(spawnProvider));
+            world.SetupFeature<ProjectileManager>();
+            
+            // 表现相关
+            world.SetupFeature<HudManager>(TickGroup.Visual);
+            world.SetupFeature<CameraManager>(TickGroup.Visual);
         }
     }
 }

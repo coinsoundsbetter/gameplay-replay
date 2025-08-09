@@ -5,6 +5,22 @@ namespace KillCam {
         public bool IsActive { get; private set; }
         protected double TickDelta { get; private set; }
 
+        public bool HasData<T>() where T : unmanaged {
+            return World.HasActorData<T>(Owner);
+        }
+
+        public T GetDataRO<T>() where T : unmanaged {
+            return World.GetActorDataRO<T>(Owner);
+        }
+
+        public ref T GetDataRW<T>() where T : unmanaged {
+            return ref World.GetActorDataRW<T>(Owner);
+        }
+
+        public T GetDataManaged<T>() where T : class {
+            return World.GetDataManaged<T>();
+        }
+
         public void Setup(GameplayActor gameplayActor) {
             Owner = gameplayActor;
             World = gameplayActor.MyWorld;
@@ -45,12 +61,8 @@ namespace KillCam {
 
         protected virtual void OnTickActive() { }
 
-        public virtual bool OnShouldActivate() {
+        public virtual bool OnShouldTick() {
             return true;
-        }
-
-        public virtual bool OnShouldDeactivate() {
-            return false;
         }
     }
 }

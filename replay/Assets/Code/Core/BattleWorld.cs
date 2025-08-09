@@ -19,15 +19,17 @@ namespace KillCam {
         private readonly Dictionary<GameplayActor, Dictionary<Type, RefStorageBase>> actorDataUnmanagedSet = new();
 
         private readonly TickGroup[] logicTickOrders = {
-            TickGroup.InitializeLogic,
+            TickGroup.NetworkReceive,
+            TickGroup.PreSimulation,
             TickGroup.Input,
-            TickGroup.PlayerLogic,
+            TickGroup.Prediction,
+            TickGroup.Simulation,
+            TickGroup.CollisionAndHits,
+            TickGroup.PostSimulation
         };
 
         private readonly TickGroup[] frameTickOrders = {
-            TickGroup.InitializeFrame,
-            TickGroup.PlayerFrame,
-            TickGroup.CameraFrame,
+            TickGroup.Visual,
         };
 
         private readonly ActorGroup[] actorRemoveOrders = {
@@ -121,12 +123,12 @@ namespace KillCam {
 
         private void Tick(TickGroup group, double deltaTime) {
             foreach (var c in tickGroups[group]) {
-                if (!c.IsActive && c.OnShouldActivate()) {
+                if (!c.IsActive && c.OnShouldTick()) {
                     c.Activate();
-                } else if (c.IsActive && c.OnShouldDeactivate()) {
+                }else if (c.IsActive && !c.OnShouldTick()) {
                     c.Deactivate();
                 }
-
+                
                 if (c.IsActive) {
                     c.TickActive(deltaTime);
                 }
@@ -155,6 +157,19 @@ namespace KillCam {
         public void SetupActorDataManaged<T>(GameplayActor actor, T instance) where T : class {
             var type = typeof(T);
             actorDataManagedSet[actor].Add(type, instance);
+        }
+
+        public bool HasData<T>() where T : unmanaged {
+            return HasActorData<T>(worldActor);
+        }
+
+        public bool HasActorData<T>(GameplayActor actor) where T : unmanaged {
+            var type = typeof(T);
+            if (actorDataUnmanagedSet[actor].ContainsKey(type)) {
+                return true;
+            }
+
+            return false;
         }
         
         public ref T GetActorDataRW<T>(GameplayActor actor) where T : unmanaged {
@@ -195,10 +210,10 @@ namespace KillCam {
             return default;
         }
 
-        public void SetupFeature<T>(TickGroup tickGroup) where T : Feature, new() 
+        public void SetupFeature<T>(TickGroup tickGroup = TickGroup.Simulation) where T : Feature, new() 
             => SetupActorFeature<T>(worldActor, tickGroup);
 
-        public void SetupFeature(Feature feature, TickGroup tickGroup) 
+        public void SetupFeature(Feature feature, TickGroup tickGroup = TickGroup.Simulation) 
             => SetupActorFeature(worldActor, feature, tickGroup);
         
         public void SetupData<T>(T instance) where T : unmanaged

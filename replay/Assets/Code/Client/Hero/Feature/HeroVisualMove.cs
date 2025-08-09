@@ -2,7 +2,7 @@
     public class HeroVisualMove : Feature {
         private IUnityHero unityHero;
 
-        public override bool OnShouldActivate() {
+        public override bool OnShouldTick() {
             var link = Owner.GetDataManaged<UnityHeroLink>();
             unityHero = link.Actor;
             if (unityHero != null) {

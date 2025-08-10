@@ -36,7 +36,7 @@ namespace KillCam {
         public ushort GetMsgType() => (ushort)NetworkMsg.C2S_SendCameraData;
     }
 
-    public struct ProjectileFire : INetworkMsg {
+    public struct C2S_CmdFire : INetworkMsg {
         public uint ClientLocalTick;
         public Vector3 Origin;
         public Vector3 Direction;

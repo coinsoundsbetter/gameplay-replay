@@ -139,6 +139,7 @@ MonoBehaviour:
   cameraTarget: {fileID: 2939420404720213640}
   cc: {fileID: 4592143310602994849}
   animator: {fileID: 6553925359013124077}
+  fireOrigin: {fileID: 2387259316342502831}
 --- !u!1 &7332903531067066210
 GameObject:
   m_ObjectHideFlags: 0

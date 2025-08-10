@@ -17,7 +17,8 @@ namespace KillCam {
         private readonly Dictionary<GameplayActor, Dictionary<string, Feature>> actorFeatureSet = new();
         private readonly Dictionary<GameplayActor, Dictionary<Type, object>> actorDataManagedSet = new();
         private readonly Dictionary<GameplayActor, Dictionary<Type, RefStorageBase>> actorDataUnmanagedSet = new();
-
+        private readonly Dictionary<GameplayActor, Dictionary<Type, RefStorageBase>> actorBufferUnmanagedSet = new();
+        
         private readonly TickGroup[] logicTickOrders = {
             TickGroup.NetworkReceive,
             TickGroup.PreSimulation,

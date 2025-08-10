@@ -32,6 +32,14 @@ namespace KillCam {
         public T GetDataManaged<T>() where T : class {
             return GetActorDataManaged<T>(worldActor);
         }
+
+        public void SetupBuffer<T>() where T : unmanaged, IBufferElement{
+            SetupActorBuffer<T>(worldActor);
+        }
+
+        public ref DynamicBuffer<T> GetBuffer<T>() where T : unmanaged, IBufferElement {
+            return ref GetActorBuffer<T>(worldActor);
+        }
         
         public bool HasFlag(WorldFlag check) {
             if ((Flags & check) != 0) {

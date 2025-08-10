@@ -24,6 +24,7 @@ namespace KillCam.Client {
             data.Move = new Vector2Int((int)h, (int)v);
             data.Yaw = Input.GetAxis("Mouse X");
             data.Pitch = Input.GetAxis("Mouse Y");
+            data.IsFirePressed = Input.GetButton("Fire1");
         }
     }
 }

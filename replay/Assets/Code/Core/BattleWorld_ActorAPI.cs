@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Collections;
 
 namespace KillCam {
     public partial class BattleWorld {
@@ -11,6 +12,7 @@ namespace KillCam {
             actorFeatureSet.Add(newActor, new Dictionary<string, Feature>());
             actorDataManagedSet.Add(newActor, new Dictionary<Type, object>());
             actorDataUnmanagedSet.Add(newActor, new Dictionary<Type, RefStorageBase>());
+            actorBufferUnmanagedSet.Add(newActor, new Dictionary<Type, RefStorageBase>());
             newActor.SetupWorld(this);
             return newActor;
         }
@@ -35,6 +37,11 @@ namespace KillCam {
                 data.Dispose();
             }
             actorDataUnmanagedSet.Remove(actor);
+
+            foreach (var data in actorBufferUnmanagedSet[actor].Values) {
+                data.Dispose();
+            }
+            actorBufferUnmanagedSet.Remove(actor);
         }
         
         public void SetupActorFeature<T>(GameplayActor actor, TickGroup tickGroup) where T : Feature, new() {
@@ -133,6 +140,22 @@ namespace KillCam {
             }
 
             return false;
+        }
+
+        public void SetupActorBuffer<T>(GameplayActor actor) where T : unmanaged, IBufferElement {
+            var type = typeof(T);
+            actorBufferUnmanagedSet[actor].Add(type, new RefStorageBuffer<T>() {
+                Value = new DynamicBuffer<T>(0, Allocator.Persistent),
+            });
+        }
+
+        public ref DynamicBuffer<T> GetActorBuffer<T>(GameplayActor actor) where T : unmanaged, IBufferElement {
+            var type = typeof(T);
+            if (actorBufferUnmanagedSet[actor].TryGetValue(type, out var buffWrapper)) {
+                return ref ((RefStorageBuffer<T>)buffWrapper).GetRef();
+            }
+            
+            throw new KeyNotFoundException($"No dynamic buffer of type {type}");
         }
     }
 }

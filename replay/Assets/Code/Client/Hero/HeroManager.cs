@@ -38,6 +38,7 @@ namespace KillCam.Client {
             characterActor.SetupData(new HeroMoveData() { Rot = Quaternion.identity, });
             characterActor.SetupData(new HeroSkinData());
             characterActor.SetupData(new HeroAnimData());
+            characterActor.SetupData(new HeroFireData());
             characterActor.SetupDataManaged(new UnityHeroLink());
             characterActor.SetupDataManaged(new ClientHeroNetLink() {
                 NetClient = net,

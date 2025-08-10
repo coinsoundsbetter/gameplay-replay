@@ -1,13 +1,9 @@
-using System.Collections.Generic;
-
 namespace KillCam {
     public abstract class Feature {
         protected GameplayActor Owner { get; private set; }
         private BattleWorld world;
         public bool IsActive { get; private set; }
         protected double TickDelta { get; private set; }
-        private readonly HashSet<System.Type> needActorData = new();
-        private readonly HashSet<System.Type> needWorldData = new();
 
         public void Setup(GameplayActor gameplayActor) {
             Owner = gameplayActor;
@@ -95,6 +91,10 @@ namespace KillCam {
 
         protected T GetWorldFeature<T>() where T : Feature
             => world.GetFeature<T>();
+
+        protected ref DynamicBuffer<T> GetWorldBuffer<T>() where T : unmanaged, IBufferElement {
+            return ref world.GetBuffer<T>();
+        }
         
         protected bool HasWorldFlag(WorldFlag flag) => world.HasFlag(flag);
         

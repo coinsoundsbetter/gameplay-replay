@@ -1,5 +1,5 @@
 namespace KillCam.Client {
-    public class HudManager : Feature {
+    public class VisualHUD : Feature {
         
     }
 }

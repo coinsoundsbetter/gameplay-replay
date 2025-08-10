@@ -41,6 +41,11 @@ namespace KillCam {
         public Vector3 LocalMoveDirection;
     }
 
+    public struct HeroFireData {
+        public float FireCd;
+        public bool IsInCd() => FireCd > 0;
+    }
+
     public struct HeroAnimData {
         public bool IsAnimMoving;
     }

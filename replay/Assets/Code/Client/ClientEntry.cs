@@ -27,6 +27,7 @@ namespace KillCam.Client {
             world.SetupData(new WorldTime());
             world.SetupData(new UserInputData());
             world.SetupData(new CameraData());
+            world.SetupBuffer<ImpactData>();
             
             // 网络相关
             world.SetNetworkContext(network);
@@ -39,10 +40,11 @@ namespace KillCam.Client {
             
             // 逻辑模拟
             world.SetupFeature(new HeroManager(spawnProvider));
-            world.SetupFeature<ProjectileManager>();
+            world.SetupFeature<Projectiles>(TickGroup.Simulation);
             
             // 表现相关
-            world.SetupFeature<HudManager>(TickGroup.PostVisual);
+            world.SetupFeature<ProjectileImpacts>(TickGroup.Visual);
+            world.SetupFeature<VisualHUD>(TickGroup.PostVisual);
             world.SetupFeature<CameraManager>(TickGroup.PostVisual);
         }
     }

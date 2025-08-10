@@ -121,6 +121,7 @@ Transform:
   - {fileID: 793947407087468141}
   - {fileID: 870343405427428759}
   - {fileID: 2939420404720213640}
+  - {fileID: 2387259316342502831}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1825311944216827385
@@ -138,6 +139,37 @@ MonoBehaviour:
   cameraTarget: {fileID: 2939420404720213640}
   cc: {fileID: 4592143310602994849}
   animator: {fileID: 6553925359013124077}
+--- !u!1 &7332903531067066210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2387259316342502831}
+  m_Layer: 6
+  m_Name: FireTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2387259316342502831
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7332903531067066210}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 580258912987318585}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4017778577810369840
 PrefabInstance:
   m_ObjectHideFlags: 0

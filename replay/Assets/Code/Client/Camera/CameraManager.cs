@@ -77,24 +77,40 @@ namespace KillCam.Client {
         }
 
         private void SendCameraData() {
+            ref var camData = ref GetWorldDataRW<CameraData>();
+            camData.aimDirection = GetCameraAimDirection();
+            camData.aimTarget = GetCameraAimTarget();
             Send(new C2S_SendCameraData() {
                 Rotation = uCamera.transform.rotation,
             });
         }
 
-        public CameraData GetCameraData() {
-            var data = new CameraData() {
-                lookForward = uCamera.transform.forward,
-                forwardNoY = new Vector3(uCamera.transform.forward.x, 0, uCamera.transform.forward.z),
-            };
+        private Vector3 GetCameraAimDirection(float maxDistance = 1000f, LayerMask mask = default) {
+            Camera cam = uCamera;
+            Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f)); // 屏幕中心
+            if (Physics.Raycast(ray, out RaycastHit hit, maxDistance, mask)) {
+                return (hit.point - cam.transform.position).normalized;
+            }
 
-            return data;
+            return ray.direction; // 没打到东西就直接 forward
+        }
+
+        private Vector3 GetCameraAimTarget(float maxDistance = 1000f, LayerMask hitMask = default) {
+            Ray ray = uCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)); // 从屏幕中心射出
+            if (Physics.Raycast(ray, out RaycastHit hit, maxDistance, hitMask)) {
+                return hit.point; // 命中物体
+            }
+            else {
+                return ray.origin + ray.direction * maxDistance; // 没命中则取远处一点
+            }
         }
     }
 
     public struct CameraData {
         public Vector3 lookForward;
         public Vector3 forwardNoY;
+        public Vector3 aimDirection;
+        public Vector3 aimTarget;
     }
 
     public class CameraDataSource {

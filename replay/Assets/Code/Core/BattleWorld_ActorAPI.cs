@@ -74,6 +74,26 @@ namespace KillCam {
             return false;
         }
 
+        public bool HasActorDataManaged<T>(GameplayActor actor) where T : class {
+            var type = typeof(T);
+            if (actorDataManagedSet[actor].ContainsKey(type)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool TryGetActorDataManaged<T>(GameplayActor actor, out T value) where T : class {
+            var type = typeof(T);
+            if (actorDataManagedSet[actor].TryGetValue(type, out var res)) {
+                value = (T)res;
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+
         public ref T GetActorDataRW<T>(GameplayActor actor) where T : unmanaged {
             var type = typeof(T);
             if (actorDataUnmanagedSet[actor].TryGetValue(type, out var storage)) {
@@ -99,6 +119,20 @@ namespace KillCam {
             }
 
             return default;
+        }
+
+        public bool HasActorData(GameplayActor actor, Type type) {
+            var unmanagedSet = actorDataUnmanagedSet[actor];
+            if (unmanagedSet.ContainsKey(type)) {
+                return true;
+            }
+
+            var managedSet = actorDataManagedSet[actor];
+            if (managedSet.ContainsKey(type)) {
+                return true;
+            }
+
+            return false;
         }
     }
 }

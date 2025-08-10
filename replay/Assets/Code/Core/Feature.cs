@@ -1,9 +1,13 @@
+using System.Collections.Generic;
+
 namespace KillCam {
     public abstract class Feature {
         protected GameplayActor Owner { get; private set; }
         private BattleWorld world;
         public bool IsActive { get; private set; }
         protected double TickDelta { get; private set; }
+        private readonly HashSet<System.Type> needActorData = new();
+        private readonly HashSet<System.Type> needWorldData = new();
 
         public void Setup(GameplayActor gameplayActor) {
             Owner = gameplayActor;
@@ -52,8 +56,15 @@ namespace KillCam {
         //====================
         // Actor 级数据访问
         //====================
+        
         protected bool HasData<T>() where T : unmanaged
             => world.HasActorData<T>(Owner);
+
+        protected bool HasDataManaged<T>() where T : class
+            => world.HasActorDataManaged<T>(Owner);
+
+        protected bool TryGetDataManaged<T>(out T value) where T : class
+            => world.TryGetActorDataManaged(Owner, out value);
 
         protected ref T GetDataRW<T>() where T : unmanaged
             => ref world.GetActorDataRW<T>(Owner);

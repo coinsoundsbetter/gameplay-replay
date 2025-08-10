@@ -6,6 +6,8 @@ namespace KillCam {
         public Transform cameraTarget;
         public CharacterController cc;
         public Animator animator;
+        public Transform fireOrigin;
+        
         public void SetPosition(Vector3 pos) => transform.position = pos;
         public void SetRotation(Quaternion rot) => transform.rotation = rot;
         public Vector3 GetPosition() => transform.position;
@@ -15,6 +17,7 @@ namespace KillCam {
         public void SetAnimParam(string key, int value) => animator.SetInteger(key, value);
         public void SetAnimParam(string key, bool value) => animator.SetBool(key, value);
         public Transform GetCameraTarget() => cameraTarget;
+        public Transform GetFireTarget() => fireOrigin;
     }
 
     public interface IUnityHero {
@@ -27,5 +30,6 @@ namespace KillCam {
         void SetAnimParam(string key, int value);
         void SetAnimParam(string key, bool value);
         Transform GetCameraTarget();
+        Transform GetFireTarget();
     }
 }

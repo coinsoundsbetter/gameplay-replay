@@ -9,27 +9,24 @@ namespace KillCam.Client {
         protected override void OnTickActive() {
             for (int i = flyingProjectiles.Count - 1; i >= 0; i--) {
                 var proj = flyingProjectiles[i];
-                var nowSpeed = proj.speed;
-                // 更新速度
-                nowSpeed += Vector3.down * proj.gravity * (float)TickDelta;
-                // 子弹位移
-                var motion = nowSpeed * (float)TickDelta;
-                // 子弹实体移动
-                proj.objHandle.transform.position += motion;
-                // 控制子弹实体最大距离
-                proj.hasFlyDis += motion.magnitude;
+                var lastPos = proj.nowPos;
+                proj.speed += Vector3.down * proj.gravity * (float)TickDelta;
+                proj.nowPos += proj.speed * (float)TickDelta;
+                proj.objHandle.transform.position = proj.nowPos;
+                proj.hasFlyDis += Vector3.Distance(proj.nowPos, lastPos);
                 if (proj.hasFlyDis >= proj.totalFlyDis) {
                     ReturnBulletObject(proj.objHandle);
                     proj.objHandle = null;
                     flyingProjectiles.RemoveAt(i);
+                }else {
+                    flyingProjectiles[i] = proj;
                 }
-
-                proj.speed = nowSpeed;
             }
         }
 
         public void SpawnBullet(BulletInitData data) {
             flyingProjectiles.Add(new ProjectileInstance() {
+                nowPos = data.origin,
                 speed = data.direction * data.burstSpeed,
                 hasFlyDis = 0,
                 gravity = 9.8f,
@@ -45,11 +42,13 @@ namespace KillCam.Client {
             
             var res = bulletObjects[0];
             bulletObjects.RemoveAt(0);
+            res.SetActive(true);
             return res;
         }
 
         private void ReturnBulletObject(GameObject obj) {
             bulletObjects.Add(obj);
+            obj.SetActive(false);
         }
     }
 }

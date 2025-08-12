@@ -1,5 +1,5 @@
 namespace KillCam.Server {
-    public class CharacterMovement : HeroMomentMethod {
+    public class HeroMovement : HeroMomentMethod {
         public override bool OnShouldActivate() {
             ref var inputData = ref Owner.GetDataReadWrite<HeroInputData>();
             return inputData.HasValidInput();

@@ -25,6 +25,7 @@ namespace KillCam.Client {
         
         private void AddClientFeatures() {
             world.SetupData(new WorldTime());
+            world.SetupData(new NetworkData());
             world.SetupData(new UserInputData());
             world.SetupData(new CameraData());
             world.SetupBuffer<ImpactData>();

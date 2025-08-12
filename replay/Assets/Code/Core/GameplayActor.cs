@@ -14,6 +14,14 @@ namespace KillCam {
             MyWorld.SetupActorDataManaged(this, instance);
         }
 
+        public void SetupBuffer<T>() where T : unmanaged, IBufferElement {
+            MyWorld.SetupActorBuffer<T>(this);
+        }
+
+        public ref DynamicBuffer<T> GetBuffer<T>() where T : unmanaged, IBufferElement {
+            return ref MyWorld.GetActorBuffer<T>(this);
+        }
+
         public bool HasData<T>() where T : unmanaged {
             return MyWorld.HasActorData<T>(this);
         }

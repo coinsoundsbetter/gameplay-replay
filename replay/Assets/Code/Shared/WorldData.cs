@@ -5,6 +5,11 @@ namespace KillCam {
         public uint Tick;
     }
 
+    public struct NetworkData {
+        public long RTT;
+        public long HalfRTT;
+    }
+
     public struct UserInputData {
         public Vector2Int Move;
         public float Yaw;

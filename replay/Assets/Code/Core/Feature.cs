@@ -4,6 +4,8 @@ namespace KillCam {
         private BattleWorld world;
         public bool IsActive { get; private set; }
         protected double TickDelta { get; private set; }
+        
+        protected float TickDeltaFloat => (float)TickDelta;
 
         public void Setup(GameplayActor gameplayActor) {
             Owner = gameplayActor;
@@ -68,6 +70,9 @@ namespace KillCam {
         protected ref readonly T GetDataRO<T>() where T : unmanaged
             => ref world.GetActorDataRO<T>(Owner);
 
+        protected ref DynamicBuffer<T> GetBuffer<T>() where T : unmanaged, IBufferElement
+            => ref world.GetActorBuffer<T>(Owner);
+        
         protected T GetDataManaged<T>() where T : class
             => world.GetActorDataManaged<T>(Owner);
 
@@ -107,6 +112,18 @@ namespace KillCam {
 
         protected void Rpc<T>(T msg) where T : INetworkMsg {
             world.NetworkContext.SendToAllClients(msg);
+        }
+
+        protected long GetRTT() {
+            return world.NetworkContext.GetRTT();
+        }
+
+        protected long GetHalfRTT() {
+            return world.NetworkContext.GetRTT();
+        }
+
+        protected double GetNetTime() {
+            return world.NetworkContext.GetNowTime();
         }
 
         protected uint GetTick() => world.NetworkContext.GetTick();

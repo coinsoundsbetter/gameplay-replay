@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f65dad55ebcee4f42b7309c79b72d48d, type: 3}
-  m_Name: PlayerCameraSO
+  m_Name: HeroCameraSO
   m_EditorClassIdentifier: 
-  initPitch: 0
-  pitchRange: {x: -60, y: 20}
+  initPitch: 20
   initYaw: 0
-  offsetFromTarget: {x: 0, y: 2.11, z: -1.86}
+  pitchRange: {x: -40, y: 55}
+  offsetFromTarget: {x: 0, y: 3, z: -5}

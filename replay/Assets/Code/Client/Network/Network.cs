@@ -63,6 +63,9 @@ namespace KillCam.Client {
         protected override void OnTickActive() {
             ref var worldTime = ref GetWorldDataRW<WorldTime>();
             worldTime.Tick = manager.TimeManager.LocalTick;
+            ref var networkData = ref GetWorldDataRW<NetworkData>();
+            networkData.RTT = manager.TimeManager.RoundTripTime;
+            networkData.HalfRTT = manager.TimeManager.HalfRoundTripTime;
         }
         
         public void SendToServer<T>(T message) where T : INetworkMsg {
@@ -77,9 +80,23 @@ namespace KillCam.Client {
             throw new InvalidOperationException("Client can't send to specific client");
         }
 
-        public uint GetTick() {
+        public new uint GetTick() {
             var worldData = GetWorldDataRO<WorldTime>();
             return worldData.Tick;
+        }
+        
+        public new double GetNowTime() {
+            return manager.TimeManager.TicksToTime(GetTick());
+        }
+
+        public new long GetRTT() {
+            var networkData = GetWorldDataRO<NetworkData>();
+            return networkData.RTT;
+        }
+
+        public new long GetHalfRTT() {
+            var networkData = GetWorldDataRO<NetworkData>();
+            return networkData.HalfRTT;
         }
     }
 }

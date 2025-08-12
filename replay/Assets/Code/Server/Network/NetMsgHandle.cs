@@ -19,17 +19,37 @@ namespace KillCam.Server {
                 case NetworkMsg.C2S_SendInput:
                     var msg1 = new C2S_SendInput();
                     msg1.Deserialize(reader);
-                    OnC2S_SendInput(senderId, msg1);
+                    OnC2S_SendInput(senderId, in msg1);
+                    break;
+                case NetworkMsg.CS2_CmdFire:
+                    var msg2 = new C2S_CmdFire();
+                    msg2.Deserialize(reader);
+                    OnC2S_CmdFire(senderId, in msg2);
                     break;
             }
         }
 
-        private void OnC2S_SendInput(int senderId, C2S_SendInput message) {
-            var roleMgr = GetWorldFeature<HeroManager>();
-            if (roleMgr.RoleActors.TryGetValue(senderId, out var actor)) {
-                ref var ipData = ref actor.GetDataReadWrite<HeroInputData>();
-                ipData.Move = message.Move;
+        private void OnC2S_SendInput(int senderId, in C2S_SendInput message) {
+            if (TryGetHero(senderId, out var hero)) {
+                ref var ipData = ref hero.GetDataReadWrite<HeroInputData>();
+                ipData.Move = message.Move; 
             }
+        }
+        
+        private void OnC2S_CmdFire(int senderId, in C2S_CmdFire msg2) {
+            if (TryGetHero(senderId, out var hero)) {
+                ref var buffer = ref hero.GetBuffer<C2S_CmdFire>();
+                buffer.Add(msg2);
+            }
+        }
+
+        private bool TryGetHero(int senderId, out GameplayActor actor) {
+            var roleMgr = GetWorldFeature<HeroManager>();
+            if (roleMgr.RoleActors.TryGetValue(senderId, out actor)) {
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -36,24 +36,27 @@ namespace KillCam {
         public ushort GetMsgType() => (ushort)NetworkMsg.C2S_SendCameraData;
     }
 
-    public struct C2S_CmdFire : INetworkMsg {
-        public uint ClientLocalTick;
-        public Vector3 Origin;
-        public Vector3 Direction;
+    public struct C2S_CmdFire : INetworkMsg, IBufferElement {
+        public uint FireTick;
+        public Vector3 FireOrigin;
+        public Vector3 FireDir;
+        public uint FireId;
         
         public byte[] Serialize(Writer writer) {
-            writer.WriteUInt32(ClientLocalTick);
-            writer.Write(Origin);
-            writer.Write(Direction);
+            writer.WriteUInt32(FireTick);
+            writer.Write(FireOrigin);
+            writer.Write(FireDir);
+            writer.WriteUInt32(FireId);
             return writer.GetBuffer();
         }
 
         public void Deserialize(Reader reader) {
-            ClientLocalTick = reader.ReadUInt32();
-            Origin = reader.ReadVector3();
-            Direction = reader.ReadVector3();
+            FireTick = reader.ReadUInt32();
+            FireOrigin = reader.ReadVector3();
+            FireDir = reader.ReadVector3();
+            FireId = reader.ReadUInt32();
         }
 
-        public ushort GetMsgType() => (ushort)NetworkMsg.C2S_SendProjectileFire;
+        public ushort GetMsgType() => (ushort)NetworkMsg.CS2_CmdFire;
     }
 }

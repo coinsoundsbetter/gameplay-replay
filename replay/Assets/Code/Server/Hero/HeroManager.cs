@@ -25,8 +25,9 @@ namespace KillCam.Server {
             });
             character.SetupData(new HeroInputData());
             character.SetupData(new HeroMoveData());
-            character.SetupFeature<CharacterMovement>(TickGroup.Simulation);
-            //character.SetupCapability<CharacterView>(TickGroup.FrameStep);
+            character.SetupBuffer<C2S_CmdFire>();
+            character.SetupFeature<HeroMovement>(TickGroup.Simulation);
+            character.SetupFeature<HeroFire>(TickGroup.Simulation);
             roleActors.Add(id, character);
         }
 

@@ -11,6 +11,7 @@ namespace KillCam.Server {
         
         protected override void OnBeforeStart() {
             world.SetupData(new WorldTime());
+            world.SetupData(new NetworkData());
             world.SetNetworkContext(networkServer);
             world.SetupFeature(networkServer);
             networkServer.Start(() => {

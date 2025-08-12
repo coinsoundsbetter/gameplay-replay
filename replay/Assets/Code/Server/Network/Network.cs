@@ -8,7 +8,7 @@ using Object = UnityEngine.Object;
 
 namespace KillCam.Server {
     public class NetworkServer : Feature, INetworkContext {
-        private NetworkManager manager;
+        private readonly NetworkManager manager;
         private Action startAction;
         private int clientUniqueId;
         public bool IsServer { get; } = true;
@@ -34,6 +34,9 @@ namespace KillCam.Server {
         protected override void OnTickActive() {
             ref var worldTime = ref GetWorldDataRW<WorldTime>();
             worldTime.Tick = manager.TimeManager.LocalTick;
+            ref var networkData = ref GetWorldDataRW<NetworkData>();
+            networkData.RTT = manager.TimeManager.RoundTripTime;
+            networkData.HalfRTT = manager.TimeManager.HalfRoundTripTime;
         }
 
         private void OnConnectState(ServerConnectionStateArgs args) {
@@ -76,6 +79,20 @@ namespace KillCam.Server {
         public new uint GetTick() {
             var worldTime = GetWorldDataRO<WorldTime>();
             return worldTime.Tick;
+        }
+
+        public new double GetNowTime() {
+            return manager.TimeManager.TicksToTime(GetTick());
+        }
+
+        public new long GetRTT() {
+            var networkData = GetWorldDataRO<NetworkData>();
+            return networkData.RTT;
+        }
+
+        public new long GetHalfRTT() {
+            var networkData = GetWorldDataRO<NetworkData>();
+            return networkData.HalfRTT;
         }
     }
 }

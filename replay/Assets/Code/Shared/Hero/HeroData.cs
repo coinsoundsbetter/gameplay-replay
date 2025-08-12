@@ -43,7 +43,7 @@ namespace KillCam {
 
     public struct HeroFireData {
         public float FireCd;
-        public bool IsInCd() => FireCd > 0;
+        public uint FireId;
     }
 
     public struct HeroAnimData {

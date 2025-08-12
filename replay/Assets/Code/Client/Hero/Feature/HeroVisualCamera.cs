@@ -3,7 +3,12 @@ using UnityEngine;
 namespace KillCam.Client {
     public class HeroVisualCamera : Feature {
         private CameraDataSource link;
-        
+        private HeroCameraSO config;
+
+        protected override void OnSetup() {
+            config = Resources.Load<HeroCameraSO>("HeroCameraSO");
+        }
+
         public override bool OnShouldActivate() {
             var heroActor = Owner.GetDataManaged<UnityHeroLink>();
             if (heroActor.Actor != null) {
@@ -17,16 +22,17 @@ namespace KillCam.Client {
             var cameraMgr = GetWorldFeature<CameraManager>();
             cameraMgr.SetDataSource(link = new CameraDataSource() {
                 target = Owner.GetDataManaged<UnityHeroLink>().Actor.GetCameraTarget(),
-                pitch = 20f,
-                pitchRange = new Vector2(-40f, 55f),
-                yaw = 0,
-                offsetFromTarget = new Vector3(0, 3, -5),
+                pitch = config.initPitch,
+                pitchRange = config.pitchRange,
+                yaw = config.initYaw,
+                offsetFromTarget = config.offsetFromTarget,
             });
         }
 
         protected override void OnTickActive() {
             var inputData = Owner.GetDataReadOnly<HeroInputData>();
             link.pitch += -inputData.Pitch * (float)TickDelta * 300f;
+            link.offsetFromTarget = config.offsetFromTarget;
         }
     }
 }

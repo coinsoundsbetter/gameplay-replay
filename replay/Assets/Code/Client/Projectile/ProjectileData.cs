@@ -11,6 +11,7 @@ namespace KillCam.Client {
     }
     
     public struct ProjectileInstance {
+        public Vector3 nowPos;
         public Vector3 speed;
         public float gravity;
         public float hasFlyDis;

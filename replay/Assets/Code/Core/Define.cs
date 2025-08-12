@@ -28,6 +28,9 @@ namespace KillCam {
         void SendToAllClients<T>(T message) where T : INetworkMsg;
         void SendToTargetClient<T>(int playerId, T message) where T : INetworkMsg;
         uint GetTick();
+        double GetNowTime();
+        long GetRTT();
+        long GetHalfRTT();
     }
 
     public interface INetworkClient {

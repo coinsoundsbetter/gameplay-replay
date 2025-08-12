@@ -16,6 +16,8 @@ namespace KillCam {
         public static event Action OnGUIContent;
 
         private void Start() {
+            Application.targetFrameRate = 60;
+            
             if (isStartServer) {
                 LoadServer();
             }

@@ -36,7 +36,7 @@ namespace KillCam.Client {
                 maxDistance = 100f,
             });
             
-            // 开火请求
+            // 开火请求 
             Send(new C2S_CmdFire() {
                 FireTick = GetTick(),
                 FireOrigin = fireTarget.position,

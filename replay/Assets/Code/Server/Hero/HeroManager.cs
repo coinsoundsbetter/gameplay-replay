@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Collections;
 
 namespace KillCam.Server {
     public class HeroManager : Feature {
@@ -25,6 +26,8 @@ namespace KillCam.Server {
             });
             character.SetupData(new HeroInputData());
             character.SetupData(new HeroMoveData());
+            character.SetupData(new HeroFireAckData() { AckFireIds = new NativeHashSet<uint>(512, Allocator.Persistent )});
+            character.SetupData(new HeroWeaponData());
             character.SetupBuffer<C2S_CmdFire>();
             character.SetupFeature<HeroMovement>(TickGroup.Simulation);
             character.SetupFeature<HeroFire>(TickGroup.Simulation);

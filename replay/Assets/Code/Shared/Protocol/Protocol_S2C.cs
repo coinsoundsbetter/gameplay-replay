@@ -44,4 +44,25 @@ namespace KillCam {
 
         public ushort GetMsgType() => (ushort)NetworkMsg.S2C_StartReplay;
     }
+
+    public struct S2C_FireAck : INetworkMsg {
+        public uint FireId;
+        public bool Accept;
+        public uint ServerFireTick;
+        public int HitHeroActorId;
+        public ushort CauseDamage;
+        
+        public byte[] Serialize(Writer writer) {
+            writer.WriteUInt32(FireId);
+            writer.WriteBoolean(Accept);
+            return writer.GetBuffer();
+        }
+
+        public void Deserialize(Reader reader) {
+            FireId = reader.ReadUInt32();
+            Accept = reader.ReadBoolean();
+        }
+
+        public ushort GetMsgType() => (ushort)NetworkMsg.S2C_FireAck;
+    }
 }

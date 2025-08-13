@@ -6,5 +6,6 @@
 
         S2C_WorldStateSnapshot,
         S2C_StartReplay,
+        S2C_FireAck,
     }
 }

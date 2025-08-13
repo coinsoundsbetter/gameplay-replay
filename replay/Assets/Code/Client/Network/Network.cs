@@ -72,11 +72,11 @@ namespace KillCam.Client {
             sender?.Send(message);
         }
 
-        public void SendToAllClients<T>(T message) where T : INetworkMsg {
+        public new void SendToAllClients<T>(T message) where T : INetworkMsg {
             throw new InvalidOperationException("Client can't broadcast to all");
         }
 
-        public void SendToTargetClient<T>(int playerId, T message) where T : INetworkMsg {
+        public new void SendToClient<T>(int playerId, T message) where T : INetworkMsg {
             throw new InvalidOperationException("Client can't send to specific client");
         }
 

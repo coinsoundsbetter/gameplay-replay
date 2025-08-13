@@ -125,7 +125,7 @@ namespace KillCam.Server {
             var startReplayData = new S2C_StartReplay {
                 FullData = byteData
             };
-            Rpc(startReplayData);
+            BroadcastAll(startReplayData);
         }
     }
 }

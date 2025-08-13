@@ -110,7 +110,7 @@ namespace KillCam {
             world.NetworkContext.SendToServer(msg);
         }
 
-        protected void Rpc<T>(T msg) where T : INetworkMsg {
+        protected void BroadcastAll<T>(T msg) where T : INetworkMsg {
             world.NetworkContext.SendToAllClients(msg);
         }
 

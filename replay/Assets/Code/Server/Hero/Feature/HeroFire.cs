@@ -6,12 +6,38 @@ namespace KillCam.Server {
             if (fireCmdBuffer.Length == 0) {
                 return;
             }
+
+            var cmd = fireCmdBuffer[0];
+            fireCmdBuffer.RemoveAt(0);
+            ref var ack = ref GetDataRW<HeroFireAckData>();
             
-            var fireCmd = fireCmdBuffer[0];
-            double clientFireTime = fireCmd.FireTick * TickDelta;
-            double oneWayDelaySec = GetHalfRTT() / 1000.0;
-            double shotTimeSec = clientFireTime - oneWayDelaySec;
-            double now = GetNetTime();
+            // 去重
+            if (ack.AckFireIds.Contains(cmd.FireId)) {
+                return;
+            }
+            
+            if (cmd.FireId <= ack.LastAckFireId) {
+                return;    
+            }
+            ack.LastAckFireId = cmd.FireId;
+            
+            // 是否处于开火冷却
+            ref var weaponData = ref GetDataRW<HeroWeaponData>();
+            if (weaponData.AllowFireTick < GetTick()) {
+                return;
+            }
+
+            // 是否没有弹药了
+            if (weaponData.AmmonInMag <= 0) {
+                return;
+            }
+            
+            BroadcastAll(new S2C_FireAck() {
+                FireId = cmd.FireId,
+                ServerFireTick = GetTick(),
+                Accept = true,
+                CauseDamage = 1,
+            });
         }
     }
 }

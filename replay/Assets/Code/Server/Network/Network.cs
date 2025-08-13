@@ -69,7 +69,7 @@ namespace KillCam.Server {
             }
         }
 
-        public void SendToTargetClient<T>(int playerId, T message) where T : INetworkMsg {
+        public void SendToClient<T>(int playerId, T message) where T : INetworkMsg {
             var roleMgr = GetWorldFeature<HeroManager>();
             if (roleMgr.RoleActors.TryGetValue(playerId, out var role)) {
                 role.GetDataManaged<ServerHeroNetLink>()?.NetServer.Rpc(message);

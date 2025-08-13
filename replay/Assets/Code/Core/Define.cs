@@ -26,7 +26,7 @@ namespace KillCam {
         bool IsClient { get; }
         void SendToServer<T>(T message) where T : INetworkMsg;
         void SendToAllClients<T>(T message) where T : INetworkMsg;
-        void SendToTargetClient<T>(int playerId, T message) where T : INetworkMsg;
+        void SendToClient<T>(int playerId, T message) where T : INetworkMsg;
         uint GetTick();
         double GetNowTime();
         long GetRTT();
@@ -118,6 +118,10 @@ namespace KillCam {
 
         public void Add(in T element) {
             buffer.Add(in element);
+        }
+
+        public void RemoveAt(int index) {
+            buffer.RemoveAt(index);
         }
 
         public void Clear() {

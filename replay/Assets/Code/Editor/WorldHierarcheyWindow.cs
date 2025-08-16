@@ -105,6 +105,25 @@ namespace KillCam.Editor {
             using (var scroll = new EditorGUILayout.ScrollViewScope(rightScroll)) {
                 rightScroll = scroll.scrollPosition;
 
+                var info = world.GetActorInfo(selectedActor);
+                
+                // Group
+                EditorGUILayout.LabelField("Group", info.Group.ToString());
+                
+                // Features
+                List<string> featureList = new List<string>();
+                foreach (var kvp in info.Features) {
+                    featureList.Add(kvp.Key);
+                }
+                DrawFoldList("Features", featureList);
+                
+                // Managed Data
+                var managedDataList = new List<string>();
+                foreach (var kvp in info.DataManagedSet) {
+                    managedDataList.Add(kvp.Key.Name);
+                }   
+                DrawFoldList("Managed Data", managedDataList);
+
                 // Group
                 /*if (!world.TryGetGroup(selectedActor, out var group))
                     EditorGUILayout.LabelField("Group", "Unknown");

@@ -103,5 +103,39 @@ namespace KillCam {
                 }
             }
         }
+
+
+#if UNITY_EDITOR
+
+        public struct ActorInfo {
+            public ActorGroup Group;
+            public Dictionary<string, Feature> Features;
+            public Dictionary<Type, object> DataManagedSet;
+            public Dictionary<Type, RefStorageBase> DataUnmanagedSet;
+        }
+
+        public ActorInfo GetActorInfo(GameplayActor actor) {
+            ActorGroup belongGroup = ActorGroup.Default;
+            foreach (var kvp in groupActors) {
+                if (kvp.Value.Contains(actor)) {
+                    belongGroup = kvp.Key;
+                }
+            }
+
+            var info = new ActorInfo() {
+                Group = belongGroup,
+                Features = actorFeatureSet[actor],
+                DataManagedSet = actorDataManagedSet[actor],
+                DataUnmanagedSet = actorDataUnmanagedSet[actor],
+            };
+
+            return info;
+        }
+        
+        public bool TryGetActorInfo(out ActorInfo info) {
+            info = default;
+            return false;
+        }
+#endif
     }
 }

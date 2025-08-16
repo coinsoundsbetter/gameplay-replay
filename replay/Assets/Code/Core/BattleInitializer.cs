@@ -13,7 +13,12 @@ namespace KillCam {
         private BattleWorld server;
         private BattleWorld client;
         private BattleWorld replayClient;
+        private static BattleInitializer instance;
         public static event Action OnGUIContent;
+
+        private void Awake() {
+            instance = this;
+        }
 
         private void Start() {
             Application.targetFrameRate = 60;
@@ -127,5 +132,24 @@ namespace KillCam {
                 replayClient.Init(WorldFlag.Client | WorldFlag.Replay, replayBoostrap, "ReplayWorld");
             }
         }
+
+#if UNITY_EDITOR
+        public static BattleWorld GetWorld(WorldFlag flag) {
+            if (instance == null) {
+                return null;
+            }
+            
+            switch (flag) {
+                case WorldFlag.Client:
+                    return instance.client;
+                case WorldFlag.Server:
+                    return instance.server;
+                case WorldFlag.Replay:
+                    return instance.replayClient;
+            }
+
+            return null;
+        }
+#endif
     }
 }

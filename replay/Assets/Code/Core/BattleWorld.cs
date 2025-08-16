@@ -131,10 +131,9 @@ namespace KillCam {
 
             return info;
         }
-        
-        public bool TryGetActorInfo(out ActorInfo info) {
-            info = default;
-            return false;
+
+        public Dictionary<ActorGroup, List<GameplayActor>> GetActorEnumerator() {
+            return groupActors;
         }
 #endif
     }

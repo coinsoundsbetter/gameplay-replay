@@ -111,6 +111,13 @@ namespace KillCam.Editor {
                 var featureList = new List<string>();
                 foreach (var kvp in info.Features) featureList.Add(kvp.Key);
                 DrawFoldList("Features", featureList);
+                
+                var mapWithValues = new Dictionary<Type, object>();
+                foreach (var kvp in info.DataUnmanagedSet) {
+                    var boxed = kvp.Value.GetBoxed();
+                    mapWithValues[kvp.Key] = boxed;
+                }
+                UnmanagedInspectorUtil.DrawUnmanagedData("Unmanaged Data", mapWithValues);
 
                 // Managed Data
                 var managedDataList = new List<string>();

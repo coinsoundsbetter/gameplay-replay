@@ -32,21 +32,23 @@ namespace KillCam.Client {
             
             // 网络相关
             world.SetNetworkContext(network);
-            world.SetupFeature(network);
-            world.SetupFeature(spawnProvider = new SpawnProvider());
-            world.SetupFeature<NetMsgHandle>(TickGroup.NetworkReceive);
+            world.CreateFeature(network);
+            world.CreateFeature(spawnProvider = new SpawnProvider());
+            world.CreateFeature<NetMsgHandle>(TickGroup.NetworkReceive);
             
             // 输入
-            world.SetupFeature<InputManager>(TickGroup.Input);
+            world.CreateFeature<InputManager>(TickGroup.Input);
             
             // 逻辑模拟
-            world.SetupFeature(new HeroManager(spawnProvider));
-            world.SetupFeature<Projectiles>(TickGroup.Simulation);
+            world.CreateFeature(new HeroManager(spawnProvider));
+            world.CreateFeature<Projectiles>(TickGroup.Simulation);
             
             // 表现相关
-            world.SetupFeature<ProjectileImpacts>(TickGroup.Visual);
-            world.SetupFeature<VisualHUD>(TickGroup.PostVisual);
-            world.SetupFeature<CameraManager>(TickGroup.PostVisual);
+            world.CreateFeature<ProjectileImpacts>(TickGroup.Visual);
+            world.CreateFeature<VisualHUD>(TickGroup.PostVisual);
+            world.CreateFeature<CameraManager>(TickGroup.PostVisual);
+            
+            world.SetupAllFeatures();
         }
     }
 }

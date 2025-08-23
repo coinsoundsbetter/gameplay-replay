@@ -4,7 +4,7 @@ using UnityEngine;
 namespace KillCam.Server {
     public class NetMessageHandle : Feature {
         
-        protected override void OnSetup() {
+        protected override void OnCreate() {
             HeroNet.OnServerReceiveData += HandleClientRequest;
         }
 

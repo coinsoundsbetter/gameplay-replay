@@ -11,7 +11,7 @@ namespace KillCam.Client {
             this.provider = provider;
         }
 
-        protected override void OnSetup() {
+        protected override void OnCreate() {
             provider.OnRoleSpawn += OnRoleSpawn;
             provider.OnRoleDespawn += OnRoleDespawn;
         }
@@ -45,13 +45,14 @@ namespace KillCam.Client {
             });
             
             // 设置逻辑
-            characterActor.SetupFeature<HeroInput>(TickGroup.Input);
-            characterActor.SetupFeature<HeroMovement>(TickGroup.Simulation);
-            characterActor.SetupFeature<HeroFire>(TickGroup.Simulation);
-            characterActor.SetupFeature<HeroVisualSkin>(TickGroup.Visual);
-            characterActor.SetupFeature<HeroVisualAnim>(TickGroup.Visual);
-            characterActor.SetupFeature<HeroVisualMove>(TickGroup.Visual);
-            characterActor.SetupFeature<HeroVisualCamera>(TickGroup.Visual);
+            characterActor.CreateFeature<HeroInput>(TickGroup.Input);
+            characterActor.CreateFeature<HeroMovement>(TickGroup.Simulation);
+            characterActor.CreateFeature<HeroFire>(TickGroup.Simulation);
+            characterActor.CreateFeature<HeroVisualSkin>(TickGroup.Visual);
+            characterActor.CreateFeature<HeroVisualAnim>(TickGroup.Visual);
+            characterActor.CreateFeature<HeroVisualMove>(TickGroup.Visual);
+            characterActor.CreateFeature<HeroVisualCamera>(TickGroup.Visual);
+            characterActor.SetupAllFeatures();
             characters.Add(playerId, characterActor);
         }
 

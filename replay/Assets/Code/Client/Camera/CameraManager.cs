@@ -6,7 +6,7 @@ namespace KillCam.Client {
         private Transform uCameraTrans => uCamera.transform;
         private CameraDataSource ass;
 
-        protected override void OnSetup() {
+        protected override void OnCreate() {
             LoadCamera();
         }
 

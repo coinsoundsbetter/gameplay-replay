@@ -5,7 +5,7 @@ namespace KillCam.Client {
         private CameraDataSource link;
         private HeroCameraSO config;
 
-        protected override void OnSetup() {
+        protected override void OnCreate() {
             config = Resources.Load<HeroCameraSO>("HeroCameraSO");
         }
 

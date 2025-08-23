@@ -7,10 +7,14 @@ namespace KillCam {
         
         protected float TickDeltaFloat => (float)TickDelta;
 
-        public void Setup(GameplayActor gameplayActor) {
+        public void Create(GameplayActor gameplayActor) {
             Owner = gameplayActor;
             world = gameplayActor.MyWorld;
             IsActive = false;
+            OnCreate();
+        }
+
+        public void Setup() {
             OnSetup();
         }
 
@@ -37,9 +41,11 @@ namespace KillCam {
             OnTickActive();
         }
 
-        protected virtual void OnSetup() { }
+        protected virtual void OnCreate() { }
 
         protected virtual void OnDestroy() { }
+        
+        protected virtual void OnSetup() { }
 
         protected virtual void OnActivate() { }
         
@@ -54,6 +60,9 @@ namespace KillCam {
         //====================
         // Actor 级数据访问
         //====================
+
+        protected void SetupData<T>() where T : unmanaged
+            => world.SetupData(new T());
         
         protected bool HasData<T>() where T : unmanaged
             => world.HasActorData<T>(Owner);

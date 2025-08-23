@@ -16,6 +16,10 @@ namespace KillCam.Client {
         public NetworkClient(NetworkManager mgr) {
             manager = mgr;
         }
+        
+        protected override void OnCreate() {
+            SetupData<WorldTime>();
+        }
 
         public void Start(Action started) {
             startAction = started;

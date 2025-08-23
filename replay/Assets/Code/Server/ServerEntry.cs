@@ -13,11 +13,11 @@ namespace KillCam.Server {
             world.SetupData(new WorldTime());
             world.SetupData(new NetworkData());
             world.SetNetworkContext(networkServer);
-            world.SetupFeature(networkServer);
+            world.CreateFeature(networkServer);
             networkServer.Start(() => {
-                world.SetupFeature<HeroManager>();
-                world.SetupFeature<NetMessageHandle>();
-                world.SetupFeature<StateSnapshot>();
+                world.CreateFeature<HeroManager>();
+                world.CreateFeature<NetMessageHandle>();
+                world.CreateFeature<StateSnapshot>();
             });
         }
 

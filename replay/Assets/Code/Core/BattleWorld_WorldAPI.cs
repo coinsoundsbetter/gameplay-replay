@@ -10,16 +10,18 @@ namespace KillCam {
             return default;
         }
 
-        public void SetupFeature<T>(TickGroup tickGroup = TickGroup.Simulation) where T : Feature, new() 
-            => SetupActorFeature<T>(worldActor, tickGroup);
+        public void CreateFeature<T>(TickGroup tickGroup = TickGroup.Simulation) where T : Feature, new() 
+            => CreateActorFeature<T>(worldActor, tickGroup);
 
-        public void SetupFeature(Feature feature, TickGroup tickGroup = TickGroup.Simulation) 
+        public void CreateFeature(Feature feature, TickGroup tickGroup = TickGroup.Simulation) 
             => SetupActorFeature(worldActor, feature, tickGroup);
+
+        public void SetupAllFeatures()
+            => SetupAllActorFeatures(worldActor);
         
         public void SetupData<T>(T instance) where T : unmanaged
             => SetupActorData(worldActor, instance);
         
-
         public void SetupDataManaged<T>(T instance) where T : class 
             => SetupActorDataManaged(worldActor, instance);
 

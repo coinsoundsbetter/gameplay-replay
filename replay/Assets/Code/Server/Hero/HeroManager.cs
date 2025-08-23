@@ -6,7 +6,7 @@ namespace KillCam.Server {
         private readonly Dictionary<int, GameplayActor> roleActors = new();
         public IReadOnlyDictionary<int, GameplayActor> RoleActors => roleActors;
         
-        protected override void OnSetup() {
+        protected override void OnCreate() {
             HeroNet.OnServerSpawn += OnRoleNetSpawn;
             HeroNet.OnServerDespawn += OnRoleNetDespawn;
         }
@@ -29,8 +29,8 @@ namespace KillCam.Server {
             character.SetupData(new HeroFireAckData() { AckFireIds = new NativeHashSet<uint>(512, Allocator.Persistent )});
             character.SetupData(new HeroWeaponData());
             character.SetupBuffer<C2S_CmdFire>();
-            character.SetupFeature<HeroMovement>(TickGroup.Simulation);
-            character.SetupFeature<HeroFire>(TickGroup.Simulation);
+            character.CreateFeature<HeroMovement>(TickGroup.Simulation);
+            character.CreateFeature<HeroFire>(TickGroup.Simulation);
             roleActors.Add(id, character);
         }
 

@@ -2,7 +2,7 @@ namespace KillCam.Client {
     public class HeroFire : Feature {
         private Projectiles projectiles;
 
-        protected override void OnSetup() {
+        protected override void OnCreate() {
             projectiles = GetWorldFeature<Projectiles>();
         }
 

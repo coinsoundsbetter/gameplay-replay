@@ -5,7 +5,7 @@ namespace KillCam.Client {
         public event Action<IClientHeroNet> OnRoleSpawn;
         public event Action<IClientHeroNet> OnRoleDespawn;
 
-        protected override void OnSetup() {
+        protected override void OnCreate() {
             HeroNet.OnClientSpawn += OnClientSpawn;
             HeroNet.OnClientDespawn += OnClientDespawn;
         }

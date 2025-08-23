@@ -3,7 +3,7 @@
 namespace KillCam.Client {
     public class NetMsgHandle : Feature {
         
-        protected override void OnSetup() {
+        protected override void OnCreate() {
             HeroNet.OnClientReceiveData += OnReceived;
         }
         

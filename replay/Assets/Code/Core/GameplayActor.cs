@@ -38,12 +38,16 @@ namespace KillCam {
             return MyWorld.GetActorDataManaged<T>(this);
         }
 
-        public void SetupFeature<T>(TickGroup tickGroup) where T : Feature, new() {
-            MyWorld.SetupActorFeature<T>(this, tickGroup);
+        public void CreateFeature<T>(TickGroup tickGroup) where T : Feature, new() {
+            MyWorld.CreateActorFeature<T>(this, tickGroup);
         }
 
         public void SetupFeature(Feature feature, TickGroup tickGroup) {
             MyWorld.SetupActorFeature(this, feature, tickGroup);
+        }
+
+        public void SetupAllFeatures() {
+            MyWorld.SetupAllActorFeatures(this);
         }
 
         public void Destroy() {

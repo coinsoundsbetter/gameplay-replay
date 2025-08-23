@@ -10,7 +10,7 @@ namespace KillCam.Server {
         private readonly SortedList<uint, AllHeroSnapshot> characterSnapshots = new();
         private int stateSnapshotCountdown = 0;
 
-        protected override void OnSetup() {
+        protected override void OnCreate() {
             BattleInitializer.OnGUIContent += () => {
                 if (GUILayout.Button("Save World")) {
                     SaveWorld();

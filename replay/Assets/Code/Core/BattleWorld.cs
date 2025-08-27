@@ -132,6 +132,10 @@ namespace KillCam {
             return info;
         }
 
+        public List<GameplayActor> GetActors(ActorGroup group) {
+            return groupActors[group];
+        }
+
         public Dictionary<ActorGroup, List<GameplayActor>> GetActorEnumerator() {
             return groupActors;
         }

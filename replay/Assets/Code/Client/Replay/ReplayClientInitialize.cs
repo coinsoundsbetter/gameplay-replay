@@ -60,7 +60,7 @@ namespace KillCam.Client.Replay {
             world.CreateFeature(spawnProvider = new Replay_SpawnProvider());
             world.CreateFeature<Replay_StateProvider>();
             world.CreateFeature<Replay_InputProvider>();
-            world.CreateFeature(new HeroManager(spawnProvider));
+            world.CreateFeature(new HeroSpawnSystem(spawnProvider));
             world.CreateFeature<CameraManager>();
         }
     }

@@ -40,7 +40,7 @@ namespace KillCam.Client {
             world.CreateFeature<InputManager>(TickGroup.Input);
             
             // 逻辑模拟
-            world.CreateFeature(new HeroManager(spawnProvider));
+            world.CreateFeature(new HeroSpawnSystem(spawnProvider));
             world.CreateFeature<Projectiles>(TickGroup.Simulation);
             
             // 表现相关

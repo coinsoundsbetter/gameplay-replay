@@ -6,6 +6,10 @@ namespace KillCam {
             MyWorld = world;
         }
 
+        public void SetupData<T>() where T : unmanaged {
+            SetupData<T>(new T());
+        }
+
         public void SetupData<T>(T instance) where T : unmanaged {
             MyWorld.SetupActorData(this, instance);
         }

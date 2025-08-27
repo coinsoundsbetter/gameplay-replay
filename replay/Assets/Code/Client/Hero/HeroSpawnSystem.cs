@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace KillCam.Client {
-    public class HeroManager : Feature {
+    public class HeroSpawnSystem : Feature {
         private readonly IRoleSpawnProvider provider;
         private readonly Dictionary<int, GameplayActor> characters = new();
         public IReadOnlyDictionary<int, GameplayActor> Characters => characters;
 
-        public HeroManager(IRoleSpawnProvider provider) {
+        public HeroSpawnSystem(IRoleSpawnProvider provider) {
             this.provider = provider;
         }
 
@@ -29,16 +29,17 @@ namespace KillCam.Client {
 
             var characterActor = CreateActor(ActorGroup.Player);
             // 设置数据
+            characterActor.SetupData<HeroHealth>();
+            characterActor.SetupData<HeroInputData>();
+            characterActor.SetupData<HeroMoveData>();
+            characterActor.SetupData<HeroFireData>();
+            characterActor.SetupData<HeroAnimData>();
+            characterActor.SetupData(new HeroSkinData());
             characterActor.SetupData(new HeroIdentifier() {
                 PlayerId = playerId,
                 IsControlTarget = net.IsClientOwned(),
                 PlayerName = $"玩家{playerId}"
             });
-            characterActor.SetupData(new HeroInputData());
-            characterActor.SetupData(new HeroMoveData() { Rot = Quaternion.identity, });
-            characterActor.SetupData(new HeroSkinData());
-            characterActor.SetupData(new HeroAnimData());
-            characterActor.SetupData(new HeroFireData());
             characterActor.SetupDataManaged(new UnityHeroLink());
             characterActor.SetupDataManaged(new ClientHeroNetLink() {
                 NetClient = net,

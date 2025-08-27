@@ -49,6 +49,10 @@ namespace KillCam {
     public struct HeroAnimData {
         public bool IsAnimMoving;
     }
+
+    public struct HeroHealth {
+        public float Health;
+    }
     
     public class UnityHeroLink {
         public IUnityHero Actor;

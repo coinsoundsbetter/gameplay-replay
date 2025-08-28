@@ -1,9 +1,16 @@
-namespace KillCam {
-    public class GameplayActor {
-        public BattleWorld MyWorld { get; private set; }
+using System;
 
-        public void SetupWorld(BattleWorld world) {
-            MyWorld = world;
+namespace KillCam {
+    public struct GameplayActor : IEquatable<GameplayActor> {
+        public bool IsActive;
+        public int ActorID { get; private set; }
+        public int WorldId { get; set; }
+        public BattleWorld MyWorld => BattleWorld.Worlds[WorldId];
+
+        public void Setup(int worldId, int actorId) {
+            WorldId = worldId;
+            ActorID = actorId;
+            IsActive = true;
         }
 
         public void SetData<T>() where T : unmanaged {
@@ -56,6 +63,18 @@ namespace KillCam {
 
         public void Destroy() {
             MyWorld.DestroyActor(this);
+        }
+
+        public bool Equals(GameplayActor other) {
+            return IsActive == other.IsActive && ActorID == other.ActorID && WorldId == other.WorldId;
+        }
+
+        public override bool Equals(object obj) {
+            return obj is GameplayActor other && Equals(other);
+        }
+
+        public override int GetHashCode() {
+            return HashCode.Combine(IsActive, ActorID, WorldId);
         }
     }
 }

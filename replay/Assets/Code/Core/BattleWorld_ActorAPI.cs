@@ -4,6 +4,7 @@ using Unity.Collections;
 
 namespace KillCam {
     public partial class BattleWorld {
+        private int actorIndex;
         
         public GameplayActor CreateActor(ActorGroup group = ActorGroup.Default) {
             var newActor = new GameplayActor();
@@ -13,7 +14,8 @@ namespace KillCam {
             actorDataManagedSet.Add(newActor, new Dictionary<Type, object>());
             actorDataUnmanagedSet.Add(newActor, new Dictionary<Type, RefStorageBase>());
             actorBufferUnmanagedSet.Add(newActor, new Dictionary<Type, RefStorageBase>());
-            newActor.SetupWorld(this);
+            newActor.Setup(WorldId, actorIndex);
+            actorIndex++;
             return newActor;
         }
 

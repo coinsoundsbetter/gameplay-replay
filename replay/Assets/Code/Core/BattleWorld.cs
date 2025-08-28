@@ -41,10 +41,17 @@ namespace KillCam {
             ActorGroup.World,
         };
 
+        public static BattleWorld[] Worlds = Array.Empty<BattleWorld>();
+        
+        public int WorldId { get; private set; }
+
         public void Init(WorldFlag flag, GameEntry bs, FixedString32Bytes worldName) {
             Flags = flag;
             Name = worldName;
             boostrap = bs;
+            WorldId = Worlds.Length;
+            Array.Resize(ref Worlds, Worlds.Length + 1);
+            Worlds[^1] = this;
             foreach (var actorGroupType in actorRemoveOrders) {
                 groupActors.Add(actorGroupType, new List<GameplayActor>());
             }

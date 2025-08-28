@@ -77,7 +77,7 @@ namespace KillCam.Editor {
         }
 
         private void OnSelectActor(GameplayActor actor) {
-            if (actor != null) {
+            if (actor.IsActive) {
                 selectedActor = actor;
                 Repaint();
             }
@@ -94,7 +94,7 @@ namespace KillCam.Editor {
             EditorGUILayout.LabelField($"FrameTickΔ: {world.FrameTickDelta}   LogicTickΔ: {world.LogicTickDelta}");
             EditorGUILayout.Space();
 
-            if (selectedActor == null) {
+            if (!selectedActor.IsActive) {
                 EditorGUILayout.HelpBox("在左侧选择一个 Actor 查看详情。", MessageType.None);
                 return;
             }
@@ -176,7 +176,7 @@ namespace KillCam.Editor {
                 bool useFilter = !string.IsNullOrEmpty(filter);
 
                 foreach (var a in allActors) {
-                    if (a == null) continue;
+                    if (!a.IsActive) continue;
                     var name = a.ToString();
                     if (useFilter && (name?.IndexOf(filter, StringComparison.OrdinalIgnoreCase) ?? -1) < 0)
                         continue;
@@ -198,7 +198,7 @@ namespace KillCam.Editor {
 
                 if (args.item is ActorItem ai) {
                     EditorGUI.LabelField(col0, ai.displayName);
-                    EditorGUI.LabelField(col1, ai.Actor != null ? ai.Actor.GetType().Name : "");
+                    EditorGUI.LabelField(col1, ai.Actor.IsActive ? ai.Actor.GetType().Name : "");
                 } else {
                     EditorGUI.LabelField(col0, args.item.displayName);
                 }
@@ -208,14 +208,14 @@ namespace KillCam.Editor {
             protected override void SelectionChanged(IList<int> selectedIds) {
                 if (selectedIds == null || selectedIds.Count == 0) return;
                 int id = selectedIds[0];
-                if (idToActor.TryGetValue(id, out var actor) && actor != null) {
+                if (idToActor.TryGetValue(id, out var actor) && actor.IsActive) {
                     onSelectActor?.Invoke(actor);
                 }
             }
 
             // Reload 后恢复选中
             public void RestoreSelection(GameplayActor actor) {
-                if (actor == null) return;
+                if (!actor.IsActive) return;
                 foreach (var kv in idToActor) {
                     if (ReferenceEquals(kv.Value, actor)) {
                         SetSelection(new List<int> { kv.Key }, TreeViewSelectionOptions.RevealAndFrame);

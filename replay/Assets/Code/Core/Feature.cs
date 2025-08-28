@@ -102,6 +102,9 @@ namespace KillCam {
 
         protected GameplayActor CreateActor(ActorGroup actorGroup = ActorGroup.Default)
             => world.CreateActor(actorGroup);
+
+        protected void DestroyActor(GameplayActor actor) 
+            => world.DestroyActor(actor);
         
         //====================
         // World 级数据访问

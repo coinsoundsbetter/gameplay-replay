@@ -24,9 +24,8 @@ namespace KillCam.Client {
         }
         
         private void AddClientFeatures() {
-            world.SetupData(new WorldTime());
+            world.SetupData(new NetworkTime());
             world.SetupData(new NetworkData());
-            world.SetupData(new UserInputData());
             world.SetupData(new CameraData());
             world.SetupBuffer<ImpactData>();
             
@@ -37,7 +36,7 @@ namespace KillCam.Client {
             world.CreateFeature<NetMsgHandle>(TickGroup.NetworkReceive);
             
             // 输入
-            world.CreateFeature<InputManager>(TickGroup.Input);
+            world.CreateFeature<GatherInputSystem>(TickGroup.Input);
             
             // 逻辑模拟
             world.CreateFeature(new HeroSpawnSystem(spawnProvider));

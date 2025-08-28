@@ -1,8 +1,31 @@
 using System;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace KillCam {
+
+    public struct HeroWeaponState {
+        public float CooldownLeft;
+        public uint LocalShotSeq;
+        public uint ServerAckShotSeq;
+    }
+    
+    public struct HeroStateHistory : IBufferElement {
+        public uint Tick;
+        public HeroKinematicState State;
+    }
+
+    public struct HeroFireEventAtTick : IBufferElement {
+        public uint Tick;
+    }
+
+    public struct HeroKinematicState {
+        public float3 Position;
+        public float3 Velocity;
+        public quaternion Rotation;
+    }
+    
     public struct HeroIdentifier {
         public bool IsControlTarget;
         public int PlayerId;
@@ -11,7 +34,7 @@ namespace KillCam {
     
     public struct AllHeroSnapshot : IDisposable {
         public NativeHashMap<int, HeroMoveData> StateData;
-        public NativeHashMap<int, HeroInputData> InputData;
+        public NativeHashMap<int, HeroInputState> InputData;
 
         public bool IsEmpty() => StateData.IsEmpty && InputData.IsEmpty;
 
@@ -25,7 +48,7 @@ namespace KillCam {
         public FixedString64Bytes SkinSign;
     }
     
-    public struct HeroInputData {
+    public struct HeroInputState {
         public Vector2Int Move;
         public float Yaw;
         public float Pitch;

@@ -1,14 +1,15 @@
+using System.Collections.Generic;
+
 namespace KillCam {
     public abstract class Feature {
-        protected GameplayActor Owner { get; private set; }
+        private GameplayActor owner;
         private BattleWorld world;
         public bool IsActive { get; private set; }
-        protected double TickDelta { get; private set; }
-        
-        protected float TickDeltaFloat => (float)TickDelta;
+        protected double TickDeltaDouble { get; private set; }
+        protected float TickDelta => (float)TickDeltaDouble;
 
         public void Create(GameplayActor gameplayActor) {
-            Owner = gameplayActor;
+            owner = gameplayActor;
             world = gameplayActor.MyWorld;
             IsActive = false;
             OnCreate();
@@ -37,8 +38,8 @@ namespace KillCam {
         }
 
         public void TickActive(double deltaTime) {
-            TickDelta = deltaTime;
-            OnTickActive();
+            TickDeltaDouble = deltaTime;
+            OnTick();
         }
 
         protected virtual void OnCreate() { }
@@ -51,7 +52,7 @@ namespace KillCam {
         
         protected virtual void OnDeactivate() { }
 
-        protected virtual void OnTickActive() { }
+        protected virtual void OnTick() { }
 
         public virtual bool OnShouldActivate() {
             return true;
@@ -61,29 +62,42 @@ namespace KillCam {
         // Actor 级数据访问
         //====================
 
-        protected void SetupData<T>() where T : unmanaged
+        protected void CreateData<T>() where T : unmanaged
             => world.SetupData(new T());
         
         protected bool HasData<T>() where T : unmanaged
-            => world.HasActorData<T>(Owner);
+            => world.HasActorData<T>(owner);
 
         protected bool HasDataManaged<T>() where T : class
-            => world.HasActorDataManaged<T>(Owner);
+            => world.HasActorDataManaged<T>(owner);
 
         protected bool TryGetDataManaged<T>(out T value) where T : class
-            => world.TryGetActorDataManaged(Owner, out value);
+            => world.TryGetActorDataManaged(owner, out value);
 
-        protected ref T GetDataRW<T>() where T : unmanaged
-            => ref world.GetActorDataRW<T>(Owner);
+        protected ref T GetDataRef<T>() where T : unmanaged
+            => ref world.GetActorDataRW<T>(owner);
+
+        protected bool TryGetData<T>(out T value) where T : unmanaged {
+            if (HasData<T>()) {
+                value = GetDataRO<T>();
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
 
         protected ref readonly T GetDataRO<T>() where T : unmanaged
-            => ref world.GetActorDataRO<T>(Owner);
+            => ref world.GetActorDataRO<T>(owner);
+
+        protected void AddBuffer<T>() where T : unmanaged, IBufferElement
+            => world.SetupActorBuffer<T>(owner);
 
         protected ref DynamicBuffer<T> GetBuffer<T>() where T : unmanaged, IBufferElement
-            => ref world.GetActorBuffer<T>(Owner);
+            => ref world.GetActorBuffer<T>(owner);
         
         protected T GetDataManaged<T>() where T : class
-            => world.GetActorDataManaged<T>(Owner);
+            => world.GetActorDataManaged<T>(owner);
 
         protected GameplayActor CreateActor(ActorGroup actorGroup = ActorGroup.Default)
             => world.CreateActor(actorGroup);
@@ -136,5 +150,9 @@ namespace KillCam {
         }
 
         protected uint GetTick() => world.NetworkContext.GetTick();
+
+        protected IEnumerable<GameplayActor> GetActors(ActorGroup group) {
+            return world.GetActors(group);
+        }
     }
 }

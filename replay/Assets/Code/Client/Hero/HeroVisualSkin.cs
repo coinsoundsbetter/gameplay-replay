@@ -18,12 +18,12 @@ namespace KillCam.Client {
             instance.SetLayerRecursively(HasWorldFlag(WorldFlag.Replay)
                 ? LayerDefine.replayCharacterLayer
                 : LayerDefine.characterLayer);
-            var uCharacterRef = Owner.GetDataManaged<UnityHeroLink>();
+            var uCharacterRef = GetDataManaged<UnityHeroLink>();
             uCharacterRef.Actor = instance.GetComponent<IUnityHero>();
         }
 
         private void ClearSkin() {
-            var reference = Owner.GetDataManaged<UnityHeroLink>();
+            var reference = GetDataManaged<UnityHeroLink>();
             reference.Actor = null;
             Object.Destroy(instance);
         }

@@ -10,7 +10,7 @@ namespace KillCam.Client {
             obj.TryGetComponent(out ui);
         }
 
-        protected override void OnTickActive() {
+        protected override void OnTick() {
             
         }
     }

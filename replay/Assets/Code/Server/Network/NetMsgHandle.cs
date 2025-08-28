@@ -17,7 +17,7 @@ namespace KillCam.Server {
             var msgType = (NetworkMsg)reader.ReadUInt16();
             switch (msgType) {
                 case NetworkMsg.C2S_SendInput:
-                    var msg1 = new C2S_SendInput();
+                    var msg1 = new C2S_UserInputCmd();
                     msg1.Deserialize(reader);
                     OnC2S_SendInput(senderId, in msg1);
                     break;
@@ -29,10 +29,10 @@ namespace KillCam.Server {
             }
         }
 
-        private void OnC2S_SendInput(int senderId, in C2S_SendInput message) {
+        private void OnC2S_SendInput(int senderId, in C2S_UserInputCmd message) {
             if (TryGetHero(senderId, out var hero)) {
-                ref var ipData = ref hero.GetDataReadWrite<HeroInputData>();
-                ipData.Move = message.Move; 
+                ref var ipData = ref hero.GetDataReadWrite<HeroInputState>();
+                //ipData.Move = message.Move; 
             }
         }
         

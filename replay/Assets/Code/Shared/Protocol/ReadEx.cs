@@ -19,7 +19,7 @@ namespace KillCam {
 
             int inputDataCnt = reader.ReadInt32();
             if (inputDataCnt > 0) {
-                res.InputData = new NativeHashMap<int, HeroInputData>(4, Allocator.Persistent);
+                res.InputData = new NativeHashMap<int, HeroInputState>(4, Allocator.Persistent);
             }
 
             for (int i = 0; i < stateDataCnt; i++) {
@@ -39,8 +39,8 @@ namespace KillCam {
             return res;
         }
 
-        public static HeroInputData ReadCharacterInputData(this Reader reader) {
-            var res = new HeroInputData() {
+        public static HeroInputState ReadCharacterInputData(this Reader reader) {
+            var res = new HeroInputState() {
                 Move = reader.ReadVector2Int(),
             };
 

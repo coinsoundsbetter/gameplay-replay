@@ -1,7 +1,7 @@
 namespace KillCam.Server {
     public class HeroFire : Feature {
         
-        protected override void OnTickActive() {
+        protected override void OnTick() {
             ref var fireCmdBuffer = ref GetBuffer<C2S_CmdFire>();
             if (fireCmdBuffer.Length == 0) {
                 return;
@@ -9,7 +9,7 @@ namespace KillCam.Server {
 
             var cmd = fireCmdBuffer[0];
             fireCmdBuffer.RemoveAt(0);
-            ref var ack = ref GetDataRW<HeroFireAckData>();
+            ref var ack = ref GetDataRef<HeroFireAckData>();
             
             // 去重
             if (ack.AckFireIds.Contains(cmd.FireId)) {
@@ -22,7 +22,7 @@ namespace KillCam.Server {
             ack.LastAckFireId = cmd.FireId;
             
             // 是否处于开火冷却
-            ref var weaponData = ref GetDataRW<HeroWeaponData>();
+            ref var weaponData = ref GetDataRef<HeroWeaponData>();
             if (weaponData.AllowFireTick < GetTick()) {
                 return;
             }

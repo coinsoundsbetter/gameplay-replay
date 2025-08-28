@@ -24,7 +24,7 @@ namespace KillCam.Server {
                 PlayerId = net.GetId(),
                 PlayerName = $"Player:{net.GetId()}"
             });
-            character.SetupData(new HeroInputData());
+            character.SetupData(new HeroInputState());
             character.SetupData(new HeroMoveData());
             character.SetupData(new HeroFireAckData() { AckFireIds = new NativeHashSet<uint>(512, Allocator.Persistent )});
             character.SetupData(new HeroWeaponData());

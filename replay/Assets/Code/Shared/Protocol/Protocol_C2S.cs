@@ -1,21 +1,29 @@
 ﻿using FishNet.Serializing;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace KillCam {
-    public struct C2S_SendInput : INetworkMsg {
+    public struct C2S_UserInputCmd : INetworkMsg {
         public uint LocalTick;
-        public Vector2Int Move;
-        public float MouseX;
+        public UserInputState InputState;
 
         public byte[] Serialize(Writer writer) {
             writer.WriteUInt32(LocalTick);
-            writer.WriteVector2Int(Move);
+            writer.WriteVector2Int(InputState.Move);
+            writer.WriteSingle(InputState.Pitch);
+            writer.WriteSingle(InputState.Yaw);
+            writer.WriteBoolean(InputState.IsFirePressed);
             return writer.GetBuffer();
         }
 
         public void Deserialize(Reader reader) {
             LocalTick = reader.ReadUInt32();
-            Move = reader.ReadVector2Int();
+            InputState = new UserInputState {
+                Move = reader.ReadVector2Int(),
+                Pitch = reader.ReadSingle(),
+                Yaw = reader.ReadSingle(),
+                IsFirePressed = reader.ReadBoolean()
+            };
         }
 
         public ushort GetMsgType() => (ushort)NetworkMsg.C2S_SendInput;
@@ -38,8 +46,8 @@ namespace KillCam {
 
     public struct C2S_CmdFire : INetworkMsg, IBufferElement {
         public uint FireTick;
-        public Vector3 FireOrigin;
-        public Vector3 FireDir;
+        public float3 FireOrigin;
+        public float3 FireDir;
         public uint FireId;
         
         public byte[] Serialize(Writer writer) {
@@ -52,8 +60,8 @@ namespace KillCam {
 
         public void Deserialize(Reader reader) {
             FireTick = reader.ReadUInt32();
-            FireOrigin = reader.ReadVector3();
-            FireDir = reader.ReadVector3();
+            FireOrigin = reader.Readfloat3();
+            FireDir = reader.Readfloat3();
             FireId = reader.ReadUInt32();
         }
 

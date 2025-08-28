@@ -10,7 +10,7 @@ namespace KillCam.Client {
             LoadCamera();
         }
 
-        protected override void OnTickActive() {
+        protected override void OnTick() {
             CheckEnable();
             Movement();
             SendCameraData();

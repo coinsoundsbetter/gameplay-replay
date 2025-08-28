@@ -6,12 +6,12 @@ namespace KillCam.Client {
         private readonly List<ProjectileInstance> flyingProjectiles = new();
         private readonly List<GameObject> bulletObjects = new();
 
-        protected override void OnTickActive() {
+        protected override void OnTick() {
             for (int i = flyingProjectiles.Count - 1; i >= 0; i--) {
                 var proj = flyingProjectiles[i];
                 var lastPos = proj.nowPos;
-                proj.speed += Vector3.down * proj.gravity * (float)TickDelta;
-                proj.nowPos += proj.speed * (float)TickDelta;
+                proj.speed += Vector3.down * proj.gravity * (float)TickDeltaDouble;
+                proj.nowPos += proj.speed * (float)TickDeltaDouble;
                 proj.objHandle.transform.position = proj.nowPos;
                 proj.hasFlyDis += Vector3.Distance(proj.nowPos, lastPos);
                 if (proj.hasFlyDis >= proj.totalFlyDis) {

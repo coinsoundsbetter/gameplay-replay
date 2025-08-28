@@ -30,7 +30,7 @@ namespace KillCam.Client {
             var characterActor = CreateActor(ActorGroup.Player);
             // 设置数据
             characterActor.SetupData<HeroHealth>();
-            characterActor.SetupData<HeroInputData>();
+            characterActor.SetupData<HeroInputState>();
             characterActor.SetupData<HeroMoveData>();
             characterActor.SetupData<HeroFireData>();
             characterActor.SetupData<HeroAnimData>();

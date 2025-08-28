@@ -9,7 +9,7 @@ namespace KillCam.Client.Replay {
             }
 
             foreach (var kvp in snapshot.HeroSnapshot.InputData) {
-                ref var data = ref characters[kvp.Key].GetDataReadWrite<HeroInputData>();
+                ref var data = ref characters[kvp.Key].GetDataReadWrite<HeroInputState>();
                 data.Move = kvp.Value.Move;
             }
         }

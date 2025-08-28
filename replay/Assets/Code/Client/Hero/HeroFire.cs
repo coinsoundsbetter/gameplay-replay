@@ -7,7 +7,7 @@ namespace KillCam.Client {
         }
 
         public override bool OnShouldActivate() {
-            var inputData = GetDataRO<HeroInputData>();
+            var inputData = GetDataRO<HeroInputState>();
             if (!inputData.IsFirePressed) {
                 return false;
             }
@@ -15,9 +15,9 @@ namespace KillCam.Client {
             return true;
         }
 
-        protected override void OnTickActive() {
-            ref var fireData = ref GetDataRW<HeroFireData>();
-            fireData.FireCd -= TickDeltaFloat;
+        protected override void OnTick() {
+            ref var fireData = ref GetDataRef<HeroFireData>();
+            fireData.FireCd -= TickDelta;
             if (fireData.FireCd > 0) {
                 return;
             }

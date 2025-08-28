@@ -29,7 +29,7 @@ namespace KillCam {
             writer.WriteQuaternion64(data.Rot);
         }
 
-        public static void WriteCharacterInputData(this Writer writer, HeroInputData data) {
+        public static void WriteCharacterInputData(this Writer writer, HeroInputState data) {
             writer.WriteVector2Int(data.Move);
         }
     }

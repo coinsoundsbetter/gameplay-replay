@@ -31,8 +31,8 @@ namespace KillCam.Server {
             manager.ServerManager.UnregisterBroadcast<Login>(OnLogin);
         }
 
-        protected override void OnTickActive() {
-            ref var worldTime = ref GetWorldDataRW<WorldTime>();
+        protected override void OnTick() {
+            ref var worldTime = ref GetWorldDataRW<NetworkTime>();
             worldTime.Tick = manager.TimeManager.LocalTick;
             ref var networkData = ref GetWorldDataRW<NetworkData>();
             networkData.RTT = manager.TimeManager.RoundTripTime;
@@ -77,7 +77,7 @@ namespace KillCam.Server {
         }
 
         public new uint GetTick() {
-            var worldTime = GetWorldDataRO<WorldTime>();
+            var worldTime = GetWorldDataRO<NetworkTime>();
             return worldTime.Tick;
         }
 

@@ -4,7 +4,7 @@ namespace KillCam.Client {
     /// </summary>
     public class ProjectileImpacts : Feature {
         
-        protected override void OnTickActive() {
+        protected override void OnTick() {
             ref var impactBuffer = ref GetWorldBuffer<ImpactData>();
             if (impactBuffer.Length == 0) {
                 return;

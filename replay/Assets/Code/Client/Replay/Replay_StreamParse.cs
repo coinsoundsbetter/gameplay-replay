@@ -10,10 +10,10 @@ namespace KillCam.Client.Replay {
             playStreams = streams;
         }
 
-        protected override void OnTickActive() {
+        protected override void OnTick() {
             playTick++;
 
-            ref var worldTime = ref GetWorldDataRW<WorldTime>();
+            ref var worldTime = ref GetWorldDataRW<NetworkTime>();
             worldTime.Tick = playTick;
             
             bool isPlayNextState = false;

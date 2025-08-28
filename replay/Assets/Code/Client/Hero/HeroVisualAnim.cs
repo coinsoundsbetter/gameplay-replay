@@ -5,7 +5,7 @@ namespace KillCam.Client {
         private UnityHeroLink unityHero;
         
         public override bool OnShouldActivate() {
-            unityHero = Owner.GetDataManaged<UnityHeroLink>();
+            unityHero = GetDataManaged<UnityHeroLink>();
             if (unityHero.Actor != null) {
                 return true;
             }
@@ -13,9 +13,9 @@ namespace KillCam.Client {
             return false;
         }
 
-        protected override void OnTickActive() {
+        protected override void OnTick() {
             var hero = unityHero.Actor;
-            var moveData = Owner.GetDataReadOnly<HeroMoveData>();
+            var moveData = GetDataRO<HeroMoveData>();
             bool isMoving = moveData.IsMoving;
             hero.SetAnimParam(HeroAnimKeys.IsMove, isMoving);
             hero.SetAnimParam(HeroAnimKeys.MoveDirX, moveData.LocalMoveDirection.x);

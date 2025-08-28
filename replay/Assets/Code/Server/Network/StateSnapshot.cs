@@ -30,10 +30,10 @@ namespace KillCam.Server {
             characterSnapshots.Clear();
         }
 
-        protected override void OnTickActive() {
+        protected override void OnTick() {
             var snapshot = new AllHeroSnapshot() {
                 StateData = new NativeHashMap<int, HeroMoveData>(4, Allocator.Persistent),
-                InputData = new NativeHashMap<int, HeroInputData>(4, Allocator.Persistent),
+                InputData = new NativeHashMap<int, HeroInputState>(4, Allocator.Persistent),
             };
             characterSnapshots.Add(GetTick(), snapshot);
 
@@ -57,7 +57,7 @@ namespace KillCam.Server {
         private void TakeCharacterInputSnapshot(ref AllHeroSnapshot snapshot) {
             var characterMgr = GetWorldFeature<HeroManager>();
             foreach (var (id, character) in characterMgr.RoleActors) {
-                var inputData = character.GetDataReadOnly<HeroInputData>();
+                var inputData = character.GetDataReadOnly<HeroInputState>();
                 snapshot.InputData.Add(id, inputData);
             }
         }
@@ -70,7 +70,7 @@ namespace KillCam.Server {
                     Tick = tick,
                     HeroSnapshot = new AllHeroSnapshot() {
                         StateData = new NativeHashMap<int, HeroMoveData>(4, Allocator.Temp),
-                        InputData = new NativeHashMap<int, HeroInputData>(4, Allocator.Temp),
+                        InputData = new NativeHashMap<int, HeroInputState>(4, Allocator.Temp),
                     }
                 };
 

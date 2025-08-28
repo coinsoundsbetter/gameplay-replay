@@ -10,7 +10,7 @@ namespace KillCam.Client {
         }
 
         public override bool OnShouldActivate() {
-            var heroActor = Owner.GetDataManaged<UnityHeroLink>();
+            var heroActor = GetDataManaged<UnityHeroLink>();
             if (heroActor.Actor != null) {
                 return true;
             }
@@ -21,7 +21,7 @@ namespace KillCam.Client {
         protected override void OnActivate() {
             var cameraMgr = GetWorldFeature<CameraManager>();
             cameraMgr.SetDataSource(link = new CameraDataSource() {
-                target = Owner.GetDataManaged<UnityHeroLink>().Actor.GetCameraTarget(),
+                target = GetDataManaged<UnityHeroLink>().Actor.GetCameraTarget(),
                 pitch = config.initPitch,
                 pitchRange = config.pitchRange,
                 yaw = config.initYaw,
@@ -29,9 +29,9 @@ namespace KillCam.Client {
             });
         }
 
-        protected override void OnTickActive() {
-            var inputData = Owner.GetDataReadOnly<HeroInputData>();
-            link.pitch += -inputData.Pitch * (float)TickDelta * 300f;
+        protected override void OnTick() {
+            var inputData = GetDataRO<HeroInputState>();
+            link.pitch += -inputData.Pitch * (float)TickDeltaDouble * 300f;
             link.offsetFromTarget = config.offsetFromTarget;
         }
     }

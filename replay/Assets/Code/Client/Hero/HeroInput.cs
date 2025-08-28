@@ -13,9 +13,9 @@ namespace KillCam.Client {
             return false;
         }
 
-        protected override void OnTickActive() {
-            var input = GetWorldDataRO<UserInputData>();
-            ref var heroInput = ref GetDataRW<HeroInputData>();
+        protected override void OnTick() {
+            var input = GetWorldDataRO<UserInputState>();
+            ref var heroInput = ref GetDataRef<HeroInputState>();
             heroInput.Move = input.Move;
             heroInput.Pitch = input.Pitch;
             heroInput.Yaw = input.Yaw;

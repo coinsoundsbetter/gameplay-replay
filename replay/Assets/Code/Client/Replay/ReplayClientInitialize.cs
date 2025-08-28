@@ -55,7 +55,7 @@ namespace KillCam.Client.Replay {
                 return;
             }
             
-            world.SetupData(new WorldTime());
+            world.SetupData(new NetworkTime());
             world.CreateFeature(streamParse = new Replay_StreamParse());
             world.CreateFeature(spawnProvider = new Replay_SpawnProvider());
             world.CreateFeature<Replay_StateProvider>();

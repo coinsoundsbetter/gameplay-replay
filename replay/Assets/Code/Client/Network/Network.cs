@@ -18,7 +18,7 @@ namespace KillCam.Client {
         }
         
         protected override void OnCreate() {
-            SetupData<WorldTime>();
+            CreateData<NetworkTime>();
         }
 
         public void Start(Action started) {
@@ -64,8 +64,8 @@ namespace KillCam.Client {
             });
         }
 
-        protected override void OnTickActive() {
-            ref var worldTime = ref GetWorldDataRW<WorldTime>();
+        protected override void OnTick() {
+            ref var worldTime = ref GetWorldDataRW<NetworkTime>();
             worldTime.Tick = manager.TimeManager.LocalTick;
             ref var networkData = ref GetWorldDataRW<NetworkData>();
             networkData.RTT = manager.TimeManager.RoundTripTime;
@@ -85,7 +85,7 @@ namespace KillCam.Client {
         }
 
         public new uint GetTick() {
-            var worldData = GetWorldDataRO<WorldTime>();
+            var worldData = GetWorldDataRO<NetworkTime>();
             return worldData.Tick;
         }
         

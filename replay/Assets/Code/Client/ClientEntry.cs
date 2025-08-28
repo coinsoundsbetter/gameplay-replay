@@ -24,28 +24,27 @@ namespace KillCam.Client {
         }
         
         private void AddClientFeatures() {
-            world.SetupData(new NetworkTime());
-            world.SetupData(new NetworkData());
-            world.SetupData(new CameraData());
+            world.AddData(new NetworkTime());
+            world.AddData(new NetworkData());
+            world.AddData(new CameraData());
             world.SetupBuffer<ImpactData>();
             
             // 网络相关
             world.SetNetworkContext(network);
-            world.CreateFeature(network);
-            world.CreateFeature(spawnProvider = new SpawnProvider());
-            world.CreateFeature<NetMsgHandle>(TickGroup.NetworkReceive);
+            world.AddFeature(network);
+            world.AddFeature(spawnProvider = new SpawnProvider());
+            world.AddFeature<NetMsgHandle>(TickGroup.NetworkReceive);
             
             // 输入
-            world.CreateFeature<GatherInputSystem>(TickGroup.Input);
+            world.AddFeature<GatherInputSystem>(TickGroup.Input);
             
             // 逻辑模拟
-            world.CreateFeature(new HeroSpawnSystem(spawnProvider));
-            world.CreateFeature<Projectiles>(TickGroup.Simulation);
+            world.AddFeature(new Client_SpawnHeroSystem(spawnProvider));
+            world.AddFeature<BulletMoveSystem>();
             
             // 表现相关
-            world.CreateFeature<ProjectileImpacts>(TickGroup.Visual);
-            world.CreateFeature<VisualHUD>(TickGroup.PostVisual);
-            world.CreateFeature<CameraManager>(TickGroup.PostVisual);
+            world.AddFeature<VisualHUD>(TickGroup.PostVisual);
+            world.AddFeature<CameraManager>(TickGroup.PostVisual);
             
             world.SetupAllFeatures();
         }

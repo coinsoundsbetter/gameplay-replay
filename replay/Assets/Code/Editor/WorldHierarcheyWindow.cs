@@ -198,7 +198,7 @@ namespace KillCam.Editor {
 
                 if (args.item is ActorItem ai) {
                     EditorGUI.LabelField(col0, ai.displayName);
-                    EditorGUI.LabelField(col1, ai.Actor?.GetType().Name ?? "");
+                    EditorGUI.LabelField(col1, ai.Actor != null ? ai.Actor.GetType().Name : "");
                 } else {
                     EditorGUI.LabelField(col0, args.item.displayName);
                 }

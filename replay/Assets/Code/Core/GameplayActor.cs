@@ -6,16 +6,16 @@ namespace KillCam {
             MyWorld = world;
         }
 
-        public void SetupData<T>() where T : unmanaged {
-            SetupData<T>(new T());
+        public void SetData<T>() where T : unmanaged {
+            AddData<T>(new T());
         }
 
-        public void SetupData<T>(T instance) where T : unmanaged {
-            MyWorld.SetupActorData(this, instance);
+        public void AddData<T>(T instance) where T : unmanaged {
+            MyWorld.AddActorData(this, instance);
         }
 
-        public void SetupDataManaged<T>(T instance) where T : class {
-            MyWorld.SetupActorDataManaged(this, instance);
+        public void SetDataManaged<T>(T instance) where T : class {
+            MyWorld.AddActorDataManaged(this, instance);
         }
 
         public void SetupBuffer<T>() where T : unmanaged, IBufferElement {
@@ -42,12 +42,12 @@ namespace KillCam {
             return MyWorld.GetActorDataManaged<T>(this);
         }
 
-        public void CreateFeature<T>(TickGroup tickGroup) where T : Feature, new() {
-            MyWorld.CreateActorFeature<T>(this, tickGroup);
+        public void AddFeature<T>(TickGroup tickGroup) where T : Feature, new() {
+            MyWorld.AddActorFeature<T>(this, tickGroup);
         }
 
-        public void SetupFeature(Feature feature, TickGroup tickGroup) {
-            MyWorld.SetupActorFeature(this, feature, tickGroup);
+        public void AddFeature(Feature feature, TickGroup tickGroup) {
+            MyWorld.AddActorFeature(this, feature, tickGroup);
         }
 
         public void SetupAllFeatures() {

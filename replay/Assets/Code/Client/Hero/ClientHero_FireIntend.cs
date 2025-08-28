@@ -5,8 +5,12 @@ namespace KillCam.Client {
     /// <summary>
     /// 开火意图
     /// </summary>
-    public class HeroFireIntend : Feature {
+    public class ClientHero_FireIntend : Feature {
         
+        protected override void OnCreate() {
+            AddBuffer<HeroFireIntentElem>();
+        }
+
         protected override void OnTick() {
             var tick = GetDataRO<NetworkTime>().Tick;
             var identifier = GetDataRO<HeroIdentifier>();
@@ -25,6 +29,14 @@ namespace KillCam.Client {
 
             var kinematic = GetDataRO<HeroKinematicState>();
             float3 fwd = math.forward(kinematic.Rotation);
+
+            ref var intentBuffer = ref GetBuffer<HeroFireIntentElem>();
+            intentBuffer.Add(new HeroFireIntentElem() {
+                Tick = tick,
+                LocalShotSeq = wpn.LocalShotSeq,
+                Dir = fwd,
+                Origin = kinematic.Position,
+            });
                 
             Send(new C2S_CmdFire() {
                 FireTick = tick,

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 
 namespace KillCam {
+    
     public abstract class Feature {
         private GameplayActor owner;
         private BattleWorld world;
@@ -63,7 +64,7 @@ namespace KillCam {
         //====================
 
         protected void CreateData<T>() where T : unmanaged
-            => world.SetupData(new T());
+            => world.AddData(new T());
         
         protected bool HasData<T>() where T : unmanaged
             => world.HasActorData<T>(owner);
@@ -108,16 +109,16 @@ namespace KillCam {
         protected bool HasWorldData<T>() where T : unmanaged
             => world.HasData<T>();
 
-        protected ref T GetWorldDataRW<T>() where T : unmanaged
+        protected ref T GetWorldDataRef<T>() where T : unmanaged
             => ref world.GetDataRW<T>();
 
-        protected ref readonly T GetWorldDataRO<T>() where T : unmanaged
+        protected ref readonly T GetWorldData<T>() where T : unmanaged
             => ref world.GetDataRO<T>();
 
-        protected T GetWorldDataManaged<T>() where T : class
+        protected T GetSingletonManaged<T>() where T : class
             => world.GetDataManaged<T>();
 
-        protected T GetWorldFeature<T>() where T : Feature
+        protected T GetSingletonFeature<T>() where T : Feature
             => world.GetFeature<T>();
 
         protected ref DynamicBuffer<T> GetWorldBuffer<T>() where T : unmanaged, IBufferElement {

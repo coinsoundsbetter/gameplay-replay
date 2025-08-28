@@ -22,4 +22,6 @@ namespace KillCam.Client {
     public struct ImpactData : IBufferElement {
         public FixedString32Bytes EffSign;
     }
+    
+    
 }

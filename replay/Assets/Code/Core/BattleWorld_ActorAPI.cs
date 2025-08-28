@@ -44,14 +44,14 @@ namespace KillCam {
             actorBufferUnmanagedSet.Remove(actor);
         }
         
-        public void CreateActorFeature<T>(GameplayActor actor, TickGroup tickGroup) where T : Feature, new() {
+        public void AddActorFeature<T>(GameplayActor actor, TickGroup tickGroup) where T : Feature, new() {
             var t = new T();
             actorFeatureSet[actor].Add(typeof(T).Name, t);
             tickGroups[tickGroup].Add(t);
             t.Create(actor);
         }
 
-        public void SetupActorFeature(GameplayActor actor, Feature feature, TickGroup tickGroup) {
+        public void AddActorFeature(GameplayActor actor, Feature feature, TickGroup tickGroup) {
             var type = feature.GetType();
             actorFeatureSet[actor].Add(type.Name, feature);
             tickGroups[tickGroup].Add(feature);
@@ -65,12 +65,12 @@ namespace KillCam {
             }
         }
 
-        public void SetupActorData<T>(GameplayActor actor, T instance) where T : unmanaged {
+        public void AddActorData<T>(GameplayActor actor, T instance) where T : unmanaged {
             var type = typeof(T);
             actorDataUnmanagedSet[actor].Add(type, new RefStorage<T>() { Value = instance });
         }
 
-        public void SetupActorDataManaged<T>(GameplayActor actor, T instance) where T : class {
+        public void AddActorDataManaged<T>(GameplayActor actor, T instance) where T : class {
             var type = typeof(T);
             actorDataManagedSet[actor].Add(type, instance);
         }

@@ -65,9 +65,9 @@ namespace KillCam.Client {
         }
 
         protected override void OnTick() {
-            ref var worldTime = ref GetWorldDataRW<NetworkTime>();
+            ref var worldTime = ref GetWorldDataRef<NetworkTime>();
             worldTime.Tick = manager.TimeManager.LocalTick;
-            ref var networkData = ref GetWorldDataRW<NetworkData>();
+            ref var networkData = ref GetWorldDataRef<NetworkData>();
             networkData.RTT = manager.TimeManager.RoundTripTime;
             networkData.HalfRTT = manager.TimeManager.HalfRoundTripTime;
         }
@@ -85,7 +85,7 @@ namespace KillCam.Client {
         }
 
         public new uint GetTick() {
-            var worldData = GetWorldDataRO<NetworkTime>();
+            var worldData = GetWorldData<NetworkTime>();
             return worldData.Tick;
         }
         
@@ -94,12 +94,12 @@ namespace KillCam.Client {
         }
 
         public new long GetRTT() {
-            var networkData = GetWorldDataRO<NetworkData>();
+            var networkData = GetWorldData<NetworkData>();
             return networkData.RTT;
         }
 
         public new long GetHalfRTT() {
-            var networkData = GetWorldDataRO<NetworkData>();
+            var networkData = GetWorldData<NetworkData>();
             return networkData.HalfRTT;
         }
     }

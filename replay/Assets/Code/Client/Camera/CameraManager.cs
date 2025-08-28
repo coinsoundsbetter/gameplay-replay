@@ -77,7 +77,7 @@ namespace KillCam.Client {
         }
 
         private void SendCameraData() {
-            ref var camData = ref GetWorldDataRW<CameraData>();
+            ref var camData = ref GetWorldDataRef<CameraData>();
             camData.aimDirection = GetCameraAimDirection();
             camData.aimTarget = GetCameraAimTarget();
             Send(new C2S_SendCameraData() {

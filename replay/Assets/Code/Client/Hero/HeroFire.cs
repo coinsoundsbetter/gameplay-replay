@@ -3,7 +3,7 @@ namespace KillCam.Client {
         private Projectiles projectiles;
 
         protected override void OnCreate() {
-            projectiles = GetWorldFeature<Projectiles>();
+            projectiles = GetSingletonFeature<Projectiles>();
         }
 
         public override bool OnShouldActivate() {
@@ -26,7 +26,7 @@ namespace KillCam.Client {
             fireData.FireCd = 0.2f;
             
             var fireTarget = GetDataManaged<UnityHeroLink>().Actor.GetFireTarget();
-            var cameraData = GetWorldDataRO<CameraData>();
+            var cameraData = GetWorldData<CameraData>();
             
             // 预测生成子弹
             projectiles.SpawnBullet(new BulletInitData() {

@@ -13,7 +13,7 @@ namespace KillCam.Client.Replay {
         protected override void OnTick() {
             playTick++;
 
-            ref var worldTime = ref GetWorldDataRW<NetworkTime>();
+            ref var worldTime = ref GetWorldDataRef<NetworkTime>();
             worldTime.Tick = playTick;
             
             bool isPlayNextState = false;
@@ -34,15 +34,15 @@ namespace KillCam.Client.Replay {
 
         private void OnPlayState(S2C_WorldStateSnapshot state) {
             // 确保角色生成
-            var spawnMgr = GetWorldFeature<Replay_SpawnProvider>();
+            var spawnMgr = GetSingletonFeature<Replay_SpawnProvider>();
             spawnMgr.EnsureSpawn(state);
 
             // 纠正状态
-            var stateMgr = GetWorldFeature<Replay_StateProvider>();
+            var stateMgr = GetSingletonFeature<Replay_StateProvider>();
             stateMgr.SetState(state);
 
             // 重放输入数据
-            var inputMgr = GetWorldFeature<Replay_InputProvider>();
+            var inputMgr = GetSingletonFeature<Replay_InputProvider>();
             inputMgr.SetInput(state);
 
             // 用完了清理非托管资源

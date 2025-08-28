@@ -19,7 +19,7 @@ namespace KillCam.Client {
         }
 
         protected override void OnActivate() {
-            var cameraMgr = GetWorldFeature<CameraManager>();
+            var cameraMgr = GetSingletonFeature<CameraManager>();
             cameraMgr.SetDataSource(link = new CameraDataSource() {
                 target = GetDataManaged<UnityHeroLink>().Actor.GetCameraTarget(),
                 pitch = config.initPitch,

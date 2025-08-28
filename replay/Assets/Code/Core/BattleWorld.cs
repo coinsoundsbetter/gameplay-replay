@@ -36,6 +36,7 @@ namespace KillCam {
 
         private readonly ActorGroup[] actorRemoveOrders = {
             ActorGroup.Default,
+            ActorGroup.Bullet,
             ActorGroup.Player,
             ActorGroup.World,
         };

@@ -96,6 +96,7 @@ namespace KillCam {
         Default,
         Player,
         World,
+        Bullet,
     }
 
     public static class LayerDefine {

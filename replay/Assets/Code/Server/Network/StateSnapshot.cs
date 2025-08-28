@@ -47,7 +47,7 @@ namespace KillCam.Server {
         }
 
         private void TakeCharacterStateSnapshot(ref AllHeroSnapshot snapshot) {
-            var characterMgr = GetWorldFeature<HeroManager>();
+            var characterMgr = GetSingletonFeature<Server_SpawnHeroSystem>();
             foreach (var (id, character) in characterMgr.RoleActors) {
                 var stateData = character.GetDataReadOnly<HeroMoveData>();
                 snapshot.StateData.Add(id, stateData);
@@ -55,7 +55,7 @@ namespace KillCam.Server {
         }
 
         private void TakeCharacterInputSnapshot(ref AllHeroSnapshot snapshot) {
-            var characterMgr = GetWorldFeature<HeroManager>();
+            var characterMgr = GetSingletonFeature<Server_SpawnHeroSystem>();
             foreach (var (id, character) in characterMgr.RoleActors) {
                 var inputData = character.GetDataReadOnly<HeroInputState>();
                 snapshot.InputData.Add(id, inputData);

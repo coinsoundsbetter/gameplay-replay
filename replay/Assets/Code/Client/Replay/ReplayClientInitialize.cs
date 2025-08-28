@@ -55,13 +55,13 @@ namespace KillCam.Client.Replay {
                 return;
             }
             
-            world.SetupData(new NetworkTime());
-            world.CreateFeature(streamParse = new Replay_StreamParse());
-            world.CreateFeature(spawnProvider = new Replay_SpawnProvider());
-            world.CreateFeature<Replay_StateProvider>();
-            world.CreateFeature<Replay_InputProvider>();
-            world.CreateFeature(new HeroSpawnSystem(spawnProvider));
-            world.CreateFeature<CameraManager>();
+            world.AddData(new NetworkTime());
+            world.AddFeature(streamParse = new Replay_StreamParse());
+            world.AddFeature(spawnProvider = new Replay_SpawnProvider());
+            world.AddFeature<Replay_StateProvider>();
+            world.AddFeature<Replay_InputProvider>();
+            world.AddFeature(new Client_SpawnHeroSystem(spawnProvider));
+            world.AddFeature<CameraManager>();
         }
     }
 }

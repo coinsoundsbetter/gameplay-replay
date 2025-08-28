@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace KillCam.Client {
-    public class HeroSpawnSystem : Feature {
+    public class Client_SpawnHeroSystem : Feature {
         private readonly IRoleSpawnProvider provider;
         private readonly Dictionary<int, GameplayActor> characters = new();
         public IReadOnlyDictionary<int, GameplayActor> Characters => characters;
 
-        public HeroSpawnSystem(IRoleSpawnProvider provider) {
+        public Client_SpawnHeroSystem(IRoleSpawnProvider provider) {
             this.provider = provider;
         }
 
@@ -29,30 +28,20 @@ namespace KillCam.Client {
 
             var characterActor = CreateActor(ActorGroup.Player);
             // 设置数据
-            characterActor.SetupData<HeroHealth>();
-            characterActor.SetupData<HeroInputState>();
-            characterActor.SetupData<HeroMoveData>();
-            characterActor.SetupData<HeroFireData>();
-            characterActor.SetupData<HeroAnimData>();
-            characterActor.SetupData(new HeroSkinData());
-            characterActor.SetupData(new HeroIdentifier() {
+            characterActor.AddData(new HeroIdentifier() {
                 PlayerId = playerId,
                 IsControlTarget = net.IsClientOwned(),
                 PlayerName = $"玩家{playerId}"
             });
-            characterActor.SetupDataManaged(new UnityHeroLink());
-            characterActor.SetupDataManaged(new ClientHeroNetLink() {
+            characterActor.SetDataManaged(new UnityHeroLink());
+            characterActor.SetDataManaged(new ClientHeroNetLink() {
                 NetClient = net,
             });
             
             // 设置逻辑
-            characterActor.CreateFeature<HeroInput>(TickGroup.Input);
-            characterActor.CreateFeature<HeroMovement>(TickGroup.Simulation);
-            characterActor.CreateFeature<HeroFire>(TickGroup.Simulation);
-            characterActor.CreateFeature<HeroVisualSkin>(TickGroup.Visual);
-            characterActor.CreateFeature<HeroVisualAnim>(TickGroup.Visual);
-            characterActor.CreateFeature<HeroVisualMove>(TickGroup.Visual);
-            characterActor.CreateFeature<HeroVisualCamera>(TickGroup.Visual);
+            characterActor.AddFeature<HeroInput>(TickGroup.Input);
+            characterActor.AddFeature<ClientHero_FireIntend>(TickGroup.Simulation);
+            characterActor.AddFeature<ClientHero_FirePredictBullet>(TickGroup.Simulation);
             characterActor.SetupAllFeatures();
             characters.Add(playerId, characterActor);
         }

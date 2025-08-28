@@ -44,7 +44,7 @@ namespace KillCam.Server {
         }
 
         private bool TryGetHero(int senderId, out GameplayActor actor) {
-            var roleMgr = GetWorldFeature<HeroManager>();
+            var roleMgr = GetSingletonFeature<Server_SpawnHeroSystem>();
             if (roleMgr.RoleActors.TryGetValue(senderId, out actor)) {
                 return true;
             }

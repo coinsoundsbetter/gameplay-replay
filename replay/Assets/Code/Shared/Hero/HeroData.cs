@@ -10,6 +10,13 @@ namespace KillCam {
         public uint LocalShotSeq;
         public uint ServerAckShotSeq;
     }
+
+    public struct HeroFireIntentElem : IBufferElement {
+        public uint Tick;
+        public uint LocalShotSeq;
+        public float3 Origin;
+        public float3 Dir;
+    }
     
     public struct HeroStateHistory : IBufferElement {
         public uint Tick;

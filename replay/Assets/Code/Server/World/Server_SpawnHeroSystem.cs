@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 
 namespace KillCam.Server {
-    public class HeroManager : Feature {
+    public class Server_SpawnHeroSystem : Feature {
         private readonly Dictionary<int, GameplayActor> roleActors = new();
         public IReadOnlyDictionary<int, GameplayActor> RoleActors => roleActors;
         
@@ -19,18 +19,14 @@ namespace KillCam.Server {
         private void OnRoleNetSpawn(IServerHeroNet net) {
             var id = net.GetId();
             var character = CreateActor(ActorGroup.Player);
-            character.SetupData(new HeroIdentifier() {
+            character.AddData(new HeroIdentifier() {
                 IsControlTarget = false,
                 PlayerId = net.GetId(),
                 PlayerName = $"Player:{net.GetId()}"
             });
-            character.SetupData(new HeroInputState());
-            character.SetupData(new HeroMoveData());
-            character.SetupData(new HeroFireAckData() { AckFireIds = new NativeHashSet<uint>(512, Allocator.Persistent )});
-            character.SetupData(new HeroWeaponData());
-            character.SetupBuffer<C2S_CmdFire>();
-            character.CreateFeature<HeroMovement>(TickGroup.Simulation);
-            character.CreateFeature<HeroFire>(TickGroup.Simulation);
+            
+            character.AddFeature<ServerHero_FireValidate>(TickGroup.Simulation);
+            
             roleActors.Add(id, character);
         }
 

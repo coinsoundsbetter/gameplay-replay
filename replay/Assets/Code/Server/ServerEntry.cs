@@ -10,14 +10,14 @@ namespace KillCam.Server {
         }
         
         protected override void OnBeforeStart() {
-            world.SetupData(new NetworkTime());
-            world.SetupData(new NetworkData());
+            world.AddData(new NetworkTime());
+            world.AddData(new NetworkData());
             world.SetNetworkContext(networkServer);
-            world.CreateFeature(networkServer);
+            world.AddFeature(networkServer);
             networkServer.Start(() => {
-                world.CreateFeature<HeroManager>();
-                world.CreateFeature<NetMessageHandle>();
-                world.CreateFeature<StateSnapshot>();
+                world.AddFeature<Server_SpawnHeroSystem>();
+                world.AddFeature<NetMessageHandle>();
+                world.AddFeature<StateSnapshot>();
             });
         }
 

@@ -16,6 +16,8 @@ namespace KillCam.Server {
             world.AddFeature(networkServer);
             networkServer.Start(() => {
                 world.AddFeature<Server_SpawnHeroSystem>();
+                world.AddFeature<BulletMoveSystem>();
+                world.AddFeature<Server_BulletHitSystem>();
                 world.AddFeature<NetMessageHandle>();
                 world.AddFeature<StateSnapshot>();
             });

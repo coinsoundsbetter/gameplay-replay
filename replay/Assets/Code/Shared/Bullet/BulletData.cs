@@ -13,4 +13,9 @@ namespace KillCam {
         public int OwnerId;
         public uint ShotId;
     }
+
+    public struct BulletSweep {
+        public float3 Start;
+        public float3 End;
+    }
 }

@@ -1,86 +1,65 @@
-namespace Gameplay.Core
-{
-    public class SystemBase : ISystem
-    {
+using System;
+
+namespace Gameplay.Core {
+    /// <summary>
+    /// 面向继承的 class 版系统基类，带 OnStartRunning/OnStopRunning 生命周期
+    /// </summary>
+    public abstract class SystemBase : ISystem {
         protected World World { get; private set; }
-        
-        public virtual void OnCreate(World world)
-        {
-            World = world;
+        protected ActorManager Actors => World.ActorManager;
+        protected float DeltaTime { get; private set; }
+
+        private bool _hasStarted; // 是否已调用过 OnStartRunning
+        private bool _isRunning; // 当前是否处于运行中
+
+        public void OnCreate(ref SystemState state) {
+            World = state.World;
+            _hasStarted = false;
+            _isRunning = false;
+            OnCreate();
         }
 
-        public virtual void OnDestroy() { }
-        
-        public virtual void Update(ref SystemState state) { }
-        
-        // ====================
-        // Actor 管理
-        // ====================
-        protected Actor CreateActor()
-            => World.ActorManager.CreateActor();
+        public void Update(ref SystemState state) {
+            DeltaTime = state.DeltaTime;
 
-        protected void DestroyActor(Actor actor)
-            => World.ActorManager.DestroyActor(actor);
-        
-        // ====================
-        // 非托管数据访问（struct component）
-        // ====================
-        protected bool HasData<T>(Actor actor) where T : unmanaged
-            => World.ActorManager.HasData<T>(actor);
+            if (!_hasStarted) {
+                _hasStarted = true;
+                _isRunning = true;
+                OnStartRunning();
+            }
 
-        protected ref T GetDataRW<T>(Actor actor) where T : unmanaged
-            => ref World.ActorManager.GetDataRW<T>(actor);
+            if (_isRunning) {
+                OnUpdate();
+            }
+        }
 
-        protected ref readonly T GetDataRO<T>(Actor actor) where T : unmanaged
-            => ref World.ActorManager.GetDataRO<T>(actor);
+        public void OnDestroy(ref SystemState state) {
+            if (_isRunning) {
+                OnStopRunning();
+                _isRunning = false;
+            }
+            OnDestroy();
+        }
 
-        protected void AddData<T>(Actor actor, T value) where T : unmanaged
-            => World.ActorManager.AddData(actor, value);
+        // ========== 可重写的生命周期 ==========
 
-        protected void RemoveData<T>(Actor actor) where T : unmanaged
-            => World.ActorManager.RemoveData<T>(actor);
-        
-        // ====================
-        // 托管数据访问（class component）
-        // ====================
-        protected bool HasDataManaged<T>(Actor actor) where T : class
-            => World.ActorManager.HasDataManaged<T>(actor);
+        protected virtual void OnCreate() {
+        }
 
-        protected T GetDataManaged<T>(Actor actor) where T : class
-            => World.ActorManager.GetDataManaged<T>(actor);
+        protected virtual void OnDestroy() {
+            
+        }
 
-        protected void AddDataManaged<T>(Actor actor, T value) where T : class
-            => World.ActorManager.AddDataManaged(actor, value);
+        /// <summary>系统第一次运行时调用</summary>
+        protected virtual void OnStartRunning() {
+        }
 
-        protected void RemoveDataManaged<T>(Actor actor) where T : class
-            => World.ActorManager.RemoveDataManaged<T>(actor);
+        /// <summary>每帧调用</summary>
+        protected virtual void OnUpdate() {
+        }
 
-        // ====================
-        // 单例 Actor 支持
-        // ====================
-        protected Actor CreateSingleton<T>(T data) where T : unmanaged
-            => World.ActorManager.CreateSingleton(data);
-
-        protected ref T GetSingleton<T>() where T : unmanaged
-            => ref World.ActorManager.GetSingleton<T>();
-
-        protected bool HasSingleton<T>() where T : unmanaged
-            => World.ActorManager.HasSingleton<T>();
-
-        protected void DestroySingleton<T>() where T : unmanaged
-            => World.ActorManager.DestroySingleton<T>();
-
-        // （可选扩展：支持托管单例）
-        /*protected Actor CreateSingletonManaged<T>(T data) where T : class
-            => World.ActorManager.CreateSingletonManaged(data);
-
-        protected T GetSingletonManaged<T>() where T : class
-            => World.ActorManager.GetSingletonManaged<T>();
-
-        protected bool HasSingletonManaged<T>() where T : class
-            => World.ActorManager.HasSingletonManaged<T>();
-
-        protected void DestroySingletonManaged<T>() where T : class
-            => World.ActorManager.DestroySingletonManaged<T>();*/
+        /// <summary>系统停止运行（OnDestroy 前）</summary>
+        protected virtual void OnStopRunning() {
+        }
     }
 }

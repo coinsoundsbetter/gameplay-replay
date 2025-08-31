@@ -2,16 +2,22 @@ namespace Gameplay.Core {
     public class World {
         public readonly SystemGroup LogicRoot;
         public readonly SystemGroup FrameRoot;
-        public readonly ActorManager ActorManager = new ActorManager();
+        public readonly ActorManager ActorManager;
 
+        public int WorldId { get; private set; }
         public string WorldName { get; private set; }
         public bool IsDisposed { get; private set; }
+        
+        private static int _nextWorldId = 1;
 
         public World(string worldName) {
+            WorldId = _nextWorldId++;
+            ActorManager = new ActorManager(WorldId);
             LogicRoot = new SystemGroup(this);
             FrameRoot = new SystemGroup(this);
             WorldName = worldName;
             IsDisposed = false;
+            WorldRegistry.Register(this);
         }
 
         /// <summary>
@@ -45,13 +51,14 @@ namespace Gameplay.Core {
             if (IsDisposed) return;
 
             // 系统清理
-            LogicRoot.OnDestroy();
-            FrameRoot.OnDestroy();
+            var driverState = new SystemState();
+            LogicRoot.OnDestroy(ref driverState);
+            FrameRoot.OnDestroy(ref driverState);
 
             // 清理 Actor
-            foreach (var actor in ActorManager.GetAllActors())
-                ActorManager.DestroyActor(actor);
+            ActorManager.DestroyAllActors();
 
+            WorldRegistry.Unregister(this);
             IsDisposed = true;
         }
     }

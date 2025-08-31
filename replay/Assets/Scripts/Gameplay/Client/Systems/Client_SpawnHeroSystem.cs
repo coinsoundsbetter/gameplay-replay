@@ -8,8 +8,6 @@ namespace Gameplay.Client {
     [UpdateInGroup(typeof(InitializeSystemGroup))]
     [WorldFilter(Any = WorldFlag.Client, None = WorldFlag.Replay)]
     public class Client_SpawnHeroSystem : ISystem {
-        public void Update(ref SystemState state) {
-            Debug.Log("1");
-        }
+        
     }
 }

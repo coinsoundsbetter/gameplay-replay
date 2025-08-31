@@ -4,6 +4,11 @@ namespace Gameplay.Core {
         public InitializeSystemGroup(World world) : base(world) {
         }
     }
+
+    public class SimulationSystemGroup : SystemGroup {
+        public SimulationSystemGroup(World world) : base(world) {
+        }
+    }
     
     public class VisualizeSystemGroup : SystemGroup {
         public VisualizeSystemGroup(World world) : base(world) {

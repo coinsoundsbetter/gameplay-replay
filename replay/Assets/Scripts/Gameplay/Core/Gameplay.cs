@@ -70,7 +70,7 @@ namespace Gameplay.Core {
 
             var world = new World(worldName);
             var bootstrap = (WorldBootstrap)Activator.CreateInstance(type, world, flag)!;
-            bootstrap.Initialize();
+            bootstrap.Initialize(netPlugin);
 
             worlds.Add(world);
             Debug.Log($"加载 {worldName} 成功 ({bootstrapName})");

@@ -30,8 +30,6 @@ namespace Gameplay.Core {
             _states[_count++] = state;
         }
 
-        public void OnCreate() { }
-
         public void Update(ref SystemState state) {
             for (int i = 0; i < _count; i++) {
                 ref var st = ref _states[i];
@@ -40,9 +38,10 @@ namespace Gameplay.Core {
             }
         }
 
-        public void OnDestroy() {
+        public void OnDestroy(ref SystemState state) {
             for (int i = 0; i < _count; i++) {
-                _systems[i].OnDestroy();
+                ref var st = ref _states[i];
+                _systems[i].OnDestroy(ref st);
             }
         }
 

@@ -6,7 +6,7 @@ namespace KillCam.Server {
         private readonly Dictionary<int, GameplayActor> roleActors = new();
         public IReadOnlyDictionary<int, GameplayActor> RoleActors => roleActors;
         
-        protected override void OnCreate() {
+        /*protected override void OnCreate() {
             HeroNet.OnServerSpawn += OnRoleNetSpawn;
             HeroNet.OnServerDespawn += OnRoleNetDespawn;
         }
@@ -14,7 +14,7 @@ namespace KillCam.Server {
         protected override void OnDestroy() {
             HeroNet.OnServerSpawn -= OnRoleNetSpawn;
             HeroNet.OnServerDespawn -= OnRoleNetDespawn;
-        }
+        }*/
 
         private void OnRoleNetSpawn(IServerHeroNet net) {
             var id = net.GetId();

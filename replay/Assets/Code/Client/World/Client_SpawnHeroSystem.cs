@@ -10,7 +10,7 @@ namespace KillCam.Client {
             this.provider = provider;
         }
 
-        protected override void OnCreate() {
+        /*protected override void OnCreate() {
             provider.OnRoleSpawn += OnRoleSpawn;
             provider.OnRoleDespawn += OnRoleDespawn;
         }
@@ -18,7 +18,7 @@ namespace KillCam.Client {
         protected override void OnDestroy() {
             provider.OnRoleSpawn -= OnRoleSpawn;
             provider.OnRoleDespawn -= OnRoleDespawn;
-        }
+        }*/
 
         private void OnRoleSpawn(IClientHeroNet net) {
             var playerId = net.GetId();

@@ -25,6 +25,8 @@ namespace KillCam
             OnCreate(_world, _owner);
         }
 
+        protected virtual void OnCreate() { }
+
         public void Setup() => OnSetup();
 
         public void Activate()

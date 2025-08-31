@@ -1,6 +1,6 @@
 namespace KillCam {
     
-    [NeedManualCreate]
+    /*[NeedManualCreate]
     public class WorldTimeSystem : SystemBase {
         
         protected override void OnCreate() {
@@ -10,5 +10,5 @@ namespace KillCam {
         protected override void OnTick() {
             
         }
-    }
+    }*/
 }

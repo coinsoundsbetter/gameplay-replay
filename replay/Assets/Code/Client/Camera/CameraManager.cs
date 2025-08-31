@@ -6,7 +6,7 @@ namespace KillCam.Client {
         private Transform uCameraTrans => uCamera.transform;
         private CameraDataSource ass;
 
-        protected override void OnCreate() {
+        /*protected override void OnCreate() {
             LoadCamera();
         }
 
@@ -14,7 +14,7 @@ namespace KillCam.Client {
             CheckEnable();
             Movement();
             SendCameraData();
-        }
+        }*/
 
         public void SetDataSource(CameraDataSource association) {
             ass = association;

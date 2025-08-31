@@ -238,7 +238,7 @@ GameObject:
   - component: {fileID: 985661576}
   - component: {fileID: 985661577}
   m_Layer: 0
-  m_Name: Initializer
+  m_Name: Gameplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -268,13 +268,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 985661574}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f00599379c84cb58f8bb09343d3a7ec, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d16ea94b51940dbb473033f741ebdb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  manager: {fileID: 994486416}
-  isStartServer: 1
-  isStartClient: 1
-  isOpenReplayFunction: 1
+  netPlugin: {fileID: 994486416}
+  isLaunchServer: 1
+  isLaunchClient: 1
+  isLaunchReplay: 0
 --- !u!1 &994486414
 GameObject:
   m_ObjectHideFlags: 0

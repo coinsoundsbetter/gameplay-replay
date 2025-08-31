@@ -25,7 +25,7 @@ namespace KillCam.Client {
         }
 
         private void AddClientSystems() {
-            var logicRoot = world.LogicRoot;
+            /*var logicRoot = world.LogicRoot;
             
             var init = new InitializeSystemGroup();
             init.AddSystem(new WorldTimeSystem());
@@ -55,7 +55,7 @@ namespace KillCam.Client {
 
             var postVisualize = new PostVisualizeSystemGroup();
             SystemCollector.CollectInto(postVisualize, WorldFlag.Client);
-            frameRoot.AddSystem(postVisualize);
+            frameRoot.AddSystem(postVisualize);*/
         }
     }
 }

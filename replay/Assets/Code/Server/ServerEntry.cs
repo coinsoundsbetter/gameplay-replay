@@ -10,7 +10,7 @@ namespace KillCam.Server {
         }
         
         protected override void OnBeforeStart() {
-            var logicRoot = world.LogicRoot;
+            /*var logicRoot = world.LogicRoot;
             var init = SystemCollector.Collect<InitializeSystemGroup>(WorldFlag.Server);
             var netRecv = SystemCollector.Collect<NetworkReceiveSystemGroup>(WorldFlag.Server);
             var input   = SystemCollector.Collect<InputSystemGroup>(WorldFlag.Server);
@@ -20,7 +20,7 @@ namespace KillCam.Server {
             logicRoot.AddSystem(netRecv);
             logicRoot.AddSystem(input);
             logicRoot.AddSystem(physics);
-            logicRoot.AddSystem(netSend);
+            logicRoot.AddSystem(netSend);*/
         }
 
         protected override void OnAfterDestroy() {

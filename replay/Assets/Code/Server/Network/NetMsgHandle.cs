@@ -4,13 +4,13 @@ using UnityEngine;
 namespace KillCam.Server {
     public class NetMessageHandle : SystemBase {
         
-        protected override void OnCreate() {
+        /*protected override void OnCreate() {
             HeroNet.OnServerReceiveData += HandleClientRequest;
         }
 
         protected override void OnDestroy() {
             HeroNet.OnServerReceiveData -= HandleClientRequest;
-        }
+        }*/
 
         private void HandleClientRequest(int senderId, byte[] data) {
             var reader = new Reader(data, null);

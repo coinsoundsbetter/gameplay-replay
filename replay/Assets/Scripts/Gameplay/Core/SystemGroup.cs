@@ -24,7 +24,7 @@ namespace Gameplay.Core {
             var state = new SystemState() {
                 World = myWorld,
             };
-            sys.OnCreate();
+            sys.OnCreate(ref state);
 
             _systems.Add(sys);
             _states[_count++] = state;

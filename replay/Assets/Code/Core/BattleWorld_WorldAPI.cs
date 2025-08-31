@@ -1,7 +1,7 @@
 namespace KillCam {
     public partial class BattleWorld {
         
-        public T GetFeature<T>() where T : Feature {
+        public T GetFeature<T>() where T : SystemBase {
             var set = actorFeatureSet[worldActor];
             if (set.TryGetValue(typeof(T).Name, out var c)) {
                 return (T)c;
@@ -10,11 +10,11 @@ namespace KillCam {
             return default;
         }
 
-        public void AddFeature<T>(TickGroup tickGroup = TickGroup.Simulation) where T : Feature, new() 
+        public void AddFeature<T>(TickGroup tickGroup = TickGroup.Simulation) where T : SystemBase, new() 
             => AddActorFeature<T>(worldActor, tickGroup);
 
-        public void AddFeature(Feature feature, TickGroup tickGroup = TickGroup.Simulation) 
-            => AddActorFeature(worldActor, feature, tickGroup);
+        public void AddFeature(SystemBase systemBase, TickGroup tickGroup = TickGroup.Simulation) 
+            => AddActorFeature(worldActor, systemBase, tickGroup);
 
         public void SetupAllFeatures()
             => SetupAllActorFeatures(worldActor);

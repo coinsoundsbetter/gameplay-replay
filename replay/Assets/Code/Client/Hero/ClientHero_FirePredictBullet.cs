@@ -4,7 +4,7 @@ namespace KillCam.Client {
     /// <summary>
     /// 本地预测生成子弹
     /// </summary>
-    public class ClientHero_FirePredictBullet : Feature {
+    public class ClientHero_FirePredictBullet : SystemBase {
         
         protected override void OnTick() {
             ref var intents = ref GetBuffer<HeroFireIntentElem>();

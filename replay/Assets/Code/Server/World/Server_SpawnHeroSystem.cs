@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 
 namespace KillCam.Server {
-    public class Server_SpawnHeroSystem : Feature {
+    public class Server_SpawnHeroSystem : SystemBase {
         private readonly Dictionary<int, GameplayActor> roleActors = new();
         public IReadOnlyDictionary<int, GameplayActor> RoleActors => roleActors;
         

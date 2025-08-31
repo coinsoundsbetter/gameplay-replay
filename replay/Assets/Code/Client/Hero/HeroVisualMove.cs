@@ -1,5 +1,5 @@
 ﻿namespace KillCam.Client {
-    public class HeroVisualMove : Feature {
+    public class HeroVisualMove : SystemBase {
         private IUnityHero unityHero;
 
         public override bool OnShouldActivate() {

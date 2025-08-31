@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace KillCam.Client {
-    public class HeroVisualCamera : Feature {
+    public class HeroVisualCamera : SystemBase {
         private CameraDataSource link;
         private HeroCameraSO config;
 

@@ -4,7 +4,7 @@ namespace KillCam.Client {
     /// <summary>
     /// 采集客户端输入
     /// </summary>
-    public class GatherInputSystem : Feature {
+    public class GatherInputSystem : SystemBase {
         
         protected override void OnCreate() {
             CreateData<UserInputState>();

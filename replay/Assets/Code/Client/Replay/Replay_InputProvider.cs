@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 namespace KillCam.Client.Replay {
-    public class Replay_InputProvider : Feature {
+    public class Replay_InputProvider : SystemBase {
         public void SetInput(S2C_WorldStateSnapshot snapshot) {
             var characters = GetSingletonFeature<Client_SpawnHeroSystem>().Characters;
             if (snapshot.HeroSnapshot.InputData.IsEmpty) {

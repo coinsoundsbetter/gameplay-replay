@@ -4,7 +4,7 @@ namespace KillCam {
     /// <summary>
     /// 客户端子弹移动逻辑
     /// </summary>
-    public class BulletMoveSystem : Feature {
+    public class BulletMoveSystem : SystemBase {
         
         protected override void OnTick() {
             var delta = TickDelta;

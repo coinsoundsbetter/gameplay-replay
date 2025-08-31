@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace KillCam.Client {
-    public class Projectiles : Feature {
+    public class Projectiles : SystemBase {
         private readonly List<ProjectileInstance> flyingProjectiles = new();
         private readonly List<GameObject> bulletObjects = new();
 

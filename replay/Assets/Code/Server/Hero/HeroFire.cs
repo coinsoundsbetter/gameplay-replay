@@ -1,5 +1,5 @@
 namespace KillCam.Server {
-    public class HeroFire : Feature {
+    public class HeroFire : SystemBase {
         
         protected override void OnTick() {
             ref var fireCmdBuffer = ref GetBuffer<C2S_CmdFire>();

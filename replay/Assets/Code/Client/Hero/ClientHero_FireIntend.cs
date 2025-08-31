@@ -5,7 +5,7 @@ namespace KillCam.Client {
     /// <summary>
     /// 开火意图
     /// </summary>
-    public class ClientHero_FireIntend : Feature {
+    public class ClientHero_FireIntend : SystemBase {
         
         protected override void OnCreate() {
             AddBuffer<HeroFireIntentElem>();

@@ -2,7 +2,7 @@ namespace KillCam.Client {
     /// <summary>
     /// 弹孔特效的表现
     /// </summary>
-    public class ProjectileImpacts : Feature {
+    public class ProjectileImpacts : SystemBase {
         
         protected override void OnTick() {
             ref var impactBuffer = ref GetWorldBuffer<ImpactData>();

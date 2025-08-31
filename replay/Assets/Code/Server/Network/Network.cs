@@ -7,7 +7,7 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace KillCam.Server {
-    public class NetworkServer : Feature, INetworkContext {
+    public class NetworkServer : SystemBase, INetworkContext {
         private readonly NetworkManager manager;
         private Action startAction;
         private int clientUniqueId;

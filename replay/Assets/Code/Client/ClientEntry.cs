@@ -1,4 +1,5 @@
 using FishNet.Managing;
+using UnityEngine;
 
 namespace KillCam.Client {
     [UnityEngine.Scripting.Preserve]
@@ -13,7 +14,7 @@ namespace KillCam.Client {
         protected override void OnBeforeStart() {
             AppData.Create();
             ClientWorldsChannel.Create();
-            AddClientFeatures();
+            AddClientSystems();
             network.Start(() => { network.SendLoginRequest("Coin"); });
         }
 
@@ -22,31 +23,39 @@ namespace KillCam.Client {
             ClientWorldsChannel.Destroy();
             AppData.Destroy();
         }
-        
-        private void AddClientFeatures() {
-            world.AddData(new NetworkTime());
-            world.AddData(new NetworkData());
-            world.AddData(new CameraData());
-            world.SetupBuffer<ImpactData>();
+
+        private void AddClientSystems() {
+            var logicRoot = world.LogicRoot;
             
-            // 网络相关
-            world.SetNetworkContext(network);
-            world.AddFeature(network);
-            world.AddFeature(spawnProvider = new SpawnProvider());
-            world.AddFeature<NetMsgHandle>(TickGroup.NetworkReceive);
+            var init = new InitializeSystemGroup();
+            init.AddSystem(new WorldTimeSystem());
+            SystemCollector.CollectInto(init, WorldFlag.Client);
+            logicRoot.AddSystem(init);
+
+            var netRecv = new NetworkReceiveSystemGroup();
+            SystemCollector.CollectInto(netRecv, WorldFlag.Client);
+            logicRoot.AddSystem(netRecv);
             
-            // 输入
-            world.AddFeature<GatherInputSystem>(TickGroup.Input);
+            var input = new InputSystemGroup();
+            SystemCollector.CollectInto(input, WorldFlag.Client);
+            logicRoot.AddSystem(input);
             
-            // 逻辑模拟
-            world.AddFeature(new Client_SpawnHeroSystem(spawnProvider));
-            world.AddFeature<BulletMoveSystem>();
+            var physics = new PhysicsSystemGroup();
+            SystemCollector.CollectInto(physics, WorldFlag.Client);
+            logicRoot.AddSystem(physics);
             
-            // 表现相关
-            world.AddFeature<VisualHUD>(TickGroup.PostVisual);
-            world.AddFeature<CameraManager>(TickGroup.PostVisual);
+            var netSend = new NetworkSendSystemGroup();
+            SystemCollector.CollectInto(netSend, WorldFlag.Client);
+            logicRoot.AddSystem(netSend);
             
-            world.SetupAllFeatures();
+            var frameRoot = world.FrameRoot;
+            var visualize = new VisualizeSystemGroup();
+            SystemCollector.CollectInto(visualize, WorldFlag.Client);
+            frameRoot.AddSystem(visualize);
+
+            var postVisualize = new PostVisualizeSystemGroup();
+            SystemCollector.CollectInto(postVisualize, WorldFlag.Client);
+            frameRoot.AddSystem(postVisualize);
         }
     }
 }

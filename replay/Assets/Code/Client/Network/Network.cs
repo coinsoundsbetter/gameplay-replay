@@ -3,7 +3,7 @@ using FishNet.Managing;
 using FishNet.Transporting;
 
 namespace KillCam.Client {
-    public class NetworkClient : Feature, INetworkContext {
+    public class NetworkClient : INetworkContext {
         private readonly NetworkManager manager;
         private IClientHeroNet sender;
         private Action startAction;
@@ -17,9 +17,9 @@ namespace KillCam.Client {
             manager = mgr;
         }
         
-        protected override void OnCreate() {
+        /*protected override void OnCreate() {
             CreateData<NetworkTime>();
-        }
+        }*/
 
         public void Start(Action started) {
             startAction = started;
@@ -64,13 +64,13 @@ namespace KillCam.Client {
             });
         }
 
-        protected override void OnTick() {
+        /*protected override void OnTick() {
             ref var worldTime = ref GetWorldDataRef<NetworkTime>();
             worldTime.Tick = manager.TimeManager.LocalTick;
             ref var networkData = ref GetWorldDataRef<NetworkData>();
             networkData.RTT = manager.TimeManager.RoundTripTime;
             networkData.HalfRTT = manager.TimeManager.HalfRoundTripTime;
-        }
+        }*/
         
         public void SendToServer<T>(T message) where T : INetworkMsg {
             sender?.Send(message);
@@ -85,8 +85,9 @@ namespace KillCam.Client {
         }
 
         public new uint GetTick() {
-            var worldData = GetWorldData<NetworkTime>();
-            return worldData.Tick;
+            /*var worldData = GetWorldData<NetworkTime>();
+            return worldData.Tick;*/
+            return 0;
         }
         
         public new double GetNowTime() {
@@ -94,13 +95,15 @@ namespace KillCam.Client {
         }
 
         public new long GetRTT() {
-            var networkData = GetWorldData<NetworkData>();
-            return networkData.RTT;
+            /*var networkData = GetWorldData<NetworkData>();
+            return networkData.RTT;*/
+            return 0;
         }
 
         public new long GetHalfRTT() {
-            var networkData = GetWorldData<NetworkData>();
-            return networkData.HalfRTT;
+            /*var networkData = GetWorldData<NetworkData>();
+            return networkData.HalfRTT;*/
+            return 0;
         }
     }
 }

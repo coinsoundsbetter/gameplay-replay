@@ -2,7 +2,7 @@ namespace KillCam.Client {
     /// <summary>
     /// 负责把客户端的输入转到角色上
     /// </summary>
-    public class HeroInput : Feature {
+    public class HeroInput : SystemBase {
         
         public override bool OnShouldActivate() {
             var data = GetDataRO<HeroIdentifier>();

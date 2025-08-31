@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
 namespace KillCam.Client {
-    public class Client_SpawnHeroSystem : Feature {
+    public class Client_SpawnHeroSystem : SystemBase {
         private readonly IRoleSpawnProvider provider;
         private readonly Dictionary<int, GameplayActor> characters = new();
         public IReadOnlyDictionary<int, GameplayActor> Characters => characters;

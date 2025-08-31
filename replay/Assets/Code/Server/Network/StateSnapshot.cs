@@ -6,7 +6,7 @@ using Unity.Collections;
 using UnityEngine;
 
 namespace KillCam.Server {
-    public class StateSnapshot : Feature {
+    public class StateSnapshot : SystemBase {
         private readonly SortedList<uint, AllHeroSnapshot> characterSnapshots = new();
         private int stateSnapshotCountdown = 0;
 

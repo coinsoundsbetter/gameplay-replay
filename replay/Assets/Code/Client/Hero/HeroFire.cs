@@ -1,5 +1,5 @@
 namespace KillCam.Client {
-    public class HeroFire : Feature {
+    public class HeroFire : SystemBase {
         private Projectiles projectiles;
 
         protected override void OnCreate() {

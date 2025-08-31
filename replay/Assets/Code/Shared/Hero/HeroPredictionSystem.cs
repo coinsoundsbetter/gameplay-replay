@@ -1,7 +1,7 @@
 ﻿using Unity.Mathematics;
 
 namespace KillCam {
-    public class HeroPredictionSystem : Feature {
+    public class HeroPredictionSystem : SystemBase {
         private const float MoveAcc = 20f;
         private const float Gravity = -9.81f;
         private const float BulletSpeed = 60f;

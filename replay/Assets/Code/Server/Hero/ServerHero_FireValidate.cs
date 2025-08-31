@@ -2,7 +2,7 @@ namespace KillCam.Server {
     /// <summary>
     /// 开火验证
     /// </summary>
-    public class ServerHero_FireValidate : Feature {
+    public class ServerHero_FireValidate : SystemBase {
         
         protected override void OnTick() {
             var tick = GetWorldData<NetworkTime>().Tick;

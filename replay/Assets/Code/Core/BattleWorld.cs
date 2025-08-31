@@ -11,10 +11,10 @@ namespace KillCam {
 
         private GameEntry boostrap;
         private GameplayActor worldActor;
-        private readonly Dictionary<TickGroup, List<Feature>> tickGroups = new();
+        private readonly Dictionary<TickGroup, List<SystemBase>> tickGroups = new();
         private readonly Dictionary<ActorGroup, List<GameplayActor>> groupActors = new();
         private readonly Dictionary<GameplayActor, ActorGroup> actorGroupMap = new();
-        private readonly Dictionary<GameplayActor, Dictionary<string, Feature>> actorFeatureSet = new();
+        private readonly Dictionary<GameplayActor, Dictionary<string, SystemBase>> actorFeatureSet = new();
         private readonly Dictionary<GameplayActor, Dictionary<Type, object>> actorDataManagedSet = new();
         private readonly Dictionary<GameplayActor, Dictionary<Type, RefStorageBase>> actorDataUnmanagedSet = new();
         private readonly Dictionary<GameplayActor, Dictionary<Type, RefStorageBase>> actorBufferUnmanagedSet = new();
@@ -42,6 +42,9 @@ namespace KillCam {
         };
 
         public static BattleWorld[] Worlds = Array.Empty<BattleWorld>();
+
+        public LogicTickSystemGroup LogicRoot { get; private set; }
+        public FrameTickSystemGroup FrameRoot { get; private set; }
         
         public int WorldId { get; private set; }
 
@@ -52,14 +55,16 @@ namespace KillCam {
             WorldId = Worlds.Length;
             Array.Resize(ref Worlds, Worlds.Length + 1);
             Worlds[^1] = this;
+            LogicRoot = new LogicTickSystemGroup();
+            FrameRoot = new FrameTickSystemGroup();
             foreach (var actorGroupType in actorRemoveOrders) {
                 groupActors.Add(actorGroupType, new List<GameplayActor>());
             }
             foreach (var logicTickGroupType in logicTickOrders) {
-                tickGroups.Add(logicTickGroupType, new List<Feature>());
+                tickGroups.Add(logicTickGroupType, new List<SystemBase>());
             }
             foreach (var frameTickGroupType in frameTickOrders) {
-                tickGroups.Add(frameTickGroupType, new List<Feature>());
+                tickGroups.Add(frameTickGroupType, new List<SystemBase>());
             }
 
             worldActor = CreateActor(ActorGroup.World);
@@ -86,16 +91,12 @@ namespace KillCam {
 
         public void FrameUpdate(float delta) {
             FrameTickDelta = delta;
-            foreach (var t in frameTickOrders) {
-                Tick(t, delta);
-            }
+            FrameRoot.Tick(delta);
         }
 
         public void LogicUpdate(double delta) {
             LogicTickDelta = delta;
-            foreach (var t in logicTickOrders) {
-                Tick(t, delta);
-            }
+            LogicRoot.Tick(delta);
         }
 
         private void Tick(TickGroup group, double deltaTime) {
@@ -107,7 +108,7 @@ namespace KillCam {
                 }
                 
                 if (c.IsActive) {
-                    c.TickActive(deltaTime);
+                    c.Tick(deltaTime);
                 }
             }
         }
@@ -117,7 +118,7 @@ namespace KillCam {
 
         public struct ActorInfo {
             public ActorGroup Group;
-            public Dictionary<string, Feature> Features;
+            public Dictionary<string, SystemBase> Features;
             public Dictionary<Type, object> DataManagedSet;
             public Dictionary<Type, RefStorageBase> DataUnmanagedSet;
         }

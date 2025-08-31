@@ -10,17 +10,17 @@ namespace KillCam.Server {
         }
         
         protected override void OnBeforeStart() {
-            world.AddData(new NetworkTime());
-            world.AddData(new NetworkData());
-            world.SetNetworkContext(networkServer);
-            world.AddFeature(networkServer);
-            networkServer.Start(() => {
-                world.AddFeature<Server_SpawnHeroSystem>();
-                world.AddFeature<BulletMoveSystem>();
-                world.AddFeature<Server_BulletHitSystem>();
-                world.AddFeature<NetMessageHandle>();
-                world.AddFeature<StateSnapshot>();
-            });
+            var logicRoot = world.LogicRoot;
+            var init = SystemCollector.Collect<InitializeSystemGroup>(WorldFlag.Server);
+            var netRecv = SystemCollector.Collect<NetworkReceiveSystemGroup>(WorldFlag.Server);
+            var input   = SystemCollector.Collect<InputSystemGroup>(WorldFlag.Server);
+            var physics = SystemCollector.Collect<PhysicsSystemGroup>(WorldFlag.Server);
+            var netSend = SystemCollector.Collect<NetworkSendSystemGroup>(WorldFlag.Server);
+            logicRoot.AddSystem(init);
+            logicRoot.AddSystem(netRecv);
+            logicRoot.AddSystem(input);
+            logicRoot.AddSystem(physics);
+            logicRoot.AddSystem(netSend);
         }
 
         protected override void OnAfterDestroy() {

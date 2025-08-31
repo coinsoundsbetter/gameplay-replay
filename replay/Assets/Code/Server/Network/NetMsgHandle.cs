@@ -2,7 +2,7 @@ using FishNet.Serializing;
 using UnityEngine;
 
 namespace KillCam.Server {
-    public class NetMessageHandle : Feature {
+    public class NetMessageHandle : SystemBase {
         
         protected override void OnCreate() {
             HeroNet.OnServerReceiveData += HandleClientRequest;

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace KillCam.Client {
-    public class VisualHUD : Feature {
+    public class VisualHUD : SystemBase {
         private Hud ui;
         
         protected override void OnCreate() {

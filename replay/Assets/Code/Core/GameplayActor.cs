@@ -49,12 +49,12 @@ namespace KillCam {
             return MyWorld.GetActorDataManaged<T>(this);
         }
 
-        public void AddFeature<T>(TickGroup tickGroup) where T : Feature, new() {
+        public void AddFeature<T>(TickGroup tickGroup) where T : SystemBase, new() {
             MyWorld.AddActorFeature<T>(this, tickGroup);
         }
 
-        public void AddFeature(Feature feature, TickGroup tickGroup) {
-            MyWorld.AddActorFeature(this, feature, tickGroup);
+        public void AddFeature(SystemBase systemBase, TickGroup tickGroup) {
+            MyWorld.AddActorFeature(this, systemBase, tickGroup);
         }
 
         public void SetupAllFeatures() {

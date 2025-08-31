@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 namespace KillCam.Client.Replay {
-    public class Replay_StreamParse : Feature {
+    public class Replay_StreamParse : SystemBase {
         private bool isNeedHandle;
         private List<S2C_WorldStateSnapshot> playStreams = new();
         private uint playTick;

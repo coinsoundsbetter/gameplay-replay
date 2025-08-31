@@ -10,7 +10,7 @@ namespace KillCam {
             var newActor = new GameplayActor();
             actorGroupMap.Add(newActor, group);
             groupActors[group].Add(newActor);
-            actorFeatureSet.Add(newActor, new Dictionary<string, Feature>());
+            actorFeatureSet.Add(newActor, new Dictionary<string, SystemBase>());
             actorDataManagedSet.Add(newActor, new Dictionary<Type, object>());
             actorDataUnmanagedSet.Add(newActor, new Dictionary<Type, RefStorageBase>());
             actorBufferUnmanagedSet.Add(newActor, new Dictionary<Type, RefStorageBase>());
@@ -46,18 +46,18 @@ namespace KillCam {
             actorBufferUnmanagedSet.Remove(actor);
         }
         
-        public void AddActorFeature<T>(GameplayActor actor, TickGroup tickGroup) where T : Feature, new() {
+        public void AddActorFeature<T>(GameplayActor actor, TickGroup tickGroup) where T : SystemBase, new() {
             var t = new T();
             actorFeatureSet[actor].Add(typeof(T).Name, t);
             tickGroups[tickGroup].Add(t);
             t.Create(actor);
         }
 
-        public void AddActorFeature(GameplayActor actor, Feature feature, TickGroup tickGroup) {
-            var type = feature.GetType();
-            actorFeatureSet[actor].Add(type.Name, feature);
-            tickGroups[tickGroup].Add(feature);
-            feature.Create(actor);
+        public void AddActorFeature(GameplayActor actor, SystemBase systemBase, TickGroup tickGroup) {
+            var type = systemBase.GetType();
+            actorFeatureSet[actor].Add(type.Name, systemBase);
+            tickGroups[tickGroup].Add(systemBase);
+            systemBase.Create(actor);
         }
 
         public void SetupAllActorFeatures(GameplayActor actor) {

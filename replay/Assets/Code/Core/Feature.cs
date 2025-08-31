@@ -1,162 +1,163 @@
+using System;
 using System.Collections.Generic;
 
-namespace KillCam {
-    
-    public abstract class Feature {
-        private GameplayActor owner;
-        private BattleWorld world;
+namespace KillCam
+{
+    public abstract class SystemBase : ISystem
+    {
+        private GameplayActor _owner;
+        private BattleWorld _world;
+
+        public GameplayActor Owner => _owner;
+        public BattleWorld World => _world;
         public bool IsActive { get; private set; }
         protected double TickDeltaDouble { get; private set; }
         protected float TickDelta => (float)TickDeltaDouble;
 
-        public void Create(GameplayActor gameplayActor) {
-            owner = gameplayActor;
-            world = gameplayActor.MyWorld;
+        //====================
+        // 生命周期管理
+        //====================
+        public void Create(GameplayActor actor)
+        {
+            _owner = actor;
+            _world = actor.MyWorld;
             IsActive = false;
-            OnCreate();
+            OnCreate(_world, _owner);
         }
 
-        public void Setup() {
-            OnSetup();
+        public void Setup() => OnSetup();
+
+        public void Activate()
+        {
+            if (!IsActive)
+            {
+                IsActive = true;
+                OnActivate();
+            }
         }
 
-        public void Activate() {
-            IsActive = true;
-            OnActivate();
-        }
-
-        public void Deactivate() {
-            IsActive = false;
-            OnDeactivate();
-        }
-
-        public void Destroy() {
-            if (IsActive) {
+        public void Deactivate()
+        {
+            if (IsActive)
+            {
+                IsActive = false;
                 OnDeactivate();
             }
+        }
 
+        public void Create(BattleWorld world) {
+            
+        }
+
+        public void Destroy()
+        {
+            if (IsActive) Deactivate();
             OnDestroy();
         }
 
-        public void TickActive(double deltaTime) {
+        public void Tick(double deltaTime)
+        {
             TickDeltaDouble = deltaTime;
             OnTick();
         }
 
-        protected virtual void OnCreate() { }
-
-        protected virtual void OnDestroy() { }
-        
+        //====================
+        // 生命周期回调（子类重写）
+        //====================
+        protected virtual void OnCreate(BattleWorld world, GameplayActor owner) { }
         protected virtual void OnSetup() { }
-
         protected virtual void OnActivate() { }
-        
         protected virtual void OnDeactivate() { }
-
+        protected virtual void OnDestroy() { }
         protected virtual void OnTick() { }
+        public virtual bool OnShouldActivate() => true;
 
-        public virtual bool OnShouldActivate() {
-            return true;
-        }
-        
         //====================
         // Actor 级数据访问
         //====================
-
         protected void CreateData<T>() where T : unmanaged
-            => world.AddData(new T());
-        
+            => _world.AddData(new T());
+
         protected bool HasData<T>() where T : unmanaged
-            => world.HasActorData<T>(owner);
+            => _world.HasActorData<T>(_owner);
 
         protected bool HasDataManaged<T>() where T : class
-            => world.HasActorDataManaged<T>(owner);
+            => _world.HasActorDataManaged<T>(_owner);
 
         protected bool TryGetDataManaged<T>(out T value) where T : class
-            => world.TryGetActorDataManaged(owner, out value);
+            => _world.TryGetActorDataManaged(_owner, out value);
 
         protected ref T GetDataRef<T>() where T : unmanaged
-            => ref world.GetActorDataRW<T>(owner);
+            => ref _world.GetActorDataRW<T>(_owner);
 
-        protected bool TryGetData<T>(out T value) where T : unmanaged {
-            if (HasData<T>()) {
+        protected bool TryGetData<T>(out T value) where T : unmanaged
+        {
+            if (HasData<T>())
+            {
                 value = GetDataRO<T>();
                 return true;
             }
-
             value = default;
             return false;
         }
 
         protected ref readonly T GetDataRO<T>() where T : unmanaged
-            => ref world.GetActorDataRO<T>(owner);
+            => ref _world.GetActorDataRO<T>(_owner);
 
         protected void AddBuffer<T>() where T : unmanaged, IBufferElement
-            => world.SetupActorBuffer<T>(owner);
+            => _world.SetupActorBuffer<T>(_owner);
 
         protected ref DynamicBuffer<T> GetBuffer<T>() where T : unmanaged, IBufferElement
-            => ref world.GetActorBuffer<T>(owner);
-        
+            => ref _world.GetActorBuffer<T>(_owner);
+
         protected T GetDataManaged<T>() where T : class
-            => world.GetActorDataManaged<T>(owner);
+            => _world.GetActorDataManaged<T>(_owner);
 
         protected GameplayActor CreateActor(ActorGroup actorGroup = ActorGroup.Default)
-            => world.CreateActor(actorGroup);
+            => _world.CreateActor(actorGroup);
 
-        protected void DestroyActor(GameplayActor actor) 
-            => world.DestroyActor(actor);
-        
+        protected void DestroyActor(GameplayActor actor)
+            => _world.DestroyActor(actor);
+
         //====================
         // World 级数据访问
         //====================
         protected bool HasWorldData<T>() where T : unmanaged
-            => world.HasData<T>();
+            => _world.HasData<T>();
 
         protected ref T GetWorldDataRef<T>() where T : unmanaged
-            => ref world.GetDataRW<T>();
+            => ref _world.GetDataRW<T>();
 
         protected ref readonly T GetWorldData<T>() where T : unmanaged
-            => ref world.GetDataRO<T>();
+            => ref _world.GetDataRO<T>();
 
         protected T GetSingletonManaged<T>() where T : class
-            => world.GetDataManaged<T>();
+            => _world.GetDataManaged<T>();
 
-        protected T GetSingletonFeature<T>() where T : Feature
-            => world.GetFeature<T>();
+        protected T GetSingletonFeature<T>() where T : SystemBase
+            => _world.GetFeature<T>();
 
-        protected ref DynamicBuffer<T> GetWorldBuffer<T>() where T : unmanaged, IBufferElement {
-            return ref world.GetBuffer<T>();
-        }
-        
-        protected bool HasWorldFlag(WorldFlag flag) => world.HasFlag(flag);
-        
+        protected ref DynamicBuffer<T> GetWorldBuffer<T>() where T : unmanaged, IBufferElement
+            => ref _world.GetBuffer<T>();
+
+        protected bool HasWorldFlag(WorldFlag flag)
+            => _world.HasFlag(flag);
+
         //====================
-        // 网络发送
+        // 网络工具
         //====================
-        protected void Send<T>(T msg) where T : INetworkMsg {
-            world.NetworkContext.SendToServer(msg);
-        }
+        protected void Send<T>(T msg) where T : INetworkMsg
+            => _world.NetworkContext.SendToServer(msg);
 
-        protected void BroadcastAll<T>(T msg) where T : INetworkMsg {
-            world.NetworkContext.SendToAllClients(msg);
-        }
+        protected void BroadcastAll<T>(T msg) where T : INetworkMsg
+            => _world.NetworkContext.SendToAllClients(msg);
 
-        protected long GetRTT() {
-            return world.NetworkContext.GetRTT();
-        }
+        protected long GetRTT() => _world.NetworkContext.GetRTT();
+        protected long GetHalfRTT() => _world.NetworkContext.GetRTT() / 2;
+        protected double GetNetTime() => _world.NetworkContext.GetNowTime();
+        protected uint GetTick() => _world.NetworkContext.GetTick();
 
-        protected long GetHalfRTT() {
-            return world.NetworkContext.GetRTT();
-        }
-
-        protected double GetNetTime() {
-            return world.NetworkContext.GetNowTime();
-        }
-
-        protected uint GetTick() => world.NetworkContext.GetTick();
-
-        protected IEnumerable<GameplayActor> GetActors(ActorGroup group) {
-            return world.GetActors(group);
-        }
+        protected IEnumerable<GameplayActor> GetActors(ActorGroup group)
+            => _world.GetActors(group);
     }
 }

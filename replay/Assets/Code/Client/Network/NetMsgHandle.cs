@@ -1,7 +1,7 @@
 ﻿using FishNet.Serializing;
 
 namespace KillCam.Client {
-    public class NetMsgHandle : Feature {
+    public class NetMsgHandle : SystemBase {
         
         protected override void OnCreate() {
             HeroNet.OnClientReceiveData += OnReceived;

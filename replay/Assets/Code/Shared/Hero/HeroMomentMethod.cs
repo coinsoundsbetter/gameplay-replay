@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace KillCam {
-    public abstract class HeroMomentMethod : Feature {
+    public abstract class HeroMomentMethod : SystemBase {
         protected void SimulateMove(ref Vector3 pos, Quaternion rot, 
             Vector2Int move, float speed, float deltaTime) {
             var forward = (rot * Vector3.forward).normalized;

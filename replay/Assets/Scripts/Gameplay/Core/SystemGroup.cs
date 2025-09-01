@@ -28,6 +28,8 @@ namespace Gameplay.Core {
 
             _systems.Add(sys);
             _states[_count++] = state;
+            
+            myWorld.RegisterSystem(sys);
         }
 
         public void Update(ref SystemState state) {
@@ -42,6 +44,7 @@ namespace Gameplay.Core {
             for (int i = 0; i < _count; i++) {
                 ref var st = ref _states[i];
                 _systems[i].OnDestroy(ref st);
+                myWorld.UnregisterSystem(_systems[i]);
             }
         }
 

@@ -12,6 +12,7 @@ namespace Gameplay.Core {
         [SerializeField] private bool isLaunchClient = true;
         [SerializeField] private bool isLaunchReplay = false;
         private readonly List<World> worlds = new();
+        private readonly List<WorldBootstrap> bootstraps = new();
         
         private void Start() {
             if (isLaunchClient) {
@@ -34,6 +35,11 @@ namespace Gameplay.Core {
             foreach (var world in worlds) {
                 world.Dispose();
             }
+
+            foreach (var bootstrap in bootstraps) {
+                bootstrap.Dispose();
+            }
+            
             worlds.Clear();
         }
 
@@ -71,7 +77,7 @@ namespace Gameplay.Core {
             var world = new World(worldName);
             var bootstrap = (WorldBootstrap)Activator.CreateInstance(type, world, flag)!;
             bootstrap.Initialize(netPlugin);
-
+            bootstraps.Add(bootstrap);
             worlds.Add(world);
             Debug.Log($"加载 {worldName} 成功 ({bootstrapName})");
         }

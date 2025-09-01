@@ -1,0 +1,20 @@
+{
+    "name": "Gameplay.Client",
+    "rootNamespace": "",
+    "references": [
+        "GUID:36e4f5125efbcbb44815133bf1fd571d",
+        "GUID:e0cd26848372d4e5c891c569017e11f1",
+        "GUID:7c88a4a7926ee5145ad2dfa06f454c67",
+        "GUID:9a6c1a88dc9a35347b0ed75d2caf16d2",
+        "GUID:d8b63aba1907145bea998dd612889d6b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

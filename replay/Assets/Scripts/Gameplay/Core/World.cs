@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Gameplay.Core {
     public class World {
         public readonly SystemGroup LogicRoot;
@@ -9,9 +12,11 @@ namespace Gameplay.Core {
         public bool IsDisposed { get; private set; }
         
         private static int _nextWorldId = 1;
+        private readonly Dictionary<Type, ISystem> _systemCache;
 
         public World(string worldName) {
             WorldId = _nextWorldId++;
+            _systemCache = new Dictionary<Type, ISystem>();
             ActorManager = new ActorManager(WorldId);
             LogicRoot = new SystemGroup(this);
             FrameRoot = new SystemGroup(this);
@@ -60,6 +65,22 @@ namespace Gameplay.Core {
 
             WorldRegistry.Unregister(this);
             IsDisposed = true;
+        }
+        
+        internal void RegisterSystem(ISystem sys) {
+            _systemCache[sys.GetType()] = sys;
+        }
+        
+        internal void UnregisterSystem(ISystem sys) {
+            _systemCache.Remove(sys.GetType());
+        }
+
+        public T GetExistSystem<T>() where T : ISystem {
+            if (_systemCache.TryGetValue(typeof(T), out var system)) {
+                return (T)system;
+            }
+
+            return default;
         }
     }
 }

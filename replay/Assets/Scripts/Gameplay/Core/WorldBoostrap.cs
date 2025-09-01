@@ -12,5 +12,6 @@ namespace Gameplay.Core {
         }
         
         public abstract void Initialize(NetworkManager manager);
+        public abstract void Dispose();
     }
 }

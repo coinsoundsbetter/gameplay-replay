@@ -1,4 +1,4 @@
-using Gameplay.Core;
+/*using Gameplay.Core;
 
 namespace Gameplay.Client {
     [UpdateInGroup(typeof(InitializeSystemGroup))]
@@ -6,4 +6,4 @@ namespace Gameplay.Client {
     public class ClientReplay_SpawnHeroSystem : ISystem {
         
     }
-}
+}/*#1#*/

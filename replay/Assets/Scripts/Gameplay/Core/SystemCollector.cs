@@ -5,7 +5,7 @@ namespace Gameplay.Core {
 
     public static class SystemCollector {
         
-        public static void CollectInto<T>(T group, WorldFlag world) where T : SystemGroup
+        public static void CollectInto<T>(T group, SystemFlag systemFlag) where T : SystemGroup
         {
             var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
             var allTypes = allAssemblies
@@ -23,12 +23,23 @@ namespace Gameplay.Core {
                     continue;
 
                 // 世界过滤
-                var wf = type.GetCustomAttribute<WorldFilterAttribute>();
-                if (wf != null)
+                var filter = type.GetCustomAttribute<SystemTagAttribute>();
+                if (filter != null)
                 {
-                    if (wf.All != WorldFlag.Default && (world & wf.All) != wf.All) continue;
-                    if (wf.Any != WorldFlag.Default && (world & wf.Any) == 0) continue;
-                    if (wf.None != WorldFlag.Default && (world & wf.None) != 0) continue;
+                    switch (filter.Mode)
+                    {
+                        case SystemFilterMode.AnyMatch:
+                            // 只要有交集就行
+                            if ((filter.Flag & systemFlag) == 0)
+                                continue;
+                            break;
+
+                        case SystemFilterMode.Strict:
+                            // 必须完全包含
+                            if ((systemFlag & filter.Flag) != filter.Flag)
+                                continue;
+                            break;
+                    }
                 }
 
                 // 检查是否在这个 Group 内

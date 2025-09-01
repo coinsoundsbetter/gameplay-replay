@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections;
 
 namespace Gameplay.Core {
     public class ActorManager {
@@ -12,6 +13,7 @@ namespace Gameplay.Core {
         private readonly Dictionary<Type, Actor> _singletons = new();
         private readonly Dictionary<Type, object> _managedSingletons = new();
         private readonly Dictionary<int, List<Capability>> _actorCapabilities = new();
+        private readonly Dictionary<Type, RefStorageBase> _bufferSingletons = new();
 
         public ActorManager(int worldId) {
             _worldId = worldId;
@@ -188,6 +190,25 @@ namespace Gameplay.Core {
                     yield return new Actor { Id = id };
                 }
             }
+        }
+        
+        // ====================
+        // 动态缓冲区支持
+        // ====================
+        public void CreateSingletonBuffer<T>() where T : unmanaged, IBufferElement {
+            var type = typeof(T);
+            _bufferSingletons.Add(type, new RefStorageBuffer<T>() {
+                Value = new DynamicBuffer<T>(2, Allocator.Persistent),
+            });
+        }
+
+        public ref DynamicBuffer<T> GetSingletonBuffer<T>() where T : unmanaged, IBufferElement {
+            var type = typeof(T);
+            if (_bufferSingletons.TryGetValue(type, out var bufferWrapper)) {
+                return ref ((RefStorageBuffer<T>)bufferWrapper).GetRef();
+            }
+            
+            throw new KeyNotFoundException($"No dynamic buffer of type {type}");
         }
         
         // ====================

@@ -36,13 +36,17 @@ namespace Gameplay.Core {
         public SystemOrder Order { get; }
         public OrderAttribute(SystemOrder order) => Order = order;
     }
-
-    /// <summary>世界过滤</summary>
+    
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class WorldFilterAttribute : Attribute
+    public class SystemTagAttribute : Attribute
     {
-        public WorldFlag All { get; set; } = WorldFlag.Default;   // 必须全有
-        public WorldFlag Any { get; set; } = WorldFlag.Default;   // 至少一个
-        public WorldFlag None { get; set; } = WorldFlag.Default;  // 禁止出现
+        public SystemFlag Flag { get; }
+        public SystemFilterMode Mode { get; }
+
+        public SystemTagAttribute(SystemFlag flag, SystemFilterMode mode = SystemFilterMode.AnyMatch)
+        {
+            Flag = flag;
+            Mode = mode;
+        }
     }
 }

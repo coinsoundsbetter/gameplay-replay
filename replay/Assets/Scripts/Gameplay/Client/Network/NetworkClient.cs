@@ -30,6 +30,11 @@ namespace Gameplay.Client {
             IsActive = false;
             NetSync.OnAddClient = OnAddClient;
             NetSync.OnRemoveClient = OnRemoveClient;
+            RegisterMessages();
+        }
+
+        private void RegisterMessages() {
+            
         }
 
         public void Start() {

@@ -10,6 +10,8 @@ namespace Gameplay.Client {
         public ClientBootstrap(World myWorld, WorldFlag flag) : base(myWorld, flag) { }
 
         public override void Initialize(NetworkManager manager) {
+            NetMessageBoostrap.Initialize();
+            
             client = new NetworkClient();
             client.Prepare(manager, myWorld.ActorManager);
             

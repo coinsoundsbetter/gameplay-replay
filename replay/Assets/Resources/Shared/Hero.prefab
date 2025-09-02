@@ -97,7 +97,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 580258912987318585}
-  - component: {fileID: 1825311944216827385}
   m_Layer: 6
   m_Name: Hero
   m_TagString: Untagged
@@ -124,22 +123,6 @@ Transform:
   - {fileID: 2387259316342502831}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1825311944216827385
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4374892781657840796}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 525ad0847030425184442bd39e1239be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cameraTarget: {fileID: 2939420404720213640}
-  cc: {fileID: 4592143310602994849}
-  animator: {fileID: 6553925359013124077}
-  fireOrigin: {fileID: 2387259316342502831}
 --- !u!1 &7332903531067066210
 GameObject:
   m_ObjectHideFlags: 0
@@ -239,10 +222,5 @@ PrefabInstance:
 --- !u!4 &870343405427428759 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4311652260893728935, guid: 9bd72731ebe2248478ba4849c274a43b, type: 3}
-  m_PrefabInstance: {fileID: 4017778577810369840}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &6553925359013124077 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 7869543608362826461, guid: 9bd72731ebe2248478ba4849c274a43b, type: 3}
   m_PrefabInstance: {fileID: 4017778577810369840}
   m_PrefabAsset: {fileID: 0}

@@ -1,5 +1,7 @@
 using System;
+using FishNet.Serializing;
 using Gameplay.Core;
+using UnityEngine;
 
 namespace Gameplay.Client {
     
@@ -17,7 +19,13 @@ namespace Gameplay.Client {
         }
         
         private void OnReceived(ArraySegment<byte> data) {
-            
+            var reader = new Reader(data, null);
+            var msgId = reader.ReadInt32();
+            var msgBody = NetMessageBootstrap.ClientRecv.CreateMessage(msgId);
+            msgBody.Deserialize(reader);
+            if (msgBody is Protocol.CreatePlayer) {
+                Debug.Log("1");
+            }
         }
     }
 }

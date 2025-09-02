@@ -19,6 +19,17 @@ namespace Gameplay.Core {
             _worldId = worldId;
         }
 
+        ~ActorManager() {
+            foreach (var kvp in _unmanaged.Values) {
+                foreach (var dataWrap in kvp.Values) {
+                    dataWrap.Dispose();
+                }
+            }
+            foreach (var bufferWrap in _bufferSingletons.Values) {
+                bufferWrap.Dispose();
+            }
+        }
+
         // ====================
         // Actor 生命周期
         // ====================

@@ -38,12 +38,9 @@ namespace Gameplay {
         }
 
         public void ServerRpc<T>(T message) where T : INetworkMessage {
-            /*if (!NetworkMsgRegistry.TryGetMsgTypeId<T>(out var id)) {
-                return;
-            }*/
-            
+            var msgId = NetMessageBootstrap.ClientRecv.GetId<T>();
             var writer = new Writer();
-           // writer.WriteInt32(id);
+            writer.WriteInt32(msgId);
             message.Serialize(writer);
             var byteArray = writer.GetArraySegment();
             RpcToClient(byteArray);
@@ -61,8 +58,7 @@ namespace Gameplay {
     }
     
     public interface INetworkMessage {
-        int GetMessageTypeId();
-        void Serialize(Writer writer);
-        void Deserialize(Reader reader);
+        void Serialize(Writer w);
+        void Deserialize(Reader r);
     }
 }

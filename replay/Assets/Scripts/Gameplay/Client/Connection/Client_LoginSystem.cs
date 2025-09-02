@@ -1,12 +1,6 @@
-﻿using FishNet.Broadcast;
-using Gameplay.Core;
-using Unity.Collections;
+﻿using Gameplay.Core;
 
 namespace Gameplay.Client {
-    
-    public struct LoginRequest : IBroadcast {
-        public FixedString32Bytes PlayerName;
-    }
     
     [UpdateInGroup(typeof(InitializeSystemGroup))]
     [SystemTag(SystemFlag.Client, SystemFilterMode.Strict)]

@@ -8,8 +8,8 @@ namespace Gameplay.Server {
         private NetworkServer server;
         
         public override void Initialize(NetworkManager manager) {
-            NetMessageBoostrap.Initialize();
-            server = new NetworkServer();
+            NetMessageBootstrap.Initialize();
+            server = myWorld.ActorManager.CreateSingletonManaged<NetworkServer>();
             server.Prepare(manager, myWorld.ActorManager);
             server.OnServerStarted = OnServerStarted;
             server.Start();

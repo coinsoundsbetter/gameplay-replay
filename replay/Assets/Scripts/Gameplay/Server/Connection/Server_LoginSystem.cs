@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using FishNet.Connection;
+using FishNet.Object;
 using FishNet.Transporting;
 using Gameplay.Core;
+using UnityEngine;
 
 namespace Gameplay.Server {
 
@@ -31,15 +33,13 @@ namespace Gameplay.Server {
         }
 
         private void OnLogin(NetworkConnection conn, LoginRequest request, Channel channel) {
-            if (!loginPlayers.ContainsKey(request.PlayerName)) {
-                var id = ++nextId;
-                loginPlayers.Add(request.PlayerName, id);
-                ref var buffer = ref Actors.GetSingletonBuffer<HeroSpawner>();
-                buffer.Add(new HeroSpawner() {
-                    Id = id,
-                    IsReLogin = false,
-                });
-            }
+            var connection = Resources.Load<GameObject>("NetConnection");
+            var connectionObj = Object.Instantiate(connection);
+            var networkObj = connectionObj.GetComponent<NetworkObject>();
+            var netSync = connectionObj.GetComponent<NetSync>();
+            netSync.Id.Value = ++nextId;
+            connectionObj.name = $"Net_{netSync.Id.Value}";
+            Actors.GetSingletonManaged<NetworkServer>().UsePlugin.ServerManager.Spawn(networkObj, conn);
         }
     }
 }

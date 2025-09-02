@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using FishNet.Managing;
+using FishNet.Transporting;
 using Gameplay.Core;
 
 namespace Gameplay.Client {
@@ -28,23 +29,39 @@ namespace Gameplay.Client {
             actorManager.CreateSingletonBuffer<AddClientEvent>();
             actorManager.CreateSingletonBuffer<RemoveClientEvent>();
             IsActive = false;
+        }
+        
+        public void StartConnection() {
             NetSync.OnAddClient = OnAddClient;
             NetSync.OnRemoveClient = OnRemoveClient;
-            RegisterMessages();
-        }
-
-        private void RegisterMessages() {
-            
-        }
-
-        public void Start() {
+            usePlugin.ClientManager.OnClientConnectionState += OnClientConnState;
             usePlugin.ClientManager.StartConnection();
         }
 
-        public void Stop() {
+        public void StopConnection() {
             usePlugin.ClientManager.StopConnection();
             NetSync.OnAddClient = null;
             NetSync.OnRemoveClient = null;
+            usePlugin.ClientManager.OnClientConnectionState -= OnClientConnState;
+        }
+        
+        private void OnClientConnState(ClientConnectionStateArgs args) {
+            if (!actorManager.HasSingleton<ConnectionInfo>()) {
+                return;
+            }
+            
+            ref var data = ref actorManager.GetSingleton<ConnectionInfo>();
+            switch (args.ConnectionState) {
+                case LocalConnectionState.Started:
+                    data.State = ConnectState.Connected;
+                    break;
+                case LocalConnectionState.Starting:
+                    data.State = ConnectState.Connecting;
+                    break;
+                case LocalConnectionState.Stopped:
+                    data.State = ConnectState.Offline;
+                    break;
+            }
         }
         
         private void OnAddClient(NetSync obj) {

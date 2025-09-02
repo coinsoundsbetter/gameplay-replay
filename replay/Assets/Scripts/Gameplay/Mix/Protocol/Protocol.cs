@@ -9,18 +9,19 @@ namespace Gameplay {
             public uint Tick;
         }
 
+        [MessageId(1001)]
         public struct CreatePlayer : INetworkMessage {
             public int PlayerId;
             public Vector3 Position;
 
-            public int GetMessageTypeId() => StableHash(typeof(CreatePlayer));
-
-            public void Serialize(Writer writer) {
-                
+            public void Serialize(Writer w) {
+                w.WriteInt32(PlayerId);
+                w.WriteVector3(Position);
             }
 
-            public void Deserialize(Reader reader) {
-                
+            public void Deserialize(Reader r) {
+                PlayerId = r.ReadInt32();
+                Position = r.ReadVector3();
             }
         }
         

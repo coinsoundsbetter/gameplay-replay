@@ -6,8 +6,6 @@ using Gameplay.Core;
 
 namespace Gameplay.Server {
     
-    
-    
     public class NetworkServer {
         public NetworkManager UsePlugin { get; private set; }
         private ActorManager actorManager;
@@ -21,7 +19,6 @@ namespace Gameplay.Server {
             UsePlugin.ServerManager.OnServerConnectionState += OnServerConnState;
             NetSync.OnAddServer = OnAddServer;
             NetSync.OnRemoveServer = OnRemoveServer;
-            NetSync.OnServerReceived = OnReceived;
         }
 
         public void Start() {
@@ -32,7 +29,6 @@ namespace Gameplay.Server {
             UsePlugin.ServerManager.StopConnection(false);
             NetSync.OnAddServer = null;
             NetSync.OnRemoveServer = null;
-            NetSync.OnServerReceived = null;
             activeClients.Clear();
         }
 
@@ -60,18 +56,14 @@ namespace Gameplay.Server {
         
         public void SendToClient<T>(int id, T message) where T : INetworkMessage {
             if (activeClients.TryGetValue(id, out var client)) {
-                client.ClientRpc<T>(message);
+                client.ServerRpc<T>(message);
             }
         }
 
         public void SendToAll<T>(T message) where T : INetworkMessage {
             foreach (var client in activeClients.Values) {
-                client.ClientRpc<T>(message);
+                client.ServerRpc<T>(message);
             }
-        }
-        
-        private void OnReceived(int id, ArraySegment<byte> data) {
-            
         }
     }
 }
